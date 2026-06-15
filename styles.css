@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Tatta-Archive CSS: Premium Design System
+   Tatta-Archive CSS: Premium Design System & Wow-Factor Elements
    ========================================================================== */
 
 /* Değişkenler & Renk Sistemi */
@@ -73,7 +73,6 @@ body {
   left: -100px;
 }
 
-/* Yıldız efekti arkaplanı */
 .stars-container {
   position: fixed;
   top: 0;
@@ -273,6 +272,9 @@ body {
 .margin-top-20 {
   margin-top: 20px;
 }
+.margin-bottom-30 {
+  margin-bottom: 30px;
+}
 
 /* HERO SECTION ÖZELLEŞTİRMELERİ */
 .hero-block {
@@ -330,6 +332,7 @@ body {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 14px 28px;
   border-radius: 12px;
@@ -367,6 +370,10 @@ body {
   padding: 8px 16px;
   font-size: 0.85rem;
   border-radius: 8px;
+}
+
+.btn-full {
+  width: 100%;
 }
 
 /* Canlı İstatistikler Grid */
@@ -512,11 +519,12 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(10, 15, 30, 0.85);
+  background: rgba(10, 15, 30, 0.9);
   backdrop-filter: blur(8px);
   border-top: 1px solid var(--border-light);
   padding: 15px 20px;
   transition: var(--transition-smooth);
+  border-top: 2px solid transparent;
 }
 
 .map-tooltip h4 {
@@ -528,6 +536,186 @@ body {
 
 .map-tooltip p {
   font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* KAROT SONDAJ SİMÜLATÖRÜ */
+.drill-simulator-layout {
+  display: flex;
+  gap: 25px;
+  height: 290px;
+  align-items: center;
+}
+
+.drill-column-container {
+  position: relative;
+  width: 80px;
+  height: 250px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--border-active);
+  display: flex;
+  flex-direction: column;
+}
+
+.drill-bit {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 15px;
+  background: linear-gradient(90deg, #94a3b8, #cbd5e1, #475569);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+  z-index: 10;
+  box-shadow: 0 0 8px #fff;
+}
+
+.drill-bit.drilling {
+  animation: drill-descend 6s linear forwards, drill-vibrate 0.1s infinite alternate;
+}
+
+@keyframes drill-descend {
+  0% { top: -15px; }
+  100% { top: 250px; }
+}
+
+@keyframes drill-vibrate {
+  0% { margin-left: -1px; }
+  100% { margin-left: 1px; }
+}
+
+.drill-layer {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  opacity: 0.4;
+  transition: opacity 0.5s ease, filter 0.3s ease;
+  cursor: pointer;
+  filter: grayscale(80%);
+}
+
+.drill-layer.extracted {
+  opacity: 1;
+  filter: grayscale(0%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.drill-layer:hover.extracted {
+  filter: brightness(1.2);
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.l-halite {
+  background: linear-gradient(180deg, #f8fafc, #cbd5e1);
+  height: 15%;
+}
+.l-gypsum {
+  background: linear-gradient(180deg, #ffedd5, #fdba74);
+  height: 20%;
+}
+.l-clay {
+  background: linear-gradient(180deg, #dcfce7, #86efac);
+  height: 35%;
+}
+.l-sandstone {
+  background: linear-gradient(180deg, #cbd5e1, #64748b);
+  height: 30%;
+}
+
+.layer-depth-tag {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.drill-controls-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.drill-output-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 170px;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drill-output-content h4 {
+  color: var(--secondary-cyan);
+  font-family: var(--font-title);
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+.drill-output-content ul {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.drill-output-content li {
+  margin-bottom: 4px;
+}
+
+.output-placeholder {
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Akifer Bilgi Kutusu */
+.aquifer-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.aquifer-item {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.aq-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--secondary-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.aq-content h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.aq-content p {
+  font-size: 0.82rem;
   color: var(--text-secondary);
   line-height: 1.4;
 }
@@ -623,7 +811,91 @@ body {
   color: var(--text-secondary);
 }
 
-/* 2. EKOLOJİ, ALG SİMÜLATÖRÜ & FLAMİNGO & FLORA */
+/* 2. EKOLOJİ, FOOD WEB & ALG SİMÜLATÖRÜ */
+.food-web-container {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  position: relative;
+}
+
+.food-web-svg {
+  width: 100%;
+  height: auto;
+}
+
+.web-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-dasharray: 8, 4;
+  animation: web-flow 25s linear infinite;
+  opacity: 0.25;
+  transition: opacity 0.3s ease, stroke-width 0.3s ease;
+}
+
+@keyframes web-flow {
+  0% { stroke-dashoffset: 500; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.web-line.l-cyan { stroke: var(--secondary-cyan); }
+.web-line.l-pink { stroke: var(--primary-pink); }
+.web-line.l-orange { stroke: #f97316; }
+
+.web-node {
+  fill: var(--bg-dark);
+  stroke: var(--text-muted);
+  stroke-width: 2.5;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.web-node-text {
+  fill: var(--text-primary);
+  font-family: var(--font-title);
+  font-size: 8px;
+  font-weight: 700;
+  text-anchor: middle;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+
+.n-sun { stroke: #f59e0b; filter: drop-shadow(0 0 4px rgba(245,158,11,0.3)); }
+.n-producer { stroke: var(--primary-pink); filter: drop-shadow(0 0 4px var(--primary-pink-glow)); }
+.n-consumer { stroke: var(--secondary-cyan); filter: drop-shadow(0 0 4px var(--secondary-cyan-glow)); }
+.n-apex { stroke: #f43f5e; filter: drop-shadow(0 0 4px rgba(244,63,94,0.3)); }
+
+.web-node:hover {
+  transform: scale(1.1);
+  stroke-width: 3.5;
+  fill: rgba(255, 255, 255, 0.05);
+}
+
+.web-node-info {
+  background: rgba(10, 15, 30, 0.65);
+  border-top: 1px solid var(--border-light);
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+  transition: var(--transition-smooth);
+}
+
+.web-node-info h4 {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  color: var(--secondary-cyan);
+  margin-bottom: 4px;
+}
+
+.web-node-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Alg & Renk Simülatörü */
 .sim-col-layout {
   display: flex;
   flex-direction: column;
@@ -997,7 +1269,7 @@ body {
   line-height: 1.5;
 }
 
-/* 4. GİZEMLER, HİKAYE VE SERAP SİMÜLATÖRÜ */
+/* 4. GİZEMLER, CYOA VE RADAR */
 .narrative-card {
   position: relative;
   overflow: hidden;
@@ -1018,16 +1290,42 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 220px;
+  min-height: 250px;
 }
 
 .story-text {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   font-style: italic;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   min-height: 120px;
+  transition: opacity 0.3s ease;
+}
+
+.cyoa-choices-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.btn-cyoa {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-cyoa:hover {
+  background: rgba(255, 117, 151, 0.08);
+  border-color: var(--primary-pink);
+  color: var(--text-primary);
+  transform: translateX(4px);
 }
 
 .story-controls {
@@ -1043,6 +1341,78 @@ body {
   font-weight: 700;
   font-size: 0.9rem;
   color: var(--text-muted);
+}
+
+/* GECE IŞIK RADARI */
+.radar-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.radar-screen-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: #020617;
+  border: 3px solid rgba(0, 229, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+  overflow: hidden;
+}
+
+.radar-screen-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%);
+  background-image: 
+    radial-gradient(circle, transparent 20%, rgba(0,229,255,0.03) 21%, rgba(0,229,255,0.03) 40%, transparent 41%, transparent 60%, rgba(0,229,255,0.03) 61%, rgba(0,229,255,0.03) 80%, transparent 81%),
+    linear-gradient(0deg, transparent 49%, rgba(0,229,255,0.05) 50%, transparent 51%),
+    linear-gradient(90deg, transparent 49%, rgba(0,229,255,0.05) 50%, transparent 51%);
+  pointer-events: none;
+}
+
+#radarCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.radar-details-panel {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 110px;
+}
+
+.radar-log-title {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--secondary-cyan);
+  margin-bottom: 6px;
+}
+
+.radar-log-content {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.radar-target-tag {
+  color: var(--primary-pink);
+  font-weight: 700;
 }
 
 /* Ufuk İllüzyonu */
@@ -1078,7 +1448,41 @@ body {
   color: #fbbf24;
 }
 
-/* 5. TURİZM REHBERİ VE AYNA GALERİSİ */
+/* Anomaliler Listesi */
+.anomalies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.anomaly-item {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding-bottom: 12px;
+}
+
+.anomaly-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.anom-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-pink);
+  margin-bottom: 4px;
+}
+
+.anomaly-item p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* 5. TURİZM REHBERİ, GALERİ VE TAHMİN EDİCİ */
 .route-box {
   display: flex;
   flex-direction: column;
@@ -1160,6 +1564,52 @@ body {
   align-items: center;
 }
 
+/* Ayna Tahmin Kutusu */
+.prediction-box {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.select-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.prediction-result {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transition: var(--transition-smooth);
+}
+
+.pred-percentage {
+  font-family: var(--font-title);
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pred-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  flex: 1;
+}
+
 /* Fotoğraf Galerisi (Slide) */
 .gallery-wrapper {
   display: flex;
@@ -1220,7 +1670,140 @@ body {
   color: var(--text-muted);
 }
 
-/* 6. VERİ, DARALMA HARİTASI VE GRAFİKLER */
+/* 6. VERİ, GRAFİKLER & SATELLITE COMPARATOR */
+.satellite-slider-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 25px;
+  align-items: center;
+}
+
+.sat-view-box {
+  width: 100%;
+  aspect-ratio: 1.6;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--border-active);
+  position: relative;
+}
+
+.sat-image-sim {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  transition: filter 0.5s ease, background 0.5s ease;
+}
+
+.sat-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--secondary-cyan);
+  opacity: 0.6;
+  box-shadow: 0 0 10px var(--secondary-cyan);
+  animation: sat-scan 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sat-scan {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.sat-label-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(6, 9, 19, 0.8);
+  border: 1px solid var(--border-light);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sat-selector-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sat-selector-btn {
+  background: rgba(255,255,255,0.015);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.sat-selector-btn:hover {
+  background: rgba(255,255,255,0.03);
+  transform: translateX(4px);
+}
+
+.sat-selector-btn.active {
+  background: rgba(0, 229, 255, 0.05);
+  border-color: var(--secondary-cyan);
+}
+
+.sat-selector-btn h4 {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sat-selector-btn p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Tablo Tasarımı */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+}
+
+.scientific-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+  background: rgba(0,0,0,0.15);
+}
+
+.scientific-table th {
+  background: rgba(0, 229, 255, 0.05);
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--secondary-cyan);
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.scientific-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+}
+
+.scientific-table tr:hover td {
+  background: rgba(255,255,255,0.01);
+  color: var(--text-primary);
+}
+
+/* Daralma Haritası */
 .shrinkage-sim-container {
   display: flex;
   flex-direction: column;
@@ -1422,11 +2005,21 @@ body {
   .timeline-badge {
     left: 40px;
   }
+  .drill-simulator-layout {
+    height: auto;
+    flex-direction: column;
+  }
+  .drill-column-container {
+    height: 180px;
+  }
+  .satellite-slider-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .nav-menu {
-    display: none; /* Basit mobil menü saklama */
+    display: none;
   }
   .menu-toggle {
     display: block;

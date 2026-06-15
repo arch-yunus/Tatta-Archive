@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Tatta-Archive JS: Core Interactive Functionality
+   Tatta-Archive JS: Premium Masterpiece Dashboard Interactivity
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,8 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Basin Map Interactions (Geology)
   initBasinMap();
 
+  // Stratigraphic Core Drill Simulator (Geology)
+  initCoreDrillSimulator();
+
   // Water Budget Calculator (Geology)
   initWaterBudgetCalculator();
+
+  // Hipersalin Food Web (Ecology)
+  initFoodWeb();
 
   // Dunaliella Salina & Color Simulator (Ecology)
   initDunaliellaSimulator();
@@ -21,8 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Flora Cards (Ecology)
   initFloraCatalog();
 
-  // Taşlaşan Kadın Interactive Story (Mysteries)
-  initStoryReader();
+  // Choose-Your-Own-Adventure Story (Mysteries)
+  initCYOAStory();
+
+  // Gece Işık Radarı (Mysteries)
+  initRadarSimulator();
 
   // Spatial Disorientation Canvas (Mysteries)
   initIllusionSimulator();
@@ -30,11 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // Tourism Route Optimizer (Tourism)
   initRouteOptimizer();
 
+  // Sky Mirror Tahmin Algoritması (Tourism)
+  initSkyMirrorPredictor();
+
   // Tourism Gallery Slide (Tourism)
   initGallery();
 
   // Shrinkage Timeline & Chart (Data & Satellite)
   initShrinkageSimulator();
+
+  // Multispectral Satellite Comparator (Data & Satellite)
+  initSatelliteComparator();
 });
 
 /* ==========================================================================
@@ -47,7 +62,6 @@ function initNavigation() {
   const menuToggle = document.getElementById("menuToggle");
   const navMenu = document.getElementById("navMenu");
 
-  // Scroll header styling
   window.addEventListener("scroll", () => {
     if (window.scrollY > 50) {
       header.classList.add("scrolled");
@@ -56,7 +70,6 @@ function initNavigation() {
     }
   });
 
-  // Mobile menu toggle
   if (menuToggle) {
     menuToggle.addEventListener("click", () => {
       navMenu.style.display = navMenu.style.display === "flex" ? "none" : "flex";
@@ -66,35 +79,33 @@ function initNavigation() {
     });
   }
 
-  // Section Switching
   navLinks.forEach(link => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const targetId = link.getAttribute("href").substring(1);
       
-      // Close mobile menu on click
       if (window.innerWidth <= 768) {
         navMenu.style.display = "none";
         menuToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
       }
 
-      // Update active nav-link
       navLinks.forEach(l => l.classList.remove("active"));
       link.classList.add("active");
 
-      // Hide all sections, show active
       sections.forEach(sec => {
         sec.classList.remove("active-section");
         if (sec.id === targetId) {
           sec.classList.add("active-section");
-          // Re-render canvas elements if they are visible now
+          // Resize canvases on view load
           if (targetId === "mysteries") {
-            setTimeout(resizeIllusionCanvas, 100);
+            setTimeout(() => {
+              resizeIllusionCanvas();
+              startRadarSweep();
+            }, 100);
           }
         }
       });
       
-      // Smooth scroll back to top of content
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
@@ -138,13 +149,106 @@ function initBasinMap() {
 }
 
 /* ==========================================================================
-   3. GEOLOGY: SU BÜTÇESİ HESAPLAYICI
+   3. GEOLOGY: STRATİGRAFİK KAROT SONDAJ SİMÜLATÖRÜ (YENİ)
+   ========================================================================== */
+function initCoreDrillSimulator() {
+  const btnStart = document.getElementById("btn-start-drill");
+  const drillBit = document.getElementById("drillBit");
+  const layers = document.querySelectorAll(".drill-layer");
+  const outputCard = document.getElementById("drillOutputCard");
+
+  if (!btnStart) return;
+
+  btnStart.addEventListener("click", () => {
+    // Reset state
+    btnStart.disabled = true;
+    btnStart.innerHTML = '<i class="fa-solid fa-sync fa-spin"></i> Sondaj Sürüyor...';
+    
+    layers.forEach(layer => layer.classList.remove("extracted"));
+    drillBit.classList.remove("drilling");
+    void drillBit.offsetWidth; // Trigger reflow to restart animation
+    drillBit.classList.add("drilling");
+
+    outputCard.innerHTML = `
+      <div class="drill-output-content">
+        <h4>Sondaj Operasyonu Aktif</h4>
+        <p><i class="fa-solid fa-gear fa-spin"></i> Elmas karot ucu göl yatağında ilerliyor...</p>
+        <ul>
+          <li><strong>Aktif Derinlik:</strong> Sürüyor...</li>
+          <li><strong>Formasyon:</strong> Evaporit Tabakası</li>
+        </ul>
+      </div>
+    `;
+
+    // Timeline of drilling through layers
+    // Layer 1: Halite (0 - 2m) - 1.5s
+    setTimeout(() => {
+      layers[0].classList.add("extracted");
+      updateDrillLog(layers[0]);
+    }, 1500);
+
+    // Layer 2: Gypsum (2 - 5m) - 3.0s
+    setTimeout(() => {
+      layers[1].classList.add("extracted");
+      updateDrillLog(layers[1]);
+    }, 3000);
+
+    // Layer 3: Clay (5 - 10m) - 4.5s
+    setTimeout(() => {
+      layers[2].classList.add("extracted");
+      updateDrillLog(layers[2]);
+    }, 4500);
+
+    // Layer 4: Sandstone (10 - 15m) - 6.0s
+    setTimeout(() => {
+      layers[3].classList.add("extracted");
+      updateDrillLog(layers[3]);
+      
+      // Completion State
+      btnStart.disabled = false;
+      btnStart.innerHTML = '<i class="fa-solid fa-check"></i> Sondaj Tamamlandı';
+    }, 6000);
+  });
+
+  // Layer click handler
+  layers.forEach(layer => {
+    layer.addEventListener("click", () => {
+      if (layer.classList.contains("extracted")) {
+        updateDrillLog(layer);
+      }
+    });
+  });
+
+  function updateDrillLog(layer) {
+    const depth = layer.getAttribute("data-depth");
+    const name = layer.getAttribute("data-layer");
+    const age = layer.getAttribute("data-age");
+    const comp = layer.getAttribute("data-composition");
+
+    outputCard.innerHTML = `
+      <div class="drill-output-content">
+        <h4>Karot Veri Girişi: ${name}</h4>
+        <ul>
+          <li><strong>Sondaj Derinliği:</strong> ${depth}</li>
+          <li><strong>Jeolojik Dönem:</strong> ${age}</li>
+          <li><strong>Mineral Bileşimi:</strong> ${comp}</li>
+        </ul>
+        <p style="font-size:0.75rem; margin-top:8px; color:var(--text-muted);">Tıklayarak diğer karot katmanlarını inceleyebilirsiniz.</p>
+      </div>
+    `;
+  }
+}
+
+/* ==========================================================================
+   4. GEOLOGY: SU BÜTÇESİ HESAPLAYICI
    ========================================================================== */
 function initWaterBudgetCalculator() {
   const slidePrecip = document.getElementById("slide-precip");
   const slideRivers = document.getElementById("slide-rivers");
   const slideGw = document.getElementById("slide-gw");
   const slideEvap = document.getElementById("slide-evap");
+
+  if (!slidePrecip) return;
 
   const valPrecip = document.getElementById("val-precip");
   const valRivers = document.getElementById("val-rivers");
@@ -157,36 +261,28 @@ function initWaterBudgetCalculator() {
 
   function calculate() {
     const precip = parseInt(slidePrecip.value);
-    const rivers = parseInt(slideRivers.value); // milyon m3
-    const gw = parseInt(slideGw.value); // milyon m3
+    const rivers = parseInt(slideRivers.value); 
+    const gw = parseInt(slideGw.value); 
     const evap = parseInt(slideEvap.value);
 
-    // Güncellemeler
     valPrecip.innerText = `${precip} mm`;
     valRivers.innerText = `${rivers}m m³`;
     valGw.innerText = `${(gw/1000).toFixed(1)}b m³`;
     valEvap.innerText = `${evap} mm`;
 
-    // Sabit Göller alanı (ortalama 1000 km² = 1,000,000,000 m²)
     const lakeArea = 1000 * 1e6;
 
-    // Girdiler
-    const precipInflow = (precip / 1000) * lakeArea; // m3
-    const riverInflow = rivers * 1e6; // m3
-    // Doğal yeraltı suyu beslenmesi (çekime bağlı olarak azalır)
+    const precipInflow = (precip / 1000) * lakeArea; 
+    const riverInflow = rivers * 1e6; 
     const naturalGw = 250 * 1e6;
     const netGwInflow = Math.max(0, naturalGw - (gw * 1e6 * 0.1));
 
     const totalInflow = precipInflow + riverInflow + netGwInflow;
+    const evapOutflow = (evap / 1000) * lakeArea; 
 
-    // Çıktılar
-    const evapOutflow = (evap / 1000) * lakeArea; // m3
-
-    // Net Bilanço
     const netVolumeChange = totalInflow - evapOutflow;
     const netMillionM3 = netVolumeChange / 1e6;
 
-    // Arayüz Çıktısı
     if (netMillionM3 < 0) {
       simNetVal.innerText = `${netMillionM3.toFixed(1)} milyon m³`;
       simNetVal.style.color = "#ef4444";
@@ -213,14 +309,85 @@ function initWaterBudgetCalculator() {
 }
 
 /* ==========================================================================
-   4. ECOLOGY: DUNALIELLA SALINA & RENK SİMÜLATÖRÜ
+   5. ECOLOGY: TROFİK BESİN AĞI INTERACTION (YENİ)
+   ========================================================================== */
+function initFoodWeb() {
+  const nodes = document.querySelectorAll(".web-node");
+  const webLines = document.querySelectorAll(".web-line");
+  const webNodeInfo = document.getElementById("webNodeInfo");
+
+  if (!nodes || nodes.length === 0) return;
+
+  nodes.forEach(node => {
+    node.addEventListener("mouseenter", () => {
+      const name = node.getAttribute("data-name");
+      const desc = node.getAttribute("data-desc");
+
+      // Highlight target node and update text
+      webNodeInfo.innerHTML = `
+        <h4>${name}</h4>
+        <p>${desc}</p>
+      `;
+
+      // Highlight specific connections related to node classes
+      webLines.forEach(line => {
+        line.style.opacity = "0.1";
+        line.style.strokeWidth = "1.5";
+      });
+
+      if (node.classList.contains("n-sun")) {
+        highlightLine("line-sun-alg");
+        highlightLine("line-sun-bact");
+        webNodeInfo.style.borderColor = "#f59e0b";
+      } else if (node.classList.contains("n-producer")) {
+        highlightLine("line-sun-alg");
+        highlightLine("line-sun-bact");
+        highlightLine("line-alg-artemia");
+        highlightLine("line-bact-artemia");
+        highlightLine("line-alg-flamingo");
+        webNodeInfo.style.borderColor = "var(--primary-pink)";
+      } else if (node.classList.contains("n-consumer")) {
+        highlightLine("line-alg-artemia");
+        highlightLine("line-bact-artemia");
+        highlightLine("line-artemia-flamingo");
+        webNodeInfo.style.borderColor = "var(--secondary-cyan)";
+      } else if (node.classList.contains("n-apex")) {
+        highlightLine("line-artemia-flamingo");
+        highlightLine("line-alg-flamingo");
+        webNodeInfo.style.borderColor = "#f43f5e";
+      }
+    });
+
+    node.addEventListener("mouseleave", () => {
+      // Reset connections opacity
+      webLines.forEach(line => {
+        line.style.opacity = "0.25";
+        line.style.strokeWidth = "2.5";
+      });
+      webNodeInfo.style.borderColor = "var(--border-light)";
+    });
+  });
+
+  function highlightLine(id) {
+    const line = document.getElementById(id);
+    if (line) {
+      line.style.opacity = "0.95";
+      line.style.strokeWidth = "4";
+    }
+  }
+}
+
+/* ==========================================================================
+   6. ECOLOGY: DUNALIELLA SALINA & RENK SİMÜLATÖRÜ
    ========================================================================== */
 function initDunaliellaSimulator() {
   const slideSal = document.getElementById("ecology-salinity");
   const slideTemp = document.getElementById("ecology-temp");
+  
+  if (!slideSal) return;
+
   const valSal = document.getElementById("val-eco-sal");
   const valTemp = document.getElementById("val-eco-temp");
-
   const waterSim = document.getElementById("lakeWaterSim");
   const waterLabel = document.getElementById("waterLabel");
   const popText = document.getElementById("eco-population");
@@ -233,25 +400,22 @@ function initDunaliellaSimulator() {
     valSal.innerText = `%${sal}`;
     valTemp.innerText = `${temp}°C`;
 
-    // Koşul kontrolü
     if (sal < 15) {
-      // Düşük tuzluluk: Standart göl biyolojisi
-      waterSim.style.backgroundColor = "#1e40af"; // Koyu Mavi
+      waterSim.style.backgroundColor = "#1e40af"; 
       waterLabel.innerText = "Normal Göl Suyu";
       waterLabel.style.color = "#fff";
       popText.innerText = "Diatomlar, Yeşil Algler";
       processText.innerText = "Tuzluluk düşük olduğu için Dunaliella salina baskın değil. Yeşil alglerin fotosentez döngüsü hakimdir.";
     } 
     else if (sal >= 15 && sal < 25) {
-      // Orta-Yüksek tuzluluk: Alg geçiş evresi
       if (temp > 22) {
-        waterSim.style.backgroundColor = "#0d9488"; // Turkuaz/Yeşil
+        waterSim.style.backgroundColor = "#0d9488"; 
         waterLabel.innerText = "Hafif Yeşil Alg Baskınlığı";
         waterLabel.style.color = "#fff";
         popText.innerText = "Dunaliella salina (Aktif Değil)";
         processText.innerText = "Tuzluluk artıyor. Algler beta-karoten üretmeye başlamadı, klorofil rengi yeşil tonları öne çıkarıyor.";
       } else {
-        waterSim.style.backgroundColor = "#2563eb"; // Mavi
+        waterSim.style.backgroundColor = "#2563eb"; 
         waterLabel.innerText = "Klasik Tuzlu Su";
         waterLabel.style.color = "#fff";
         popText.innerText = "Halofit Bakteriler (Pasif)";
@@ -259,24 +423,22 @@ function initDunaliellaSimulator() {
       }
     } 
     else {
-      // Aşırı tuzluluk (Hipersalin): >25%
       if (temp < 20) {
-        waterSim.style.backgroundColor = "#475569"; // Gri-Kristal
+        waterSim.style.backgroundColor = "#475569"; 
         waterLabel.innerText = "Tuz Kristallenmesi";
         waterLabel.style.color = "#e2e8f0";
         popText.innerText = "Durgun Halobakteriler";
         processText.innerText = "Sıcaklık yetersiz olduğu için alg sentezi durdu. Göl yüzeyi beyaz tuz plakalarıyla kaplanıyor.";
       } 
       else if (temp >= 20 && temp < 30) {
-        waterSim.style.backgroundColor = "#f97316"; // Turuncu
+        waterSim.style.backgroundColor = "#f97316"; 
         waterLabel.innerText = "Karotenoid Reaksiyonu";
         waterLabel.style.color = "#fff";
         popText.innerText = "Dunaliella salina (Sentez Evresi)";
         processText.innerText = "Güneş ışığı ve tuz stresi altındaki algler, UV koruması için Beta-Karoten sentezleyerek turuncu renk alır.";
       } 
       else {
-        // En ekstrem durum: >30°C ve >30% Tuzluluk
-        waterSim.style.backgroundColor = "#db2777"; // Canlı Pembe/Kızıl
+        waterSim.style.backgroundColor = "#db2777"; 
         waterLabel.innerText = "Kızıl Göl Fenomeni";
         waterLabel.style.color = "#fff";
         popText.innerText = "Dunaliella salina & Halobakteriler";
@@ -291,7 +453,7 @@ function initDunaliellaSimulator() {
 }
 
 /* ==========================================================================
-   5. ECOLOGY: FLAMİNGO STEPPER
+   7. ECOLOGY: FLAMİNGO STEPPER
    ========================================================================== */
 const flamingoSteps = {
   1: {
@@ -301,7 +463,7 @@ const flamingoSteps = {
   },
   2: {
     title: "Mayıs: Çamur Yuvaların İnşası",
-    text: "Eşleşen çiftler, gölün sığ çamurlu zemininden gagalarıyla topladıkları çamurlarla yanardağ kraterini andıran 30-40 cm yüksekliğinde konik yuvalar inşa ederler. Bu yuvalar yükselen sulardan yumurtayı korur.",
+    text: "Eşleşen çiftler, gölün sığ çamurlu zemininden gagalarıyla topladıkları çamurlarla yanardağ kraterini andıran 30-40 cm yüksekliğinde konik yuvalar inşa ederler. Yuvalar yükselen suların yumurtayı ıslatmasını engeller.",
     period: "Mayıs Başı"
   },
   3: {
@@ -327,6 +489,8 @@ function initFlamingoStepper() {
   const stepText = document.getElementById("step-text");
   const stepPeriod = document.getElementById("step-period");
 
+  if (!stepBtns || stepBtns.length === 0) return;
+
   stepBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       stepBtns.forEach(b => b.classList.remove("active"));
@@ -343,7 +507,7 @@ function initFlamingoStepper() {
 }
 
 /* ==========================================================================
-   6. ECOLOGY: FLORA KATALOĞU
+   8. ECOLOGY: FLORA KATALOĞU
    ========================================================================== */
 const floraData = [
   {
@@ -412,6 +576,8 @@ function initFloraCatalog() {
   const grid = document.getElementById("floraGrid");
   const filterBtns = document.querySelectorAll(".btn-filter");
 
+  if (!grid) return;
+
   function render(filter = "all") {
     grid.innerHTML = "";
     
@@ -475,70 +641,260 @@ function initFloraCatalog() {
 }
 
 /* ==========================================================================
-   7. MYSTERIES: TAŞLAŞAN KADIN HİKAYE OKUYUCU
+   9. MYSTERIES: CHOOSE-YOUR-OWN-ADVENTURE STORY ENGINE (YENİ)
    ========================================================================== */
-const storySteps = [
-  {
-    text: "Bir varmış bir yokmuş... Çok eski zamanlarda gölün henüz kıyısında, sürüsüyle yaşayan yaşlı bir kadın varmış. Bu kadının yüzlerce koyunu, bolca sütü ve peyniri olurmuş ancak kendisi oldukça cimriymiş.",
-    overlay: "linear-gradient(135deg, rgba(255, 117, 151, 0.05) 0%, rgba(0, 0, 0, 0) 100%)"
+const cyoaNodes = {
+  start: {
+    text: "Tuz Gölü çeperindeki kervan yolundasınız. Güneş tepeye ulaştığında, sıcaktan çatlamış zemin üzerinde sendeleyen, eski cübbeli yaşlı bir derviş kervanınızın önüne çıkar. Titreyen sesiyle elindeki boş kabı gösterip 'Sonsuz yoldayım, bir damla su verir misiniz?' der.",
+    choices: [
+      { text: "Suyunuzu dervişle paylaşın", next: "share" },
+      { text: "Dervişe buradaki efsaneleri sorun", next: "ask_legend" },
+      { text: "Cimrilik edin, yolunuza devam edin", next: "ignore" }
+    ],
+    progress: "Giriş - Kervan Yolu"
   },
-  {
-    text: "Sıcak bir yaz günü, susuzluktan ve açlıktan dudakları çatlamış pir-i fani bir derviş kadının çadırına yanaşmış. 'Allah rızası için bir tas su veya bir kase süt ver, günlerdir yoldayım' demiş derviş.",
-    overlay: "linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(0, 0, 0, 0.1) 100%)"
+  share: {
+    text: "Derviş suyu içerken yüzü aydınlanır. 'Genç yolcu, bu iyiliğin karşılıksız kalmaz' der. 'Eğer gölün doğu yakasındaki killi tepeciklerden güneye saparsan, antik bir obruk içinde saklanmış, tatlı su sızan gizli bir pınar bulacaksın. Oraya sığın.'",
+    choices: [
+      { text: "Dervişin tarif ettiği gizli pınarı ara", next: "find_spring" },
+      { text: "Normal tuz yolundan hızla ilerlemeyi seç", next: "blessed_road" }
+    ],
+    progress: "Bölüm 2 - Seçim: Yardım Etmek"
   },
-  {
-    text: "Cimri kadın kafasını kaldırmış, 'Sana verecek bir damla suyum da sütüm de yok! Haydi başka kapıya!' diyerek yaşlı adamı kovmuş. Derviş üzüntüyle boynunu bükmüş, göğe bakarak dua etmiş: 'Eğer yalan söylüyorsan, sen de sürün de tuz olasınız!'",
-    overlay: "linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(0, 0, 0, 0.2) 100%)"
+  ask_legend: {
+    text: "Derviş gözlerinize derin derin bakar. 'Bu uçsuz bucaksız beyazlık sadece tuzdan ibaret değil' der. 'Yalan söyleyenlerin taşa dönüştüğü, ufuksuz gökte gemilerin uçtuğu bir serap diyarıdır burası. Kalbini temiz tut, doğa yalanı yutar.' Size efsaneyi hatırlatır.",
+    choices: [
+      { text: "Dervişe inanıp, kervanı güvenli patikaya çekin", next: "safe_path" },
+      { text: "Dervişi küçümseyip tuz düzlüğünü diklemesine geçin", next: "storm_danger" }
+    ],
+    progress: "Bölüm 2 - Seçim: Bilgi Edinmek"
   },
-  {
-    text: "O anda gök gürlemiş, bir fırtına kopmuş. Çadır, kadın ve tüm koyun sürüsü beyaz tuz kristallerine dönüşerek donakalmış. Bugün göl kıyısında görülen bazı tümsek kaya tuzu bloklarının bu sürünün kalıntıları olduğuna inanılır.",
-    overlay: "linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.3) 100%)"
+  ignore: {
+    text: "Dervişin yakarışına sırt çevirip, 'Suyumuz kervana ancak yeter' deyip geçip gidersiniz. Derviş yavaşça doğrulur, asasını beyaz zemine vurur ve göğe bakıp mırıldanır: 'Cimriliğinle bu kuraklıkta boğul. Sen de kervanın da tuz olasınız!'",
+    choices: [
+      { text: "Fırtına aniden yükselirken kaçmaya çalışın", next: "legend_ending" }
+    ],
+    progress: "Bölüm 2 - Seçim: Reddetmek"
+  },
+  find_spring: {
+    text: "Dervişin sözüne güvenip güneye yönelirsiniz. Birkaç saat sonra jipsli tepelerin ardında saklı kalmış, sazlıklarla kaplı tatlı su pınarını (Umut Pınarı) bulursunuz. Develeriniz ve adamlarınız dinlenir. Kervanınız kurtulmuştur.",
+    choices: [],
+    progress: "Son 1 - Umut Pınarı Keşfi (Mutlu Son)"
+  },
+  blessed_road: {
+    text: "Dervişin duasıyla yolunuza devam edersiniz. Normalde tuz kabuğunun kırıldığı tehlikeli balçık alanlardan geçerken, altınızdaki tuz tabakasının mucizevi şekilde sertleşip kervanı taşıdığını görürsünüz. Kazasız belasız menzile ulaşırsınız.",
+    choices: [],
+    progress: "Son 2 - Takdis Edilmiş Kervan (Mutlu Son)"
+  },
+  safe_path: {
+    text: "Dervişin uyarısını ciddiye alıp, gölün riskli bataklık orta kısmını dolanarak sert Kaldırım rotasından gidersiniz. Akşama doğru büyük tuz fırtınası başlar ancak siz kayalık çeperde olduğunuz için kervanınız zarar görmez.",
+    choices: [],
+    progress: "Son 3 - Tedbirli Lider (Güvenli Son)"
+  },
+  storm_danger: {
+    text: "Tuz düzlüğünün ortasında, ufuk çizgisi aniden kaybolur. Hava sıcaklığı artar ve yoğun serap sebebiyle kervanınız yönünü tamamen şaşırır. Gece başlayan tuz ve kum fırtınası kervanınızı yutar, kaybolursunuz.",
+    choices: [],
+    progress: "Son 4 - Serapta Kayboluş (Başarısız Son)"
+  },
+  legend_ending: {
+    text: "Fırtına devasa tuz tozlarını üzerinize savurur. Görüş açısı sıfıra iner. Derinizdeki ıslaklık tuz kristalleriyle kaplanmaya başlar. Hareket edemez hale gelirsiniz. Kervanınız ve siz, dervişin bedduasıyla sonsuza kadar orada taşlaşıp tuz bloklarına dönüşürsünüz.",
+    choices: [],
+    progress: "Son 5 - Taşlaşan Kervan (Efsane Sonu)"
   }
-];
+};
 
-function initStoryReader() {
-  let currentStep = 0;
-  const textEl = document.getElementById("storyText");
-  const progressEl = document.getElementById("storyProgress");
-  const prevBtn = document.getElementById("story-prev");
-  const nextBtn = document.getElementById("story-next");
-  const overlay = document.getElementById("narrativeOverlay");
+function initCYOAStory() {
+  const textEl = document.getElementById("storyCYOAText");
+  const choicesContainer = document.getElementById("cyoaChoices");
+  const progressEl = document.getElementById("cyoaProgress");
+  const btnReset = document.getElementById("btn-reset-cyoa");
 
-  function update() {
+  if (!textEl) return;
+
+  function renderNode(nodeKey) {
+    const node = cyoaNodes[nodeKey];
+    
+    // Text animation effect
     textEl.style.opacity = 0;
     setTimeout(() => {
-      textEl.innerText = storySteps[currentStep].text;
+      textEl.innerText = node.text;
       textEl.style.opacity = 1;
     }, 200);
 
-    progressEl.innerText = `${currentStep + 1} / ${storySteps.length}`;
-    overlay.style.background = storySteps[currentStep].overlay;
+    progressEl.innerText = node.progress;
+    
+    // Clear old choices
+    choicesContainer.innerHTML = "";
 
-    prevBtn.disabled = currentStep === 0;
-    nextBtn.innerHTML = currentStep === storySteps.length - 1 
-      ? 'Tekrar Oku <i class="fa-solid fa-rotate-left"></i>' 
-      : 'İleri <i class="fa-solid fa-chevron-right"></i>';
+    // If there are choices, render them
+    if (node.choices && node.choices.length > 0) {
+      node.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "btn-cyoa";
+        btn.innerHTML = `<i class="fa-solid fa-angles-right"></i> ${choice.text}`;
+        btn.addEventListener("click", () => renderNode(choice.next));
+        choicesContainer.appendChild(btn);
+      });
+    } else {
+      // Ending node
+      const endAlert = document.createElement("div");
+      endAlert.className = "alert-box";
+      endAlert.style.borderColor = "var(--primary-pink)";
+      endAlert.innerHTML = `<i class="fa-solid fa-flag-checkered"></i> <span><strong>Hikaye Bitti:</strong> Bu kararla serüveninizi tamamladınız.</span>`;
+      choicesContainer.appendChild(endAlert);
+    }
+
+    // Set narrative backdrop color depending on state
+    const overlay = document.getElementById("narrativeOverlay");
+    if (nodeKey === "ignore" || nodeKey === "legend_ending") {
+      overlay.style.background = "linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%)";
+    } else if (nodeKey.includes("spring") || nodeKey.includes("blessed") || nodeKey.includes("safe")) {
+      overlay.style.background = "linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%)";
+    } else {
+      overlay.style.background = "linear-gradient(135deg, rgba(255, 117, 151, 0.03) 0%, rgba(0, 0, 0, 0) 100%)";
+    }
   }
 
-  nextBtn.addEventListener("click", () => {
-    if (currentStep < storySteps.length - 1) {
-      currentStep++;
-    } else {
-      currentStep = 0;
-    }
-    update();
+  btnReset.addEventListener("click", () => {
+    renderNode("start");
   });
 
-  prevBtn.addEventListener("click", () => {
-    if (currentStep > 0) {
-      currentStep--;
-    }
-    update();
-  });
+  // Init
+  renderNode("start");
 }
 
 /* ==========================================================================
-   8. MYSTERIES: SERAP & UZAMSAL YÖN KAYBI KANVAS SİMÜLATÖRÜ
+   10. MYSTERIES: ATMOSFERİK RADAR SİMÜLATÖRÜ (YENİ)
+   ========================================================================== */
+let radarInterval = null;
+let radarAngle = 0;
+const radarTargets = [
+  { x: 140, y: 70, id: 1, name: "Grup-Alfa: Mineral Işıldaması", desc: "Kaldırım tuzlası yakınlarında saptanan mavi-yeşil parıltı. Laboratuvar analizi: Kuruyan tuz çatlaklarındaki mineral fosforunun (Potasyum/Lityum) termal uyarılması.", type: "Doğal Lüminesans" },
+  { x: 220, y: 150, id: 2, name: "Grup-Beta: Sıcaklık Terselmesi", desc: "Şereflikoçhisar kıyısında havada asılı duran dikey ışık sütunları. Atmosferik analiz: Zemin üstündeki soğuk hava tabakasının yıldız ışıklarını kırarak oluşturduğu serap yansıması (Fata Morgana).", type: "Optik Kırılma" },
+  { x: 90, y: 190, id: 3, name: "Grup-Gama: Fay Gazı Yanması", desc: "Cihanbeyli aktif fay zonu üzerinde saptanan anlık kıvılcımlar. Jeolojik analiz: Tektonik yarıklardan sızan eser miktardaki metan gazının statik elektrikle havada parlaması.", type: "Tektonik Parlama" }
+];
+
+function initRadarSimulator() {
+  const canvas = document.getElementById("radarCanvas");
+  if (!canvas) return;
+
+  const ctxR = canvas.getContext("2d");
+  const logContent = document.getElementById("radarLog");
+
+  function drawRadar() {
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const radius = w / 2 - 5;
+
+    ctxR.clearRect(0, 0, w, h);
+
+    // Radar arkaplan ızgaraları
+    ctxR.strokeStyle = "rgba(0, 229, 255, 0.15)";
+    ctxR.lineWidth = 1;
+    
+    // Eşmerkezli daireler
+    for (let r = radius / 3; r <= radius; r += radius / 3) {
+      ctxR.beginPath();
+      ctxR.arc(cx, cy, r, 0, Math.PI * 2);
+      ctxR.stroke();
+    }
+
+    // Koordinat eksenleri
+    ctxR.beginPath();
+    ctxR.moveTo(5, cy); ctxR.lineTo(w - 5, cy);
+    ctxR.moveTo(cx, 5); ctxR.lineTo(cx, h - 5);
+    ctxR.stroke();
+
+    // Dönen tarama çizgisi (Radar Sweep)
+    radarAngle = (radarAngle + 0.02) % (Math.PI * 2);
+    
+    const sx = cx + Math.cos(radarAngle) * radius;
+    const sy = cy + Math.sin(radarAngle) * radius;
+
+    // Tarama kuyruğu (Glow effect)
+    const sweepGrad = ctxR.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    sweepGrad.addColorStop(0, "rgba(0, 229, 255, 0)");
+    sweepGrad.addColorStop(1, "rgba(0, 229, 255, 0.1)");
+
+    ctxR.fillStyle = sweepGrad;
+    ctxR.beginPath();
+    ctxR.moveTo(cx, cy);
+    ctxR.arc(cx, cy, radius, radarAngle - 0.3, radarAngle);
+    ctxR.lineTo(cx, cy);
+    ctxR.fill();
+
+    // Ana tarama çizgisi
+    ctxR.strokeStyle = "rgba(0, 229, 255, 0.8)";
+    ctxR.lineWidth = 1.5;
+    ctxR.beginPath();
+    ctxR.moveTo(cx, cy);
+    ctxR.lineTo(sx, sy);
+    ctxR.stroke();
+
+    // Hedef sinyallerin (Blips) çizilmesi
+    radarTargets.forEach(target => {
+      // Tarayıcının hedefe olan açısına göre yanıp sönme parlaklığı
+      const targetAngle = Math.atan2(target.y - cy, target.x - cx);
+      const angleDiff = Math.abs(radarAngle - (targetAngle < 0 ? targetAngle + Math.PI * 2 : targetAngle));
+
+      let opacity = 0;
+      if (angleDiff < 0.3) {
+        opacity = 1.0 - (angleDiff / 0.3); // Tarama anında parlak blip
+      } else {
+        opacity = 0.2; // Sabit sönük ışık
+      }
+
+      ctxR.fillStyle = `rgba(255, 117, 151, ${opacity})`;
+      ctxR.beginPath();
+      ctxR.arc(target.x, target.y, 5, 0, Math.PI * 2);
+      ctxR.fill();
+
+      // Dış halka parlaması
+      if (opacity > 0.5) {
+        ctxR.strokeStyle = `rgba(255, 117, 151, ${opacity - 0.2})`;
+        ctxR.beginPath();
+        ctxR.arc(target.x, target.y, 10, 0, Math.PI * 2);
+        ctxR.stroke();
+      }
+    });
+  }
+
+  // Click collision detection
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    let clickedTarget = null;
+    radarTargets.forEach(target => {
+      const dist = Math.sqrt((mx - target.x)**2 + (my - target.y)**2);
+      if (dist < 12) {
+        clickedTarget = target;
+      }
+    });
+
+    if (clickedTarget) {
+      logContent.innerHTML = `
+        <div class="radar-target-tag"><i class="fa-solid fa-circle-dot"></i> DETECTED: ${clickedTarget.name}</div>
+        <div style="margin-top: 6px;"><strong>Anomali Sınıfı:</strong> ${clickedTarget.type}</div>
+        <div style="margin-top: 4px; font-size:0.75rem; color:var(--text-secondary);">${clickedTarget.desc}</div>
+      `;
+    }
+  });
+
+  // Start Animation
+  if (radarInterval) clearInterval(radarInterval);
+  radarInterval = setInterval(drawRadar, 30);
+}
+
+function startRadarSweep() {
+  initRadarSimulator();
+}
+
+/* ==========================================================================
+   11. MYSTERIES: SERAP & UZAMSAL YÖN KAYBI KANVAS SİMÜLATÖRÜ
    ========================================================================== */
 let illusionCanvas, ctx;
 let hazeSlider, reflectionSlider;
@@ -566,18 +922,18 @@ function initIllusionSimulator() {
     
     ctx.clearRect(0, 0, w, h);
 
-    // 1. Gökyüzü Çizimi (Açık Mavi/Cyan Geçiş)
+    // 1. Gökyüzü
     let skyGradient = ctx.createLinearGradient(0, 0, 0, h/2);
     skyGradient.addColorStop(0, "#0284c7");
     skyGradient.addColorStop(1, "#bae6fd");
     ctx.fillStyle = skyGradient;
     ctx.fillRect(0, 0, w, h/2);
 
-    // 2. Yeryüzü / Tuz Düzlüğü Çizimi (Beyaz zemin)
+    // 2. Yeryüzü / Tuz Düzlüğü
     ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, h/2, w, h/2);
 
-    // 3. Yansıma Çizimi (Sky Mirror Effect)
+    // 3. Yansıma
     if (reflection > 0) {
       let refOpacity = reflection / 100 * 0.7;
       let refGradient = ctx.createLinearGradient(0, h/2, 0, h);
@@ -587,19 +943,18 @@ function initIllusionSimulator() {
       ctx.fillRect(0, h/2, w, h/2);
     }
 
-    // 4. Ufuk Çizgisi Bulanıklaştırma (Serap / Isı Titremesi)
+    // 4. Ufuk Çizgisi Bulanıklaştırma (Serap)
     if (haze > 0) {
-      let blurHeight = (haze / 100) * 35; // Maksimum 35px yükseklikte bulanıklık bandı
+      let blurHeight = (haze / 100) * 35; 
       let horizonGrad = ctx.createLinearGradient(0, h/2 - blurHeight/2, 0, h/2 + blurHeight/2);
       
       horizonGrad.addColorStop(0, "rgba(186, 230, 253, 1)");
-      horizonGrad.addColorStop(0.5, `rgba(248, 250, 252, ${1 - (haze/150)})`); // Ufuk erimesi
+      horizonGrad.addColorStop(0.5, `rgba(248, 250, 252, ${1 - (haze/150)})`); 
       horizonGrad.addColorStop(1, "rgba(248, 250, 252, 1)");
 
       ctx.fillStyle = horizonGrad;
       ctx.fillRect(0, h/2 - blurHeight/2, w, blurHeight);
 
-      // Çizgisel titreşim simülasyonu
       ctx.strokeStyle = `rgba(255,255,255, ${haze/100 * 0.5})`;
       ctx.lineWidth = 1;
       for (let i = 0; i < 5; i++) {
@@ -610,7 +965,6 @@ function initIllusionSimulator() {
         ctx.stroke();
       }
     } else {
-      // Net Ufuk çizgisi
       ctx.strokeStyle = "#e2e8f0";
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -619,11 +973,9 @@ function initIllusionSimulator() {
       ctx.stroke();
     }
 
-    // 5. Simüle edilmiş "Yürüyen İnsan" figürleri (Derinlik algısı için)
-    drawWalker(w/2 - 40, h/2 + 20, 10, "#1e293b"); // Yakındaki kişi
-    drawWalker(w/2 + 60, h/2 + 5, 4, "#64748b");   // Uzaktaki kişi (ufuğa yakın)
+    drawWalker(w/2 - 40, h/2 + 20, 10, "#1e293b"); 
+    drawWalker(w/2 + 60, h/2 + 5, 4, "#64748b");   
     
-    // Eğer serap şiddeti ve yansıma yüksekse, uzaktaki kişinin yansımasını çiz
     if (reflection > 20) {
       let refOpacity = (reflection/100) * 0.5;
       drawWalkerReflected(w/2 - 40, h/2 + 20, 10, refOpacity);
@@ -633,9 +985,7 @@ function initIllusionSimulator() {
 
   function drawWalker(x, y, height, color) {
     ctx.fillStyle = color;
-    // Gövde
     ctx.fillRect(x - 1, y - height * 0.8, 2, height * 0.8);
-    // Kafa
     ctx.beginPath();
     ctx.arc(x, y - height + 1, height * 0.2, 0, Math.PI * 2);
     ctx.fill();
@@ -643,9 +993,7 @@ function initIllusionSimulator() {
 
   function drawWalkerReflected(x, y, height, opacity) {
     ctx.fillStyle = `rgba(30, 41, 59, ${opacity})`;
-    // Yansıma gövdesi (aşağı doğru çizilir)
     ctx.fillRect(x - 0.8, y, 1.6, height * 0.5);
-    // Yansıma kafası
     ctx.beginPath();
     ctx.arc(x, y + height * 0.6, height * 0.15, 0, Math.PI * 2);
     ctx.fill();
@@ -661,8 +1009,7 @@ function initIllusionSimulator() {
 function resizeIllusionCanvas() {
   if (illusionCanvas) {
     const rect = illusionCanvas.parentElement.getBoundingClientRect();
-    illusionCanvas.width = rect.width - 2; // Çerçeve payı
-    // Yeniden çiz
+    illusionCanvas.width = rect.width - 2; 
     if (hazeSlider) {
       hazeSlider.dispatchEvent(new Event("input"));
     }
@@ -670,7 +1017,7 @@ function resizeIllusionCanvas() {
 }
 
 /* ==========================================================================
-   9. TOURISM: ROTA PLANLAYICISI
+   12. TOURISM: ROTA PLANLAYICISI
    ========================================================================== */
 const routeData = {
   north: {
@@ -701,6 +1048,9 @@ const routeData = {
 
 function initRouteOptimizer() {
   const routeOptions = document.querySelectorAll(".route-option");
+  
+  if (!routeOptions || routeOptions.length === 0) return;
+
   const rTitle = document.getElementById("route-title");
   const rWalk = document.getElementById("route-walk");
   const rSafety = document.getElementById("route-safety");
@@ -726,7 +1076,79 @@ function initRouteOptimizer() {
 }
 
 /* ==========================================================================
-   10. TOURISM: FOTOĞRAF GALERİSİ SLIDE
+   13. TOURISM: SKY MİRROR TAHMİN EDİCİ (YENİ)
+   ========================================================================== */
+function initSkyMirrorPredictor() {
+  const selectMonth = document.getElementById("predict-month");
+  const slideWind = document.getElementById("predict-wind");
+  const slideCloud = document.getElementById("predict-cloud");
+
+  if (!selectMonth) return;
+
+  const valWind = document.getElementById("val-predict-wind");
+  const valCloud = document.getElementById("val-predict-cloud");
+  const pctDisplay = document.getElementById("pred-percentage-val");
+  const lblDisplay = document.getElementById("pred-label-text");
+  const resultBox = document.getElementById("predictionResult");
+
+  function calculatePrediction() {
+    const month = parseInt(selectMonth.value);
+    const wind = parseInt(slideWind.value);
+    const cloud = parseInt(slideCloud.value);
+
+    valWind.innerText = `${wind} km/s`;
+    valCloud.innerText = `%${cloud}`;
+
+    // Prediction math
+    let monthFactor = 0;
+    if (month === 4) monthFactor = 1.0; // Optimum (April-May)
+    else if (month === 1) monthFactor = 0.55; // Too deep water
+    else if (month === 7) monthFactor = 0.15; // Too dry
+    else if (month === 10) monthFactor = 0.5; // Autumn rain
+
+    let windFactor = 0;
+    if (wind < 5) windFactor = 1.0;
+    else if (wind < 10) windFactor = 0.9;
+    else if (wind < 15) windFactor = 0.5;
+    else if (wind < 22) windFactor = 0.15;
+    else windFactor = 0.0; // Waves shatter the mirror
+
+    let cloudFactor = 0;
+    if (cloud >= 20 && cloud <= 50) cloudFactor = 1.0; // Dramatic reflection clouds
+    else if (cloud < 20) cloudFactor = 0.8; // Pure blue sky mirror
+    else if (cloud > 50 && cloud < 75) cloudFactor = 0.65;
+    else cloudFactor = 0.4; // Dark overcast
+
+    const probability = Math.round(monthFactor * windFactor * cloudFactor * 100);
+    
+    // UI Output Updates
+    pctDisplay.innerText = `${probability}%`;
+
+    if (probability > 75) {
+      lblDisplay.innerHTML = "<strong>Kusursuz Ayna Yansıması:</strong> Rüzgar ideal, su kalınlığı mükemmel! Harika yansıma fotoğrafları yakalayabilirsiniz.";
+      resultBox.style.borderColor = "var(--secondary-cyan)";
+      pctDisplay.style.color = "var(--secondary-cyan)";
+    } else if (probability > 40) {
+      lblDisplay.innerHTML = "<strong>Kısmi / Dalgalı Yansıma:</strong> Su var ancak hafif rüzgar veya yüksek bulutluluk yansıma netliğini bozuyor.";
+      resultBox.style.borderColor = "var(--primary-pink)";
+      pctDisplay.style.color = "var(--primary-pink)";
+    } else {
+      lblDisplay.innerHTML = "<strong>Ayna Efekti Yok:</strong> Göl tabanı ya tamamen kuru durumda ya da rüzgar hızı yüzeyi dalgalandırıyor.";
+      resultBox.style.borderColor = "var(--border-light)";
+      pctDisplay.style.color = "var(--text-muted)";
+    }
+  }
+
+  [selectMonth, slideWind, slideCloud].forEach(el => {
+    el.addEventListener("input", calculatePrediction);
+    el.addEventListener("change", calculatePrediction);
+  });
+
+  calculatePrediction();
+}
+
+/* ==========================================================================
+   14. TOURISM: FOTOĞRAF GALERİSİ SLIDE
    ========================================================================== */
 const gallerySlides = [
   {
@@ -748,7 +1170,10 @@ const gallerySlides = [
 
 function initGallery() {
   let activeIndex = 0;
+  
   const slideImgBox = document.getElementById("slide-img-box");
+  if (!slideImgBox) return;
+
   const slideTitle = document.getElementById("slide-title");
   const slideDesc = document.getElementById("slide-desc");
   const indicator = document.getElementById("gal-indicator");
@@ -780,7 +1205,55 @@ function initGallery() {
 }
 
 /* ==========================================================================
-   11. DATA: DARALMA SİMÜLATÖRÜ & CHART.JS ENTEGRASYONU
+   15. DATA: MULTİSPEKTRAL UYDU KARŞILAŞTIRICI (YENİ)
+   ========================================================================== */
+const satelliteBands = {
+  rgb: {
+    name: "True Color (Doğal Renk - RGB)",
+    bg: "radial-gradient(circle, #f8fafc 40%, #bae6fd 60%, #a16207 90%)",
+    filter: "contrast(1.1) saturate(1)"
+  },
+  nir: {
+    name: "False Color (Kızılötesi - B8,B4,B3)",
+    bg: "radial-gradient(circle, #e2e8f0 30%, #f472b6 55%, #b91c1c 85%)",
+    filter: "contrast(1.3) hue-rotate(330deg) saturate(1.5)"
+  },
+  ndwi: {
+    name: "NDWI Su İndeksi (Kanal Ayrışım)",
+    bg: "radial-gradient(circle, #0f172a 45%, #00e5ff 48%, #1e293b 80%)",
+    filter: "contrast(1.5) brightness(1.1)"
+  }
+};
+
+function initSatelliteComparator() {
+  const selectBtns = document.querySelectorAll(".sat-selector-btn");
+  const satImageSim = document.getElementById("satImageSim");
+  const satLabelTag = document.getElementById("satLabelTag");
+
+  if (!selectBtns || selectBtns.length === 0) return;
+
+  selectBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      selectBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const bandKey = btn.getAttribute("data-band");
+      const band = satelliteBands[bandKey];
+
+      // Simulated scanning transition logic
+      satImageSim.style.filter = "blur(8px)";
+      
+      setTimeout(() => {
+        satImageSim.style.background = band.bg;
+        satImageSim.style.filter = band.filter;
+        satLabelTag.innerText = band.name;
+      }, 200);
+    });
+  });
+}
+
+/* ==========================================================================
+   16. DATA: DARALMA SİMÜLATÖRÜ & CHART.JS
    ========================================================================== */
 const shrinkageHistory = {
   1975: { area: 1600, scale: 1.0, sinkholes: 2 },
@@ -800,6 +1273,8 @@ let chartInstance = null;
 
 function initShrinkageSimulator() {
   const slider = document.getElementById("timeline-slider");
+  if (!slider) return;
+
   const yearDisplay = document.getElementById("sim-year-display");
   const areaDisplay = document.getElementById("sim-area-display");
   const lakePath = document.getElementById("svg-shrink-lake");
@@ -809,28 +1284,20 @@ function initShrinkageSimulator() {
   function updateVisuals(year) {
     const data = shrinkageHistory[year];
     
-    // Yıl ve alan metin güncellemeleri
     yearDisplay.innerText = year;
     areaDisplay.innerText = `${data.area} km²`;
-
-    // SVG Ölçeklendirme (Gölün daralması)
-    // scale transform uygulayarak görsel olarak gölü daraltıyoruz
     lakePath.style.transform = `scale(${data.scale})`;
 
-    // Obruk noktalarını SVG içine ekleme
     sinkholesGroup.innerHTML = "";
-    // Yıla göre orantılı rastgele obruk noktaları çizelim (aynı tohum noktalarını korumak için deterministik konumlar)
     const pointsCount = Math.min(200, Math.floor(data.sinkholes / 3));
     
     for (let i = 0; i < pointsCount; i++) {
-      // Deterministik ama rastgele dağılmış konumlar (sinüs/cosinüs ile)
-      const angle = (i * 2.39996) * (Math.PI / 180); // Altın oran açısı
-      const radius = Math.sqrt(i) * 5.5 + 40; // Dağılım yarıçapı
+      const angle = (i * 2.39996) * (Math.PI / 180); 
+      const radius = Math.sqrt(i) * 5.5 + 40; 
       
       const cx = 150 + Math.cos(angle) * radius * 0.8;
       const cy = 150 + Math.sin(angle) * radius * 0.9;
       
-      // Sadece gölün dış çeperinde ve havzada olmasını sağlamak için sınırlar (100-200 arası)
       if (cx > 50 && cx < 250 && cy > 50 && cy < 250) {
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", cx);
@@ -841,18 +1308,13 @@ function initShrinkageSimulator() {
     }
   }
 
-  // Slider olayı
   slider.addEventListener("input", (e) => {
     updateVisuals(e.target.value);
   });
 
-  // Başlangıç durumu
   updateVisuals(1975);
-
-  // Grafik Çizimi (Chart.js)
   renderChart();
 
-  // JSON Export Olayı
   btnExport.addEventListener("click", () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shrinkageHistory, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -872,7 +1334,6 @@ function renderChart() {
   const areas = years.map(y => shrinkageHistory[y].area);
   const sinkholes = years.map(y => shrinkageHistory[y].sinkholes);
 
-  // Varsa eski grafik örneğini sil
   if (chartInstance) {
     chartInstance.destroy();
   }

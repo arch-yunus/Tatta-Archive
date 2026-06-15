@@ -67,7 +67,7 @@
         
         <div class="hero-actions">
           <a href="#satellite" class="btn btn-primary"><i class="fa-solid fa-chart-bar"></i> Verileri İncele</a>
-          <a href="#ecology" class="btn btn-outline"><i class="fa-solid fa-eye"></i> Simülatörleri Dene</a>
+          <a href="#geology" class="btn btn-outline"><i class="fa-solid fa-eye"></i> Simülatörleri Dene</a>
         </div>
 
         <!-- Canlı İstatistik Kartları -->
@@ -149,7 +149,36 @@
           </div>
         </div>
         
-        <!-- Sağ Taraf: Su Bütçesi Simülatörü -->
+        <!-- Sağ Taraf: Karot Sondaj Simülatörü (YENİ - WOW FACTOR) -->
+        <div class="card glass-card">
+          <h3>Stratigrafik Karot Sondaj Simülatörü</h3>
+          <p class="card-desc">Göl yatağı tabanına sondaj başlatarak derinliklerine göre biriken sedimantolojik katmanları analiz edin.</p>
+          
+          <div class="drill-simulator-layout">
+            <div class="drill-column-container">
+              <!-- Visual representation of the core drill string descending -->
+              <div class="drill-bit" id="drillBit"></div>
+              
+              <!-- Dynamic sediment layers painted in column -->
+              <div class="drill-layer l-halite" data-depth="0-2m" data-layer="Saf Halit (Tuz)" data-age="Holosen (Günümüz)" data-composition="NaCl %98.2, Yoğun Kristalli"><span class="layer-depth-tag">2m</span></div>
+              <div class="drill-layer l-gypsum" data-depth="2-5m" data-layer="Jips ve Anhidrit" data-age="Geç Pleyistosen" data-composition="CaSO4.2H2O, İğnemsi Kristalli"><span class="layer-depth-tag">5m</span></div>
+              <div class="drill-layer l-clay" data-depth="5-10m" data-layer="Gölsel Yeşil Çamur / Kil" data-age="Orta Pleyistosen" data-composition="Montmorillonit, Kuvars, İnce Karbonat"><span class="layer-depth-tag">10m</span></div>
+              <div class="drill-layer l-sandstone" data-depth="10-15m" data-layer="Kırıntılı Kumtaşı & Marn" data-age="Miyosen (Eski Havza)" data-composition="Kalsit çimentolu detritik kuvars taneleri"><span class="layer-depth-tag">15m</span></div>
+            </div>
+            
+            <div class="drill-controls-panel">
+              <button class="btn btn-primary btn-full" id="btn-start-drill"><i class="fa-solid fa-screwdriver"></i> Sondajı Başlat</button>
+              
+              <div class="drill-output-card" id="drillOutputCard">
+                <div class="output-placeholder">Sondajı başlatarak derin katmanlardaki mineralleri ve jeolojik dönemleri inceleyin.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Grid: Hidrolojik Denge Simülatörü -->
+      <div class="grid-2col margin-top-20">
         <div class="card glass-card">
           <h3>Hidrolojik Denge Simülatörü</h3>
           <p class="card-desc">Gölün su bütçesini kontrol eden parametreleri değiştirerek yıllık net su hacim değişimini (m³) hesaplayın.</p>
@@ -182,6 +211,34 @@
             </div>
           </div>
         </div>
+
+        <div class="card glass-card">
+          <h3>Havza Akifer & Jeotermal Yapısı</h3>
+          <p class="card-desc">Tuz Gölü'nün tuzluluğunu ve kimyasal yapısını besleyen derin yeraltı su döngüleri.</p>
+          <div class="aquifer-info-box">
+            <div class="aquifer-item">
+              <div class="aq-icon"><i class="fa-solid fa-water-ladder"></i></div>
+              <div class="aq-content">
+                <h4>Meteorik Beslenme</h4>
+                <p>Toros Dağları'na düşen kar ve yağmur suları, kireçtaşları arasından süzülerek göl tabanındaki artezyen kaynaklardan mineralli su olarak boşalır.</p>
+              </div>
+            </div>
+            <div class="aquifer-item">
+              <div class="aq-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+              <div class="aq-content">
+                <h4>Jeotermal Girişler</h4>
+                <p>Doğu sınırındaki Şereflikoçhisar fayı boyunca süzülen sular magmatik ısı etkisiyle 45°C'ye kadar ısınarak göle sodyum, klor ve sülfat iyonları taşır.</p>
+              </div>
+            </div>
+            <div class="aquifer-item">
+              <div class="aq-icon"><i class="fa-solid fa-cubes"></i></div>
+              <div class="aq-content">
+                <h4>Halit Doygunluğu</h4>
+                <p>Buharlaşma hızı giriş hızını aştığında, çözelti halindeki NaCl doygunluğa (325 g/L) ulaşır ve kristalleşerek göl tabanında sert halit kabuğu oluşturur.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -192,6 +249,48 @@
         <span class="sec-badge"><i class="fa-solid fa-seedling"></i> Bölüm 2</span>
         <h2>Ekstrem Biyoçeşitlilik ve Ekoloji</h2>
         <p>Aşırı tuzlu (hipersalin) sularda Dunaliella salina mikro algleri ve halobakteriler hayat bulurken, göl çevresi korunaklı yapısıyla flamingo kolonilerinin üreme merkezidir.</p>
+      </div>
+
+      <!-- İnteraktif Besin Zinciri Şeması (YENİ - WOW FACTOR) -->
+      <div class="card glass-card margin-bottom-30">
+        <h3>Hipersalin Trofik (Besin Ağ) Diyagramı</h3>
+        <p class="card-desc">Lake Tuz ekosistemindeki enerji akışını görmek için düğümlerin (nodes) üzerine gelin.</p>
+        
+        <div class="food-web-container">
+          <svg viewBox="0 0 800 250" class="food-web-svg" id="foodWebSvg">
+            <!-- Bağlantı Çizgileri -->
+            <path d="M 100,125 Q 200,70 300,70" class="web-line l-cyan" id="line-sun-alg"></path>
+            <path d="M 100,125 Q 200,180 300,180" class="web-line l-cyan" id="line-sun-bact"></path>
+            <path d="M 300,70 Q 400,70 500,125" class="web-line l-pink" id="line-alg-artemia"></path>
+            <path d="M 300,180 Q 400,180 500,125" class="web-line l-pink" id="line-bact-artemia"></path>
+            <path d="M 500,125 Q 600,60 700,70" class="web-line l-orange" id="line-artemia-flamingo"></path>
+            <path d="M 300,70 Q 500,50 700,70" class="web-line l-orange" id="line-alg-flamingo"></path>
+            
+            <!-- Enerji Kaynağı Düğümü -->
+            <circle cx="100" cy="125" r="28" class="web-node n-sun" data-name="Güneş Enerjisi (Solar Radiation)" data-desc="Yüksek UV radyasyonu ve güneş ışığı. Fotosentetik algler için birincil enerji girdisini sağlar."></circle>
+            <text x="100" y="130" class="web-node-text">GÜNEŞ</text>
+            
+            <!-- Üretici Düğümleri -->
+            <circle cx="300" cy="70" r="28" class="web-node n-producer" data-name="Dunaliella salina (Mikro Alg)" data-desc="Karotenoid sentezleyen yeşil-kızıl mikro alg. Tuz stresinde beta-karoten üreterek besin zincirine pigment taşır."></circle>
+            <text x="300" y="75" class="web-node-text">D. SALINA</text>
+
+            <circle cx="300" cy="180" r="28" class="web-node n-producer" data-name="Halobakteriler (Archaea)" data-desc="Tuzcul arkeler. Hücre zarlarında bulunan bakteriorodopsin proteini sayesinde gölün pembeleşmesini sağlar."></circle>
+            <text x="300" y="185" class="web-node-text">HALOBACT</text>
+
+            <!-- Tüketici Düğümü -->
+            <circle cx="500" cy="125" r="28" class="web-node n-consumer" data-name="Artemia salina (Tuz Karidesi)" data-desc="Aşırı tuzlu sularda yaşayabilen tek eklembacaklı türüdür. Dunaliella algleri ile beslenir, pembe pigment biriktirir."></circle>
+            <text x="500" y="130" class="web-node-text">ARTEMIA</text>
+
+            <!-- Üst Tüketici Düğümü -->
+            <circle cx="700" cy="70" r="28" class="web-node n-apex" data-name="Flamingo (Phoenicopterus roseus)" data-desc="Besin zincirinin en üstündeki kuş türü. Artemia karideslerini süzerek beslenir ve bu sayede pembe tüy rengini alır."></circle>
+            <text x="700" y="75" class="web-node-text">FLAMİNGO</text>
+          </svg>
+          
+          <div class="web-node-info" id="webNodeInfo">
+            <h4>Detaylı Besin Ağı İncelemesi</h4>
+            <p>Tuz Gölü ekosistemindeki enerji transferinin işleyişini incelemek için düğümlerin (daireler) üzerine gelin.</p>
+          </div>
+        </div>
       </div>
 
       <div class="grid-2col">
@@ -282,7 +381,7 @@
           <div class="timeline-card glass-card">
             <span class="timeline-date">M.Ö. 1. Yüzyıl</span>
             <h3>Strabon'un Geographika'sı ve Tatta</h3>
-            <p>Amasyalı ünlü coğrafyacı Strabon, eserinde gölden <strong>Tatta (Τάττα)</strong> olarak bahseder. Gölün sularının o kadar tuzlu olduğunu yazar ki, suya sokulan her nesne anında tuz kristaliyle kaplanır ve içine düşen kuşlar uçamaz hale gelerek kolayca yakalanır.</p>
+            <p>Amasyalı ünlü coğrafyacı Strabon, eserinde gölden <strong>Tatta (Τάτta)</strong> olarak bahseder. Gölün sularının o kadar tuzlu olduğunu yazar ki, suya sokulan her nesne anında tuz kristaliyle kaplanır ve içine düşen kuşlar uçamaz hale gelerek kolayca yakalanır.</p>
           </div>
         </div>
 
@@ -325,26 +424,51 @@
       </div>
 
       <div class="grid-2col">
-        <!-- Sol: Taşlaşan Kadın Efsanesi -->
+        <!-- Sol: Taşlaşan Kadın Efsanesi CYOA (GELİŞTİRİLDİ - WOW FACTOR) -->
         <div class="card glass-card narrative-card">
           <div class="narrative-overlay" id="narrativeOverlay"></div>
-          <h3>Taşlaşan Kadın Efsanesi</h3>
-          <p class="card-desc">Cimriliğin ve doğanın mistik adaletinin hikayesi. Adımlarla keşfedin.</p>
+          <h3>Taşlaşan Kadın: İnteraktif Hikaye Serüveni</h3>
+          <p class="card-desc">Göl kıyısında bir dervişle karşılaşan kervan liderisiniz. Seçimleriniz efsanenin gidişatını belirleyecek.</p>
           
           <div class="story-reader">
-            <div class="story-text" id="storyText">
-              "Bir varmış bir yokmuş... Çok eski zamanlarda gölün henüz kıyısında, sürüsüyle yaşayan yaşlı bir kadın varmış. Bu kadının yüzlerce koyunu, bolca sütü ve peyniri olurmuş ancak kendisi oldukça cimriymiş."
+            <div class="story-text" id="storyCYOAText">
+              Ufukta sadece beyaz tuz katmanının parıldadığı sıcak bir öğleden sonra, kervanınızla göl kenarında ilerliyorsunuz. Karşınıza, susuzluktan titreyen ve eski hırkasının altında ezilen yaşlı bir derviş çıkıyor.
             </div>
             
-            <div class="story-controls">
-              <button class="btn btn-outline btn-sm" id="story-prev" disabled><i class="fa-solid fa-chevron-left"></i> Geri</button>
-              <span class="story-progress" id="storyProgress">1 / 4</span>
-              <button class="btn btn-primary btn-sm" id="story-next">İleri <i class="fa-solid fa-chevron-right"></i></button>
+            <div class="cyoa-choices-grid" id="cyoaChoices">
+              <!-- JS ile dinamik doldurulacak seçenek butonları -->
+            </div>
+            
+            <div class="story-controls margin-top-20">
+              <button class="btn btn-outline btn-sm" id="btn-reset-cyoa"><i class="fa-solid fa-rotate-left"></i> Baştan Başla</button>
+              <span class="story-progress" id="cyoaProgress">Giriş</span>
             </div>
           </div>
         </div>
 
-        <!-- Sağ: Uzamsal Algı ve Serap Yanılsaması -->
+        <!-- Sağ: Atmosferik Işık Anomali Radarı (YENİ - WOW FACTOR) -->
+        <div class="card glass-card">
+          <h3>Gece Işık Anomalileri & UFO Radarı</h3>
+          <p class="card-desc">Tuz Gölü semalarında gözlenen gizemli ışık parlamalarını simüle edin. Detaylar için sinyallere tıklayın.</p>
+          
+          <div class="radar-box">
+            <div class="radar-screen-container">
+              <canvas id="radarCanvas" width="280" height="280"></canvas>
+              <!-- Glowing sweep line handled in JS -->
+            </div>
+            
+            <div class="radar-details-panel" id="radarDetails">
+              <div class="radar-log-title"><i class="fa-solid fa-satellite-dish"></i> RADAR SENSÖR VERİSİ</div>
+              <div class="radar-log-content" id="radarLog">
+                Radarı incelemek için tarayıcının hedefleri bulmasını bekleyin ve yanıp sönen anomali sinyallerine tıklayın.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Grid: Serap ve Spatial Disorientation -->
+      <div class="grid-2col margin-top-20">
         <div class="card glass-card">
           <h3>Ufuk İllüzyonu & Mekansal Yön Kaybı</h3>
           <p class="card-desc">Gölün kuru döneminde yer ve gök sınırının kaybolmasıyla oluşan serap etkisini simüle eden etkileşimli panel.</p>
@@ -368,6 +492,24 @@
             </div>
           </div>
         </div>
+
+        <div class="card glass-card">
+          <h3>Fiziksel Işık Kırılmaları & Anomaliler</h3>
+          <div class="anomalies-list">
+            <div class="anomaly-item">
+              <span class="anom-badge"><i class="fa-solid fa-bolt"></i> Mineral Işıldaması</span>
+              <p>Yaz gecelerinde kuruyan tuz kristalleri üzerindeki potasyum ve lityum tuzlarının sıcaklık farkı sebebiyle zayıf bir lüminesans (soğuk ışık) yayması.</p>
+            </div>
+            <div class="anomaly-item">
+              <span class="anom-badge"><i class="fa-solid fa-arrows-spin"></i> Sıcaklık Terselmesi</span>
+              <p>Çok soğuk veya aşırı sıcak günlerde, tuz tabakası üstündeki havanın yoğunluk farkları nedeniyle gökyüzündeki yıldız veya araba ışıklarının dikey olarak uzayıp havada asılı durması (Fata Morgana).</p>
+            </div>
+            <div class="anomaly-item">
+              <span class="anom-badge"><i class="fa-solid fa-wind"></i> Gaz Sızıntıları</span>
+              <p>Tuz Gölü'nün altındaki aktif tektonik fay kırıklarından sızan ufak metan gazlarının, bataklık ortamındaki statik elektrikle alevlenip gece mavi-yeşil parlamalar yaratması.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -381,7 +523,7 @@
       </div>
 
       <div class="grid-2col">
-        <!-- Turizm Güvenlik ve Rota Rehberi -->
+        <!-- Sol: Ekolojik Ziyaretçi Rota Planlayıcısı -->
         <div class="card glass-card">
           <h3>Ekolojik Ziyaretçi Rota Planlayıcısı</h3>
           <p class="card-desc">Ziyaret etmek istediğiniz rotayı seçerek yürüyüş mesafesi, zemin dayanıklılığı ve güvenlik uyarılarını görün.</p>
@@ -416,26 +558,58 @@
           </div>
         </div>
 
-        <!-- Ayna Efekti Galeri -->
+        <!-- Sağ: Gökyüzü Aynası Tahmin Hesaplayıcı (YENİ - WOW FACTOR) -->
         <div class="card glass-card">
-          <h3>Gökyüzü Aynası Galeri</h3>
-          <p class="card-desc">Farklı mevsimlerde göl yüzeyinde oluşan ışık kırılmaları ve yansıma efektleri.</p>
+          <h3>Sky Mirror Tahmin Algoritması</h3>
+          <p class="card-desc">Ziyaret edeceğiniz koşulları simüle ederek göl yüzeyinde kusursuz ayna yansıması yakalama ihtimalinizi hesaplayın.</p>
           
-          <div class="gallery-wrapper">
-            <div class="gallery-slide" id="gallerySlide">
-              <div class="slide-img placeholder-slide" id="slide-img-box">
-                <!-- SVG dinamik çizim veya CSS arkaplanı -->
-                <div class="slide-overlay">
-                  <h4 id="slide-title">Bahar Aynası (Nisan)</h4>
-                  <p id="slide-desc">Göl yüzeyindeki 2 cm kalınlığındaki su filmi gökyüzünü yansıtır.</p>
-                </div>
+          <div class="prediction-box">
+            <div class="sim-slider-group">
+              <label for="predict-month">Ziyaret Zamanı (Ay):</label>
+              <select id="predict-month" class="select-input">
+                <option value="1">Ocak - Şubat (Yoğun Su)</option>
+                <option value="4" selected>Nisan - Mayıs (Optimum İnce Su)</option>
+                <option value="7">Temmuz - Ağustos (Kuru Tuz Düzlüğü)</option>
+                <option value="10">Ekim - Kasım (Kısmi Yağış)</option>
+              </select>
+            </div>
+            
+            <div class="sim-slider-group">
+              <label for="predict-wind">Rüzgar Hızı (km/s): <span class="val-display" id="val-predict-wind">8 km/s</span></label>
+              <input type="range" id="predict-wind" min="0" max="40" value="8" class="slider-input">
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="predict-cloud">Bulutluluk Oranı (%): <span class="val-display" id="val-predict-cloud">%40</span></label>
+              <input type="range" id="predict-cloud" min="0" max="100" value="40" class="slider-input">
+            </div>
+
+            <div class="prediction-result" id="predictionResult">
+              <div class="pred-percentage" id="pred-percentage-val">0%</div>
+              <div class="pred-label" id="pred-label-text">Hesaplanıyor...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt: Galeri Slide -->
+      <div class="card glass-card margin-top-20">
+        <h3>Gökyüzü Aynası Galeri</h3>
+        <p class="card-desc">Farklı mevsimlerde göl yüzeyinde oluşan ışık kırılmaları ve yansıma efektleri.</p>
+        
+        <div class="gallery-wrapper">
+          <div class="gallery-slide" id="gallerySlide">
+            <div class="slide-img placeholder-slide" id="slide-img-box">
+              <div class="slide-overlay">
+                <h4 id="slide-title">Bahar Aynası (Nisan)</h4>
+                <p id="slide-desc">Göl yüzeyindeki 2 cm kalınlığındaki su filmi gökyüzünü yansıtır.</p>
               </div>
             </div>
-            <div class="gallery-nav">
-              <button class="btn btn-outline btn-sm" id="gal-prev"><i class="fa-solid fa-arrow-left"></i></button>
-              <span id="gal-indicator">1 / 3</span>
-              <button class="btn btn-outline btn-sm" id="gal-next"><i class="fa-solid fa-arrow-right"></i></button>
-            </div>
+          </div>
+          <div class="gallery-nav">
+            <button class="btn btn-outline btn-sm" id="gal-prev"><i class="fa-solid fa-arrow-left"></i></button>
+            <span id="gal-indicator">1 / 3</span>
+            <button class="btn btn-outline btn-sm" id="gal-next"><i class="fa-solid fa-arrow-right"></i></button>
           </div>
         </div>
       </div>
@@ -448,6 +622,37 @@
         <span class="sec-badge"><i class="fa-solid fa-chart-line"></i> Bölüm 6</span>
         <h2>Veri, İklim ve Uydu Analizi</h2>
         <p>Landsat ve Sentinel-2 verilerine dayanan su yüzeyi daralma oranları ve iklimsel risk projeksiyonları.</p>
+      </div>
+
+      <!-- Çoklu Spektral Uydu Görüntü Karşılaştırıcı (YENİ - WOW FACTOR) -->
+      <div class="card glass-card margin-bottom-30">
+        <h3>Multispektrel Uydu Spektrum Karşılaştırıcısı</h3>
+        <p class="card-desc">Tuz Gölü'nün uzaydan çekilen Sentinel-2 bant kombinasyonlarını simüle edin ve farklı dalga boylarındaki yansımaları inceleyin.</p>
+        
+        <div class="satellite-slider-layout">
+          <div class="sat-view-box">
+            <!-- Simulated Sentinel scan filter box -->
+            <div class="sat-image-sim" id="satImageSim">
+              <div class="sat-scanline"></div>
+              <span class="sat-label-tag" id="satLabelTag">True Color (RGB)</span>
+            </div>
+          </div>
+          
+          <div class="sat-selector-controls">
+            <div class="sat-selector-btn active" data-band="rgb">
+              <h4>Doğal Renk (B4, B3, B2)</h4>
+              <p>İnsan gözünün gördüğü renkler. Beyaz tuz düzlükleri ve mavi sığ su.</p>
+            </div>
+            <div class="sat-selector-btn" data-band="nir">
+              <h4>Kızılötesi / Algal Canlılık (B8, B4, B3)</h4>
+              <p>Yakın kızılötesi filtre. Dunaliella salina alg birikimi parlak kırmızı görünür.</p>
+            </div>
+            <div class="sat-selector-btn" data-band="ndwi">
+              <h4>NDWI Su İndeksi (B3 - B8) / (B3 + B8)</h4>
+              <p>Normalized Difference Water Index. Açık su kütlelerini izole edip mavi gösterir.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="grid-2col">
@@ -503,6 +708,71 @@
             <button class="btn btn-outline btn-sm" id="btn-export-json"><i class="fa-solid fa-file-code"></i> JSON Veriyi İndir</button>
             <span class="data-source-tag"><i class="fa-solid fa-circle-info"></i> Kaynak: Landsat / DSİ / MTA</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Bilimsel Veri Matrisi Grid (YENİ - WOW FACTOR) -->
+      <div class="card glass-card margin-top-20">
+        <h3>Göl Yatağı Tortu & İyon Analiz Defteri</h3>
+        <p class="card-desc">Farklı karot numunelerinin derinliklerine göre laboratuvar iyon ölçüm verileri.</p>
+        
+        <div class="table-container">
+          <table class="scientific-table">
+            <thead>
+              <tr>
+                <th>Numune Kodu</th>
+                <th>Derinlik (m)</th>
+                <th>Jeolojik Birim</th>
+                <th>Na⁺ (mg/kg)</th>
+                <th>Cl⁻ (mg/kg)</th>
+                <th>SO₄²⁻ (mg/kg)</th>
+                <th>Kalsit (%)</th>
+                <th>Nem Oranı (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TG-C1-02</strong></td>
+                <td>1.5 m</td>
+                <td>Tuz Düzlüğü (Halit)</td>
+                <td>375,200</td>
+                <td>580,400</td>
+                <td>8,200</td>
+                <td>1.2%</td>
+                <td>3.5%</td>
+              </tr>
+              <tr>
+                <td><strong>TG-C1-05</strong></td>
+                <td>4.8 m</td>
+                <td>Jipsli Killi Sediment</td>
+                <td>98,400</td>
+                <td>152,000</td>
+                <td>124,500</td>
+                <td>18.4%</td>
+                <td>12.8%</td>
+              </tr>
+              <tr>
+                <td><strong>TG-C1-10</strong></td>
+                <td>9.2 m</td>
+                <td>Gölsel Yeşil Çamur</td>
+                <td>41,200</td>
+                <td>63,100</td>
+                <td>38,400</td>
+                <td>42.5%</td>
+                <td>28.4%</td>
+              </tr>
+              <tr>
+                <td><strong>TG-C1-15</strong></td>
+                <td>14.1 m</td>
+                <td>Karbonatlı Marn</td>
+                <td>22,100</td>
+                <td>34,200</td>
+                <td>19,100</td>
+                <td>68.9%</td>
+                <td>15.2%</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
