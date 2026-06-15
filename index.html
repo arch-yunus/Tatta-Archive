@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tatta-Archive | Tuz Gölü Disiplinlerarası Bilgi Bankası</title>
+  
+  <!-- SEO Meta Etiketleri -->
+  <meta name="description" content="Tuz Gölü'nün (Antik adıyla Tatta) jeolojisi, ekstrem ekolojisi, tarihi, efsaneleri, turizmi ve uydu verilerinin disiplinlerarası açık kaynaklı arşivi ve interaktif analiz platformu.">
+  <meta name="keywords" content="Tuz Gölü, Tatta, Dunaliella Salina, Flamingo, Jeoloji, Uydu Analizi, Tuz Yolu, Taşlaşan Kadın, Obruk, Karot Verisi, Tuz Gölü Florası">
+  <meta name="author" content="Tatta-Archive Team">
+  <link rel="canonical" href="https://arch-yunus.github.io/Tatta-Archive/">
+
+  <!-- Font ve İkonlar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Stil Dosyası -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Arka Plan Efektleri -->
+  <div class="bg-glow bg-glow-pink"></div>
+  <div class="bg-glow bg-glow-blue"></div>
+  <div class="stars-container"></div>
+
+  <!-- Üst Menü / Navigasyon -->
+  <header class="main-header" id="mainHeader">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-droplet"></i></span>
+        <span class="logo-text">TATTA<span class="highlight">-ARCHIVE</span></span>
+      </a>
+      
+      <nav class="nav-menu" id="navMenu">
+        <a href="#home" class="nav-link active" id="nav-home"><i class="fa-solid fa-compass"></i> Genel Bakış</a>
+        <a href="#geology" class="nav-link" id="nav-geology"><i class="fa-solid fa-mountain"></i> Jeoloji</a>
+        <a href="#ecology" class="nav-link" id="nav-ecology"><i class="fa-solid fa-seedling"></i> Ekoloji</a>
+        <a href="#history" class="nav-link" id="nav-history"><i class="fa-solid fa-hourglass-half"></i> Tarih</a>
+        <a href="#mysteries" class="nav-link" id="nav-mysteries"><i class="fa-solid fa-ghost"></i> Gizemler</a>
+        <a href="#tourism" class="nav-link" id="nav-tourism"><i class="fa-solid fa-camera-retro"></i> Turizm</a>
+        <a href="#satellite" class="nav-link" id="nav-satellite"><i class="fa-solid fa-chart-line"></i> Veri & Uydu</a>
+      </nav>
+      
+      <button class="menu-toggle" id="menuToggle" aria-label="Menüyü Aç">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="content-container">
+
+    <!-- HERO SECTION -->
+    <section id="home" class="section active-section">
+      <div class="hero-block">
+        <span class="badge"><i class="fa-solid fa-atom"></i> Tuz Gölü Multidisipliner Veri Bankası</span>
+        <h1>Gökyüzünün Yeryüzündeki Aynası: <span class="text-gradient">TATTA</span></h1>
+        <p class="hero-desc">
+          Türkiye'nin kalbindeki devasa buharlaşma havzasının sırlarını keşfedin. Antik coğrafyacıların Tatta'sından, uzaydan çekilen Landsat analizlerine, extrem mikrobiyolojiden kaybolan ufuk çizgisi efsanelerine kadar disiplinlerarası bir yolculuk.
+        </p>
+        
+        <div class="hero-actions">
+          <a href="#satellite" class="btn btn-primary"><i class="fa-solid fa-chart-bar"></i> Verileri İncele</a>
+          <a href="#ecology" class="btn btn-outline"><i class="fa-solid fa-eye"></i> Simülatörleri Dene</a>
+        </div>
+
+        <!-- Canlı İstatistik Kartları -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon pink-glow"><i class="fa-solid fa-expand"></i></div>
+            <div class="stat-details">
+              <span class="stat-label">Ortalama Alan</span>
+              <span class="stat-val" id="stat-area">520 km²</span>
+              <span class="stat-sub text-danger"><i class="fa-solid fa-arrow-trend-down"></i> Yıllık Daralma</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan-glow"><i class="fa-solid fa-flask-vial"></i></div>
+            <div class="stat-details">
+              <span class="stat-label">Tuzluluk Oranı</span>
+              <span class="stat-val">%32.4</span>
+              <span class="stat-sub text-info"><i class="fa-solid fa-equals"></i> Doygun Halit</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pink-glow"><i class="fa-solid fa-dove"></i></div>
+            <div class="stat-details">
+              <span class="stat-label">Flamingo Popülasyonu</span>
+              <span class="stat-val">22,000+</span>
+              <span class="stat-sub text-success"><i class="fa-solid fa-arrow-trend-up"></i> Bahar Göçü</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue-glow"><i class="fa-solid fa-gauge"></i></div>
+            <div class="stat-details">
+              <span class="stat-label">Rakım</span>
+              <span class="stat-val">905 m</span>
+              <span class="stat-sub">İç Anadolu Platosu</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- JEOLOJİ VE COĞRAFİ DİNAMİKLER -->
+    <section id="geology" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-mountain"></i> Bölüm 1</span>
+        <h2>Jeoloji ve Coğrafi Dinamikler</h2>
+        <p>Tuz Gölü Havzası, tektonik hareketlerle şekillenmiş kapalı bir çöküntü alanı ve devasa bir evaporit deposudur.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Sol Taraf: İnteraktif Harita veya Şema -->
+        <div class="card glass-card">
+          <h3>Tuz Gölü Tektonik Havza Şeması</h3>
+          <p class="card-desc">Havzayı çevreleyen ana fay hatlarını ve jeolojik lokasyonları incelemek için üzerlerine gelin.</p>
+          
+          <div class="interactive-map-container">
+            <svg viewBox="0 0 400 400" class="basin-svg" id="basinSvg">
+              <!-- Göl Anahatları -->
+              <path d="M 150,100 C 180,90 220,130 230,170 C 240,210 280,260 250,300 C 230,320 180,310 160,280 C 140,260 120,200 130,150 C 135,120 130,110 150,100 Z" class="lake-path" id="svg-lake"></path>
+              
+              <!-- Fay Hatları (Kırmızı-Kırık Çizgiler) -->
+              <path d="M 50,50 L 140,110 L 120,250 L 80,350" class="fault-line" id="fault-west" data-name="Tuz Gölü Batı Fay Zonu" data-desc="Cihanbeyli eksenli aktif doğrultu atımlı fay sistemidir. Havzanın batı sınırını kontrol eder."></path>
+              <path d="M 350,80 L 280,180 L 290,290 L 330,380" class="fault-line" id="fault-east" data-name="Tuz Gölü Doğu / Şereflikoçhisar Fayı" data-desc="Gölün doğu kıyısına paralel uzanan sağ yönlü doğrultu atımlı fay hattıdır. Doğu çöküntüsünü sınırlar."></path>
+              
+              <!-- Besleyici Dereler -->
+              <path d="M 20,130 Q 80,140 135,160" class="river-path" id="river-insuyu" data-name="İnsuyu Deresi" data-desc="Batıdan gölü besleyen dönemsel akarsulardan biridir. Yoğun tarımsal sulama nedeniyle yaz aylarında kurumaktadır."></path>
+              <path d="M 380,260 Q 300,260 255,270" class="river-path" id="river-pecenek" data-name="Peçeneközü Deresi" data-desc="Şereflikoçhisar yönünden göle ulaşan en önemli besleyici akarsudur. Alüvyonal taşınım sağlar."></path>
+              
+              <!-- İnteraktif Noktalar (Gözlem Noktaları) -->
+              <circle cx="150" cy="120" r="8" class="map-point" data-name="Kaldırım Tuzlası" data-desc="Gölün kuzey kesimindeki en büyük tuz üretim havzalarından biridir. Yapay seddelerle ayrılmıştır."></circle>
+              <circle cx="210" cy="200" r="8" class="map-point" data-name="Yavşan Tuzlası" data-desc="Batı kıyısında yer alan tarihi tuzla işletmesidir. Medikal kalitede tuz üretimiyle öne çıkar."></circle>
+              <circle cx="260" cy="285" r="8" class="map-point" data-name="Kayacık Tuzlası" data-desc="Güney havzasındaki tuzla işletmesidir. Sıcak buharlaşma düzlüğü üzerinde kuruludur."></circle>
+            </svg>
+            
+            <div class="map-tooltip" id="mapTooltip">
+              <h4>Detaylar için bir ögeye tıklayın veya üzerine gelin</h4>
+              <p>Fay hatları, nehirler ve tuzlalar hakkında teknik bilgilere ulaşmak için etkileşimli haritayı kullanın.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sağ Taraf: Su Bütçesi Simülatörü -->
+        <div class="card glass-card">
+          <h3>Hidrolojik Denge Simülatörü</h3>
+          <p class="card-desc">Gölün su bütçesini kontrol eden parametreleri değiştirerek yıllık net su hacim değişimini (m³) hesaplayın.</p>
+          
+          <div class="simulator-box">
+            <div class="sim-slider-group">
+              <label for="slide-precip">Yıllık Yağış (mm): <span class="val-display" id="val-precip">300 mm</span></label>
+              <input type="range" id="slide-precip" min="150" max="500" value="300" class="slider-input">
+            </div>
+            
+            <div class="sim-slider-group">
+              <label for="slide-rivers">Dere Akışları (m³/yıl): <span class="val-display" id="val-rivers">120m m³</span></label>
+              <input type="range" id="slide-rivers" min="20" max="300" value="120" class="slider-input">
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="slide-gw">Tarımsal Yeraltı Suyu Çekimi (m³/yıl): <span class="val-display" id="val-gw">2.3b m³</span></label>
+              <input type="range" id="slide-gw" min="500" max="4000" value="2300" class="slider-input">
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="slide-evap">Yıllık Buharlaşma Gücü (mm): <span class="val-display" id="val-evap">1400 mm</span></label>
+              <input type="range" id="slide-evap" min="1000" max="2000" value="1400" class="slider-input">
+            </div>
+
+            <div class="sim-result-box" id="simResultBox">
+              <div class="result-title">YILLIK SU BÜTÇESİ DENGESİ</div>
+              <div class="result-value" id="sim-net-val">Calculating...</div>
+              <div class="result-status" id="sim-net-status">Denge Durumu Açıklaması</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- EKSTREM BİYOÇEŞİTLİLİK VE EKOLOJİ -->
+    <section id="ecology" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-seedling"></i> Bölüm 2</span>
+        <h2>Ekstrem Biyoçeşitlilik ve Ekoloji</h2>
+        <p>Aşırı tuzlu (hipersalin) sularda Dunaliella salina mikro algleri ve halobakteriler hayat bulurken, göl çevresi korunaklı yapısıyla flamingo kolonilerinin üreme merkezidir.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Dunaliella Salina Simülatörü -->
+        <div class="card glass-card">
+          <h3>Kızıl Göl Fenomeni: Alg & Renk Simülatörü</h3>
+          <p class="card-desc">Sıcaklık ve Tuzluluk oranını değiştirerek mikroorganizmaların sentezlediği pigmentleri ve bunun gölün rengine etkisini gözlemleyin.</p>
+          
+          <div class="sim-col-layout">
+            <div class="lake-visualizer-container">
+              <div class="lake-water-sim" id="lakeWaterSim">
+                <span class="water-reflection"></span>
+                <span class="water-label" id="waterLabel">Normal Su</span>
+              </div>
+            </div>
+            
+            <div class="sim-controls">
+              <div class="sim-slider-group">
+                <label for="ecology-salinity">Su Tuzluluk Oranı (%): <span class="val-display" id="val-eco-sal">32%</span></label>
+                <input type="range" id="ecology-salinity" min="5" max="38" value="32" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="ecology-temp">Su Sıcaklığı (°C): <span class="val-display" id="val-eco-temp">28°C</span></label>
+                <input type="range" id="ecology-temp" min="5" max="45" value="28" class="slider-input">
+              </div>
+              
+              <div class="ecology-desc-card" id="ecoDescCard">
+                <strong>Aktif Popülasyon:</strong> <span id="eco-population">Yükleniyor...</span><br>
+                <strong>Biyolojik Süreç:</strong> <span id="eco-process">Yükleniyor...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flamingo Üreme & Göç Döngüsü -->
+        <div class="card glass-card">
+          <h3>Flamingoların Yaşam Çevrimi</h3>
+          <p class="card-desc">Tuz Gölü, Akdeniz havzasındaki flamingoların en hassas kreş ve kuluçka alanıdır. Üreme adımlarını inceleyin.</p>
+          
+          <div class="stepper-container">
+            <div class="stepper-header">
+              <div class="step-btn active" data-step="1">1. Varış</div>
+              <div class="step-btn" data-step="2">2. Yuva</div>
+              <div class="step-btn" data-step="3">3. Kuluçka</div>
+              <div class="step-btn" data-step="4">4. Kreş</div>
+              <div class="step-btn" data-step="5">5. Göç</div>
+            </div>
+            
+            <div class="step-content-box" id="stepContentBox">
+              <h4 id="step-title">Mart: Havzaya Varış</h4>
+              <p id="step-text">Kış aylarını Akdeniz kıyılarında veya Kuzey Afrika'da geçiren flamingolar, havaların ısınmasıyla gölün güneyindeki izole çamur adacıklarına göç etmeye başlar.</p>
+              <div class="step-meta"><i class="fa-solid fa-cloud-sun-rain"></i> Dönem: <span id="step-period">Mart - Nisan</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endemik Flora Kataloğu -->
+      <div class="card glass-card margin-top-20">
+        <div class="flora-header-row">
+          <h3>Havzanın Endemik Halofit (Tuzcul) Bitkileri</h3>
+          <div class="filter-buttons">
+            <button class="btn-filter active" data-filter="all">Tümü</button>
+            <button class="btn-filter" data-filter="endemic">Sadece Endemikler</button>
+            <button class="btn-filter" data-filter="cr">Kritik Tehlikede (CR/EN)</button>
+          </div>
+        </div>
+        
+        <div class="flora-grid" id="floraGrid">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TARİH, KÜLTÜR VE ANTİK DÖNEM -->
+    <section id="history" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-hourglass-half"></i> Bölüm 3</span>
+        <h2>Tarih, Kültür ve Antik Dönem</h2>
+        <p>Beyaz altının anavatanı, tarihin ilk dönemlerinden bu yana imparatorlukların lojistik ve ticari odağı olmuştur.</p>
+      </div>
+
+      <div class="timeline-container">
+        <!-- Zaman Çizelgesi Öğeleri -->
+        <div class="timeline-item">
+          <div class="timeline-badge"><i class="fa-solid fa-scroll"></i></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">M.Ö. 1. Yüzyıl</span>
+            <h3>Strabon'un Geographika'sı ve Tatta</h3>
+            <p>Amasyalı ünlü coğrafyacı Strabon, eserinde gölden <strong>Tatta (Τάττα)</strong> olarak bahseder. Gölün sularının o kadar tuzlu olduğunu yazar ki, suya sokulan her nesne anında tuz kristaliyle kaplanır ve içine düşen kuşlar uçamaz hale gelerek kolayca yakalanır.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-badge"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">M.S. 2. - 4. Yüzyıl</span>
+            <h3>Roma İmparatorluğu ve Tuz Tekeli</h3>
+            <p>Romalılar döneminde Tatta, eyalet ekonomisinin kalbiydi. Tuz üretimi devlet tekelindeydi. Çıkarılan blok kaya tuzları, Anadolu'yu çevreleyen askeri ve ticari yollar üzerinden lejyonların iaşesi ve gıda saklama süreçleri için imparatorluğun dört bir yanına taşınıyordu.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-badge"><i class="fa-solid fa-store"></i></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">13. Yüzyıl</span>
+            <h3>Selçuklu Dönemi ve İpek Yolu</h3>
+            <p>Anadolu Selçukluları, gölün doğu ve batı kıyılarından geçen ticaret kollarını koruma altına aldı. Şereflikoçhisar ve Aksaray yollarında inşa edilen kervansaraylar (Örn: Sultanhanı, Ağzıkarahan), tuz tüccarlarının konakladığı güvenli limanlar haline geldi.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-badge"><i class="fa-solid fa-industry"></i></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">19. Yüzyıl - Günümüz</span>
+            <h3>Düyun-ı Umumiye'den Modern Sanayiye</h3>
+            <p>Osmanlı İmparatorluğu'nun son döneminde dış borçların ödenmesi için Tuz Gölü'nün gelirleri Düyun-ı Umumiye idaresine devredildi. Cumhuriyet sonrasında ise TEKEL idaresine geçen tuzlalar, günümüzde modern teknolojilerle yılda milyonlarca ton tuz üreterek ülke sanayisini desteklemektedir.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- GİZEMLER, EFSANELER VE ANOMALİLER -->
+    <section id="mysteries" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-ghost"></i> Bölüm 4</span>
+        <h2>Gizemler, Efsaneler ve Anomaliler</h2>
+        <p>Sonsuz beyazlık, yer ile göğün birleştiği ufuksuz düzlük, insanoğlunun algısını zorlayarak mitolojik anlatılara ve duyusal yanılsamalara zemin hazırlamıştır.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Sol: Taşlaşan Kadın Efsanesi -->
+        <div class="card glass-card narrative-card">
+          <div class="narrative-overlay" id="narrativeOverlay"></div>
+          <h3>Taşlaşan Kadın Efsanesi</h3>
+          <p class="card-desc">Cimriliğin ve doğanın mistik adaletinin hikayesi. Adımlarla keşfedin.</p>
+          
+          <div class="story-reader">
+            <div class="story-text" id="storyText">
+              "Bir varmış bir yokmuş... Çok eski zamanlarda gölün henüz kıyısında, sürüsüyle yaşayan yaşlı bir kadın varmış. Bu kadının yüzlerce koyunu, bolca sütü ve peyniri olurmuş ancak kendisi oldukça cimriymiş."
+            </div>
+            
+            <div class="story-controls">
+              <button class="btn btn-outline btn-sm" id="story-prev" disabled><i class="fa-solid fa-chevron-left"></i> Geri</button>
+              <span class="story-progress" id="storyProgress">1 / 4</span>
+              <button class="btn btn-primary btn-sm" id="story-next">İleri <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sağ: Uzamsal Algı ve Serap Yanılsaması -->
+        <div class="card glass-card">
+          <h3>Ufuk İllüzyonu & Mekansal Yön Kaybı</h3>
+          <p class="card-desc">Gölün kuru döneminde yer ve gök sınırının kaybolmasıyla oluşan serap etkisini simüle eden etkileşimli panel.</p>
+          
+          <div class="illusion-simulator">
+            <canvas id="illusionCanvas" width="350" height="200"></canvas>
+            
+            <div class="illusion-controls">
+              <div class="sim-slider-group">
+                <label for="illusion-haze">Hava Sıcaklığı / Serap Şiddeti: <span class="val-display" id="val-haze">%50</span></label>
+                <input type="range" id="illusion-haze" min="0" max="100" value="50" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="illusion-reflection">Zemin Yansıma Gücü (Ayna Etkisi): <span class="val-display" id="val-reflection">%40</span></label>
+                <input type="range" id="illusion-reflection" min="0" max="100" value="40" class="slider-input">
+              </div>
+              <div class="alert-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span><strong>Spatial Disorientation:</strong> Ufuk çizgisi silindiğinde derinlik ve mesafe algısı kaybolur. Doğal navigasyon imkansızlaşır.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- TURİZM, GÖZLEM VE GÖRSEL ARŞİV -->
+    <section id="tourism" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-camera-retro"></i> Bölüm 5</span>
+        <h2>Turizm, Gözlem ve Görsel Arşiv</h2>
+        <p>Eşsiz günbatımları ve ayna yansımalarıyla bir fotoğraf stüdyosuna dönüşen gölü ziyaret ederken doğaya zarar vermemek esastır.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Turizm Güvenlik ve Rota Rehberi -->
+        <div class="card glass-card">
+          <h3>Ekolojik Ziyaretçi Rota Planlayıcısı</h3>
+          <p class="card-desc">Ziyaret etmek istediğiniz rotayı seçerek yürüyüş mesafesi, zemin dayanıklılığı ve güvenlik uyarılarını görün.</p>
+          
+          <div class="route-box">
+            <div class="route-selector">
+              <div class="route-option active" data-route="north">
+                <h4>Şereflikoçhisar Girişi (Kaldırım)</h4>
+                <span>Turistik Ayna Alanı & Günbatımı</span>
+              </div>
+              <div class="route-option" data-route="west">
+                <h4>Cihanbeyli Girişi (Tuzla Çeperi)</h4>
+                <span>Yassı Çamur Düzlükleri & Fotoğraf</span>
+              </div>
+              <div class="route-option" data-route="south">
+                <h4>Eskil Havzası (Kuş Gözlem)</h4>
+                <span>Flamingo Yaşam Çevresi (Kısıtlı Giriş)</span>
+              </div>
+            </div>
+            
+            <div class="route-details" id="routeDetails">
+              <h4 id="route-title">Şereflikoçhisar Girişi</h4>
+              <div class="route-stats">
+                <span><i class="fa-solid fa-shoe-prints"></i> Önerilen Yürüyüş: <strong id="route-walk">1.5 km</strong></span>
+                <span><i class="fa-solid fa-shield-halved"></i> Güvenlik Seviyesi: <strong id="route-safety" class="text-success">Yüksek</strong></span>
+              </div>
+              <p id="route-desc">Gölün en popüler noktasıdır. Tabanı sert tuz tabakasıyla kaplı olduğu için güvenli yürüyüşe uygundur. İlkbaharda ayna yansıması fotoğrafları için idealdir.</p>
+              <div class="route-restriction text-warning" id="route-warn">
+                <i class="fa-solid fa-circle-exclamation"></i> Yalınayak yürürken keskin tuz kristallerine dikkat edin.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ayna Efekti Galeri -->
+        <div class="card glass-card">
+          <h3>Gökyüzü Aynası Galeri</h3>
+          <p class="card-desc">Farklı mevsimlerde göl yüzeyinde oluşan ışık kırılmaları ve yansıma efektleri.</p>
+          
+          <div class="gallery-wrapper">
+            <div class="gallery-slide" id="gallerySlide">
+              <div class="slide-img placeholder-slide" id="slide-img-box">
+                <!-- SVG dinamik çizim veya CSS arkaplanı -->
+                <div class="slide-overlay">
+                  <h4 id="slide-title">Bahar Aynası (Nisan)</h4>
+                  <p id="slide-desc">Göl yüzeyindeki 2 cm kalınlığındaki su filmi gökyüzünü yansıtır.</p>
+                </div>
+              </div>
+            </div>
+            <div class="gallery-nav">
+              <button class="btn btn-outline btn-sm" id="gal-prev"><i class="fa-solid fa-arrow-left"></i></button>
+              <span id="gal-indicator">1 / 3</span>
+              <button class="btn btn-outline btn-sm" id="gal-next"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- VERİ, İKLİM VE UYDU ANALİZİ -->
+    <section id="satellite" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-chart-line"></i> Bölüm 6</span>
+        <h2>Veri, İklim ve Uydu Analizi</h2>
+        <p>Landsat ve Sentinel-2 verilerine dayanan su yüzeyi daralma oranları ve iklimsel risk projeksiyonları.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Daralma Simülasyonu -->
+        <div class="card glass-card">
+          <h3>Zaman Tüneli: Yüzey Alanı Küçülmesi (1975 - 2025)</h3>
+          <p class="card-desc">Yıllar arasında sürükleyerek su alanının daralmasını ve obruk oluşumlarının artışını harita üzerinde izleyin.</p>
+          
+          <div class="shrinkage-sim-container">
+            <div class="shrinkage-map-box">
+              <!-- Göl Küçülmesi SVG Haritası -->
+              <svg viewBox="0 0 300 300" class="shrinkage-svg">
+                <!-- Göl Sınırları (Yıla göre ölçeklenecek) -->
+                <path d="M 110,80 C 130,70 160,100 170,130 C 180,160 210,200 190,230 C 170,250 140,240 120,220 C 100,200 90,160 100,120 C 105,95 100,90 110,80 Z" class="shrinkage-lake-path" id="svg-shrink-lake"></path>
+                
+                <!-- Statik Kurumuş Çeper Hattı (1975 Sınırı) -->
+                <path d="M 110,80 C 130,70 160,100 170,130 C 180,160 210,200 190,230 C 170,250 140,240 120,220 C 100,200 90,160 100,120 C 105,95 100,90 110,80 Z" class="shrinkage-original-boundary"></path>
+                
+                <!-- Obruk Noktaları Grubu -->
+                <g id="svg-sinkholes"></g>
+              </svg>
+              
+              <div class="shrinkage-overlay-data">
+                <span class="active-year" id="sim-year-display">1975</span>
+                <span class="active-area" id="sim-area-display">1600 km²</span>
+              </div>
+            </div>
+            
+            <div class="slider-timeline">
+              <input type="range" id="timeline-slider" min="1975" max="2025" step="5" value="1975" class="slider-input">
+              <div class="timeline-ticks">
+                <span>1975</span>
+                <span>1985</span>
+                <span>1995</span>
+                <span>2005</span>
+                <span>2015</span>
+                <span>2025</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- İklim Veri Grafikleri -->
+        <div class="card glass-card">
+          <h3>Hidrolojik Risk Metrikleri Grafiği</h3>
+          <p class="card-desc">Göl alanı daralması ile yeraltı suyu kullanımı ve obruk sayısındaki korelasyon grafiği.</p>
+          
+          <div class="chart-container">
+            <canvas id="shrinkageChart"></canvas>
+          </div>
+          
+          <div class="data-actions-row">
+            <button class="btn btn-outline btn-sm" id="btn-export-json"><i class="fa-solid fa-file-code"></i> JSON Veriyi İndir</button>
+            <span class="data-source-tag"><i class="fa-solid fa-circle-info"></i> Kaynak: Landsat / DSİ / MTA</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Alt Bilgi / Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h4>TATTA-ARCHIVE</h4>
+        <p>Tuz Gölü'nün korunması ve anlaşılması için bilimsel, kültürel ve coğrafi açık veri arşivi.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#geology">Jeoloji</a>
+        <a href="#ecology">Ekoloji</a>
+        <a href="#history">Tarih</a>
+        <a href="#mysteries">Gizemler</a>
+        <a href="#tourism">Turizm</a>
+        <a href="#satellite">Veriler</a>
+      </div>
+      <div class="footer-meta">
+        <span><i class="fa-solid fa-copyright"></i> 2026 Tatta-Archive. MIT / CC-BY-4.0</span>
+        <span>Açık Kaynak Kodlu Bilgi Bankası</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Dosyası -->
+  <script src="app.js"></script>
+</body>
+</html>

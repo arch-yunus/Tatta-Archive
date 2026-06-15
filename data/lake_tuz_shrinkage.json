@@ -1,0 +1,90 @@
+[
+  {
+    "year": 1975,
+    "surface_area_km2": 1600,
+    "average_temp_c": 11.2,
+    "groundwater_extraction_m3": 120000000,
+    "sinkhole_count": 12,
+    "lake_depth_max_m": 1.2
+  },
+  {
+    "year": 1980,
+    "surface_area_km2": 1540,
+    "average_temp_c": 11.4,
+    "groundwater_extraction_m3": 150000000,
+    "sinkhole_count": 18,
+    "lake_depth_max_m": 1.15
+  },
+  {
+    "year": 1985,
+    "surface_area_km2": 1450,
+    "average_temp_c": 11.5,
+    "groundwater_extraction_m3": 210000000,
+    "sinkhole_count": 25,
+    "lake_depth_max_m": 1.1
+  },
+  {
+    "year": 1990,
+    "surface_area_km2": 1380,
+    "average_temp_c": 11.8,
+    "groundwater_extraction_m3": 320000000,
+    "sinkhole_count": 40,
+    "lake_depth_max_m": 0.95
+  },
+  {
+    "year": 1995,
+    "surface_area_km2": 1250,
+    "average_temp_c": 12.1,
+    "groundwater_extraction_m3": 480000000,
+    "sinkhole_count": 72,
+    "lake_depth_max_m": 0.85
+  },
+  {
+    "year": 2000,
+    "surface_area_km2": 1050,
+    "average_temp_c": 12.4,
+    "groundwater_extraction_m3": 690000000,
+    "sinkhole_count": 140,
+    "lake_depth_max_m": 0.7
+  },
+  {
+    "year": 2005,
+    "surface_area_km2": 900,
+    "average_temp_c": 12.7,
+    "groundwater_extraction_m3": 850000000,
+    "sinkhole_count": 280,
+    "lake_depth_max_m": 0.6
+  },
+  {
+    "year": 2010,
+    "surface_area_km2": 820,
+    "average_temp_c": 12.9,
+    "groundwater_extraction_m3": 1100000000,
+    "sinkhole_count": 520,
+    "lake_depth_max_m": 0.55
+  },
+  {
+    "year": 2015,
+    "surface_area_km2": 750,
+    "average_temp_c": 13.2,
+    "groundwater_extraction_m3": 1400000000,
+    "sinkhole_count": 940,
+    "lake_depth_max_m": 0.48
+  },
+  {
+    "year": 2020,
+    "surface_area_km2": 620,
+    "average_temp_c": 13.5,
+    "groundwater_extraction_m3": 1850000000,
+    "sinkhole_count": 1600,
+    "lake_depth_max_m": 0.35
+  },
+  {
+    "year": 2025,
+    "surface_area_km2": 520,
+    "average_temp_c": 13.9,
+    "groundwater_extraction_m3": 2300000000,
+    "sinkhole_count": 2400,
+    "lake_depth_max_m": 0.25
+  }
+]

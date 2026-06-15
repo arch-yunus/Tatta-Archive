@@ -1,0 +1,56 @@
+[
+  {
+    "scientific_name": "Salvia halophila",
+    "turkish_name": "Tuz Gölü Şalbası",
+    "family": "Lamiaceae (Ballıbabagiller)",
+    "endemic": true,
+    "habitat": "Tuzlu bataklıklar, jipsli bozkırlar",
+    "status": "EN (Tehlikede)",
+    "description": "Dünyada sadece Tuz Gölü havzasındaki tuzlu ve nemli topraklarda yetişen, morumsu-mavi çiçekli çok yıllık endemik bir adaçayı türüdür."
+  },
+  {
+    "scientific_name": "Kalidiopsis wagenitzii",
+    "turkish_name": "Tuz İbrikotu",
+    "family": "Amaranthaceae (Ispanakgiller)",
+    "endemic": true,
+    "habitat": "Aşırı tuzlu bataklıklar ve tuz düzlükleri çeperi",
+    "status": "CR (Kritik Tehlikede)",
+    "description": "Tuz Gölü havzasına özgü monosentrik endemik bir cinstir. Yüksek tuz konsantrasyonlarına dayanabilen sucul-etli yapraklı ekstrem bir halofittir."
+  },
+  {
+    "scientific_name": "Taraxacum farinosum",
+    "turkish_name": "Tuz Karahindibası",
+    "family": "Asteraceae (Papatyagiller)",
+    "endemic": true,
+    "habitat": "Göl kıyısındaki tuzlu çayırlar",
+    "status": "VU (Duyarlı)",
+    "description": "Tuzlu topraklara adapte olmuş, rozet yapraklı ve sarı çiçekli endemik bir hindiba türüdür. Yapraklarındaki mumsu tabaka tuz kaybını önler."
+  },
+  {
+    "scientific_name": "Microcnemum coralloides",
+    "turkish_name": "Tuz Mercanotu",
+    "family": "Amaranthaceae (Ispanakgiller)",
+    "endemic": false,
+    "habitat": "Çok yüksek tuzluluk oranına sahip ıslak çamurlar",
+    "status": "VU (Duyarlı)",
+    "description": "Görünümü küçük mercan dallarını andıran, boğumlu ve etli gövdeye sahip tek yıllık bir bitkidir. Sonbaharda kırmızı/pembe renge bürünür."
+  },
+  {
+    "scientific_name": "Limonium lilacinum",
+    "turkish_name": "Eflatun Limonyum",
+    "family": "Plumbaginaceae (Dişotugiller)",
+    "endemic": true,
+    "habitat": "Tuzlu bozkırlar, göl çevresi alüvyonal düzlükler",
+    "status": "LC (Asgari Endişe)",
+    "description": "Gölün etrafındaki tuzlu topraklarda geniş topluluklar oluşturan, yaz sonuna doğru açan eflatun renkli kuru çiçekleriyle bilinen bir bitkidir."
+  },
+  {
+    "scientific_name": "Suaeda carpathica",
+    "turkish_name": "Tuzcul Süveyda",
+    "family": "Amaranthaceae (Ispanakgiller)",
+    "endemic": false,
+    "habitat": "Tuzlu göl kıyıları, geçici tuzlu gölet çeperleri",
+    "status": "LC (Asgari Endişe)",
+    "description": "Sodyum biriktirme kapasitesi çok yüksek olan, yaprakları tuz yoğunluğuna göre yeşilden parlak kırmızıya dönen öncü bir halofit türüdür."
+  }
+]
