@@ -11,6 +11,12 @@
   <meta name="author" content="Tatta-Archive Team">
   <link rel="canonical" href="https://arch-yunus.github.io/Tatta-Archive/">
 
+  <!-- Open Graph -->
+  <meta property="og:title" content="Tatta-Archive | Tuz Gölü Disiplinlerarası Bilgi Bankası">
+  <meta property="og:description" content="Tuz Gölü'nün jeolojisi, ekolojisi, tarihi ve uydu verilerinin interaktif arşivi.">
+  <meta property="og:url" content="https://arch-yunus.github.io/Tatta-Archive/">
+  <meta property="og:type" content="website">
+
   <!-- Font ve İkonlar -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +30,18 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- Yükleme Ekranı -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo"><i class="fa-solid fa-droplet"></i> TATTA</div>
+      <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+      <div class="loading-text" id="loadingText">Arşiv yükleniyor...</div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
 
   <!-- Arka Plan Efektleri -->
   <div class="bg-glow bg-glow-pink"></div>
@@ -62,7 +80,7 @@
         <span class="badge"><i class="fa-solid fa-atom"></i> Tuz Gölü Multidisipliner Veri Bankası</span>
         <h1>Gökyüzünün Yeryüzündeki Aynası: <span class="text-gradient">TATTA</span></h1>
         <p class="hero-desc">
-          Türkiye'nin kalbindeki devasa buharlaşma havzasının sırlarını keşfedin. Antik coğrafyacıların Tatta'sından, uzaydan çekilen Landsat analizlerine, extrem mikrobiyolojiden kaybolan ufuk çizgisi efsanelerine kadar disiplinlerarası bir yolculuk.
+          Türkiye'nin kalbindeki devasa buharlaşma havzasının sırlarını keşfedin. Antik coğrafyacıların Tatta'sından, uzaydan çekilen Landsat analizlerine, ekstrem mikrobiyolojiden kaybolan ufuk çizgisi efsanelerine kadar disiplinlerarası bir yolculuk.
         </p>
         
         <div class="hero-actions">
@@ -72,7 +90,7 @@
 
         <!-- Canlı İstatistik Kartları -->
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card" id="stat-card-area">
             <div class="stat-icon pink-glow"><i class="fa-solid fa-expand"></i></div>
             <div class="stat-details">
               <span class="stat-label">Ortalama Alan</span>
@@ -84,16 +102,16 @@
             <div class="stat-icon cyan-glow"><i class="fa-solid fa-flask-vial"></i></div>
             <div class="stat-details">
               <span class="stat-label">Tuzluluk Oranı</span>
-              <span class="stat-val">%32.4</span>
+              <span class="stat-val" id="stat-salinity">%32.4</span>
               <span class="stat-sub text-info"><i class="fa-solid fa-equals"></i> Doygun Halit</span>
             </div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card stat-card-clickable" id="stat-card-flamingo" title="Flamingo popülasyon grafiğini görmek için tıkla">
             <div class="stat-icon pink-glow"><i class="fa-solid fa-dove"></i></div>
             <div class="stat-details">
               <span class="stat-label">Flamingo Popülasyonu</span>
-              <span class="stat-val">22,000+</span>
-              <span class="stat-sub text-success"><i class="fa-solid fa-arrow-trend-up"></i> Bahar Göçü</span>
+              <span class="stat-val" id="stat-flamingo">22,000+</span>
+              <span class="stat-sub text-success"><i class="fa-solid fa-arrow-trend-up"></i> Bahar Göçü <i class="fa-solid fa-chart-simple" style="margin-left:4px"></i></span>
             </div>
           </div>
           <div class="stat-card">
@@ -105,8 +123,64 @@
             </div>
           </div>
         </div>
+
+        <!-- Canlı Göl Durumu Widget'ı -->
+        <div class="live-status-panel" id="liveStatusPanel">
+          <div class="live-status-header">
+            <span class="live-dot"></span>
+            <span class="live-title">CANLI GÖL DURUMU</span>
+            <span class="live-timestamp" id="liveTimestamp">--:--</span>
+          </div>
+          <div class="live-status-grid">
+            <div class="live-item">
+              <i class="fa-solid fa-thermometer-half" style="color:#f97316"></i>
+              <span class="live-val" id="liveTemp">--</span>
+              <span class="live-unit">°C Hava</span>
+            </div>
+            <div class="live-item">
+              <i class="fa-solid fa-water" style="color:#00e5ff"></i>
+              <span class="live-val" id="liveWater">--</span>
+              <span class="live-unit">cm Su</span>
+            </div>
+            <div class="live-item">
+              <i class="fa-solid fa-flask" style="color:#ff7597"></i>
+              <span class="live-val" id="livePH">--</span>
+              <span class="live-unit">pH</span>
+            </div>
+            <div class="live-item">
+              <i class="fa-solid fa-wind" style="color:#94a3b8"></i>
+              <span class="live-val" id="liveWind">--</span>
+              <span class="live-unit">km/s Rüzgar</span>
+            </div>
+            <div class="live-item">
+              <i class="fa-solid fa-dove" style="color:#f9a8d4"></i>
+              <span class="live-val" id="liveFlamingoSight">--</span>
+              <span class="live-unit">Kuş gözlemi</span>
+            </div>
+            <div class="live-item">
+              <i class="fa-solid fa-satellite" style="color:#a78bfa"></i>
+              <span class="live-val" id="liveNDWI">--</span>
+              <span class="live-unit">NDWI İndeks</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- Flamingo Popülasyon Modalı -->
+    <div class="modal-overlay" id="flamingoModal">
+      <div class="modal-box">
+        <button class="modal-close" id="closeFlamingoModal"><i class="fa-solid fa-xmark"></i></button>
+        <h3><i class="fa-solid fa-dove" style="color:#ff7597"></i> Flamingo Popülasyon Trendi</h3>
+        <p class="card-desc">Tuz Gölü'ndeki Phoenicopterus roseus popülasyonunun 1975'ten günümüze değişimi.</p>
+        <div class="modal-chart-wrap">
+          <canvas id="flamingoChart"></canvas>
+        </div>
+        <div class="modal-info">
+          <i class="fa-solid fa-circle-info"></i> 1975 sonrası kuluçka alanlarının korunmasıyla popülasyon dramatik biçimde artmıştır. Günümüzde yıllık 22.000+ birey gölü ziyaret etmektedir.
+        </div>
+      </div>
+    </div>
 
 
     <!-- JEOLOJİ VE COĞRAFİ DİNAMİKLER -->
@@ -164,6 +238,7 @@
               <div class="drill-layer l-gypsum" data-depth="2-5m" data-layer="Jips ve Anhidrit" data-age="Geç Pleyistosen" data-composition="CaSO4.2H2O, İğnemsi Kristalli"><span class="layer-depth-tag">5m</span></div>
               <div class="drill-layer l-clay" data-depth="5-10m" data-layer="Gölsel Yeşil Çamur / Kil" data-age="Orta Pleyistosen" data-composition="Montmorillonit, Kuvars, İnce Karbonat"><span class="layer-depth-tag">10m</span></div>
               <div class="drill-layer l-sandstone" data-depth="10-15m" data-layer="Kırıntılı Kumtaşı & Marn" data-age="Miyosen (Eski Havza)" data-composition="Kalsit çimentolu detritik kuvars taneleri"><span class="layer-depth-tag">15m</span></div>
+              <div class="drill-layer l-basalt" data-depth="15-20m" data-layer="Volkanik Bazalt / Kül Taşı" data-age="Alt Miyosen / Oligosen" data-composition="Plajiyoklas, Piroksen, Demir Oksit — Olasılıklı Volkanik Tüf"><span class="layer-depth-tag">20m</span></div>
             </div>
             
             <div class="drill-controls-panel">
@@ -171,6 +246,10 @@
               
               <div class="drill-output-card" id="drillOutputCard">
                 <div class="output-placeholder">Sondajı başlatarak derin katmanlardaki mineralleri ve jeolojik dönemleri inceleyin.</div>
+              </div>
+
+              <div id="drillReportBtn" style="display:none">
+                <button class="btn btn-outline btn-sm btn-full" id="btn-drill-report"><i class="fa-solid fa-file-lines"></i> Sondaj Raporu Oluştur</button>
               </div>
             </div>
           </div>
@@ -377,6 +456,15 @@
       <div class="timeline-container">
         <!-- Zaman Çizelgesi Öğeleri -->
         <div class="timeline-item">
+          <div class="timeline-badge"><i class="fa-solid fa-landmark"></i></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-date">M.Ö. 14. Yüzyıl</span>
+            <h3>Hitit Döneminde Tuz Ticareti</h3>
+            <p>Hitit arşivlerine (Boğazköy tabletleri) göre dönemin Anadolu'sundaki tuz ticaretinin önemli bir kısmı İç Anadolu'daki kapalı havzalardan sağlanıyordu. Tarihi kaynaklar, Hattusa sarayına düzenli olarak tuz sevk edildiğini belgeler. Tatta bölgesi bu ticaret ağının stratejik bir halkasıydı.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
           <div class="timeline-badge"><i class="fa-solid fa-scroll"></i></div>
           <div class="timeline-card glass-card">
             <span class="timeline-date">M.Ö. 1. Yüzyıl</span>
@@ -409,6 +497,19 @@
             <span class="timeline-date">19. Yüzyıl - Günümüz</span>
             <h3>Düyun-ı Umumiye'den Modern Sanayiye</h3>
             <p>Osmanlı İmparatorluğu'nun son döneminde dış borçların ödenmesi için Tuz Gölü'nün gelirleri Düyun-ı Umumiye idaresine devredildi. Cumhuriyet sonrasında ise TEKEL idaresine geçen tuzlalar, günümüzde modern teknolojilerle yılda milyonlarca ton tuz üreterek ülke sanayisini desteklemektedir.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-badge" style="border-color:#ef4444; color:#ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4)"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="timeline-card glass-card" style="border-color:rgba(239,68,68,0.2)">
+            <span class="timeline-date" style="color:#ef4444">2000'ler - Günümüz</span>
+            <h3>Obruk Krizi: Toprak Çöküşleri</h3>
+            <p>Aşırı yeraltı suyu çekimi sonucu havzada obruk (sinkhole) sayısı çarpıcı biçimde artmaya başladı. 1975'te 12 olan obruk sayısı 2025 itibarıyla <strong>2.400'ü</strong> aşmıştır. Cihanbeyli başta olmak üzere tarım alanlarını, yolları ve altyapıyı tehdit eden bu jeolojik kriz, Türkiye'nin en kritik ekolojik acil durumlarından biri olarak kabul edilmektedir.</p>
+            <div class="timeline-crisis-bar">
+              <span><i class="fa-solid fa-arrow-up-right-dots"></i> 1975: 12 obruk</span>
+              <span><i class="fa-solid fa-circle-exclamation" style="color:#ef4444"></i> 2025: 2.400+ obruk</span>
+            </div>
           </div>
         </div>
       </div>
@@ -660,6 +761,12 @@
         <div class="card glass-card">
           <h3>Zaman Tüneli: Yüzey Alanı Küçülmesi (1975 - 2025)</h3>
           <p class="card-desc">Yıllar arasında sürükleyerek su alanının daralmasını ve obruk oluşumlarının artışını harita üzerinde izleyin.</p>
+
+          <div class="risk-toggle-row">
+            <button class="btn-risk-toggle" id="btnRiskOverlay" title="Obruk Risk Bölgelerini Göster/Gizle">
+              <i class="fa-solid fa-layer-group"></i> Risk Zonları
+            </button>
+          </div>
           
           <div class="shrinkage-sim-container">
             <div class="shrinkage-map-box">
@@ -671,6 +778,18 @@
                 <!-- Statik Kurumuş Çeper Hattı (1975 Sınırı) -->
                 <path d="M 110,80 C 130,70 160,100 170,130 C 180,160 210,200 190,230 C 170,250 140,240 120,220 C 100,200 90,160 100,120 C 105,95 100,90 110,80 Z" class="shrinkage-original-boundary"></path>
                 
+                <!-- Risk Bölgeleri Overlay -->
+                <g id="svg-risk-overlay" style="display:none">
+                  <ellipse cx="130" cy="120" rx="40" ry="25" class="risk-zone risk-high"/>
+                  <ellipse cx="175" cy="185" rx="30" ry="20" class="risk-zone risk-high"/>
+                  <ellipse cx="105" cy="170" rx="25" ry="35" class="risk-zone risk-medium"/>
+                  <ellipse cx="160" cy="240" rx="35" ry="18" class="risk-zone risk-medium"/>
+                  <ellipse cx="145" cy="140" rx="55" ry="40" class="risk-zone risk-low"/>
+                  <text x="130" y="120" text-anchor="middle" class="risk-label">Yüksek</text>
+                  <text x="175" y="185" text-anchor="middle" class="risk-label">Yüksek</text>
+                  <text x="105" y="170" text-anchor="middle" class="risk-label">Orta</text>
+                </g>
+
                 <!-- Obruk Noktaları Grubu -->
                 <g id="svg-sinkholes"></g>
               </svg>
@@ -707,6 +826,41 @@
           <div class="data-actions-row">
             <button class="btn btn-outline btn-sm" id="btn-export-json"><i class="fa-solid fa-file-code"></i> JSON Veriyi İndir</button>
             <span class="data-source-tag"><i class="fa-solid fa-circle-info"></i> Kaynak: Landsat / DSİ / MTA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- İklim Projeksiyon Karşılaştırıcı (YENİ) -->
+      <div class="card glass-card margin-top-20">
+        <h3>İklim Senaryosu Projektör: 2025 - 2055</h3>
+        <p class="card-desc">RCP 4.5, RCP 8.5 ve Sürdürülebilir senaryolarına göre Tuz Gölü yüzey alanının gelecekteki muhtemel seyri.</p>
+        
+        <div class="scenario-selector-row">
+          <button class="btn-scenario active" data-scenario="all" id="scenBtn-all"><i class="fa-solid fa-layer-group"></i> Tüm Senaryolar</button>
+          <button class="btn-scenario" data-scenario="sustainable" id="scenBtn-sustainable" style="--s-color:#4ade80"><span class="scenario-dot" style="background:#4ade80"></span>Sürdürülebilir</button>
+          <button class="btn-scenario" data-scenario="rcp45" id="scenBtn-rcp45" style="--s-color:#fbbf24"><span class="scenario-dot" style="background:#fbbf24"></span>RCP 4.5 (Orta)</button>
+          <button class="btn-scenario" data-scenario="rcp85" id="scenBtn-rcp85" style="--s-color:#ef4444"><span class="scenario-dot" style="background:#ef4444"></span>RCP 8.5 (Aşırı)</button>
+        </div>
+
+        <div class="projection-chart-container">
+          <canvas id="projectionChart"></canvas>
+        </div>
+
+        <div class="scenario-info-row" id="scenarioInfoRow">
+          <div class="scenario-info-card" style="border-color: rgba(74,222,128,0.3)">
+            <div class="si-label" style="color:#4ade80">Sürdürülebilir (2055 Tahmini)</div>
+            <div class="si-value">~580 km²</div>
+            <div class="si-desc">Tarımsal su kullanımı azaltılır, yağış artışı gözlemlenir.</div>
+          </div>
+          <div class="scenario-info-card" style="border-color: rgba(251,191,36,0.3)">
+            <div class="si-label" style="color:#fbbf24">RCP 4.5 (2055 Tahmini)</div>
+            <div class="si-value">~310 km²</div>
+            <div class="si-desc">Orta iklim senaryosu. Mevcut politikalar korunursa beklenen gelişme.</div>
+          </div>
+          <div class="scenario-info-card" style="border-color: rgba(239,68,68,0.3)">
+            <div class="si-label" style="color:#ef4444">RCP 8.5 (2055 Tahmini)</div>
+            <div class="si-value">~120 km²</div>
+            <div class="si-desc">Kontrolsüz emisyonlar ve artan buharlaşma. Kritik seviye.</div>
           </div>
         </div>
       </div>
@@ -785,6 +939,14 @@
       <div class="footer-brand">
         <h4>TATTA-ARCHIVE</h4>
         <p>Tuz Gölü'nün korunması ve anlaşılması için bilimsel, kültürel ve coğrafi açık veri arşivi.</p>
+        <div class="footer-social">
+          <a href="https://github.com/arch-yunus/Tatta-Archive" target="_blank" rel="noopener" class="footer-social-link" title="GitHub'da İncele">
+            <i class="fa-brands fa-github"></i> GitHub
+          </a>
+          <a href="https://arch-yunus.github.io/Tatta-Archive/" target="_blank" rel="noopener" class="footer-social-link" title="Canlı Demo">
+            <i class="fa-solid fa-globe"></i> Canlı Demo
+          </a>
+        </div>
       </div>
       <div class="footer-links">
         <a href="#geology">Jeoloji</a>
@@ -794,9 +956,14 @@
         <a href="#tourism">Turizm</a>
         <a href="#satellite">Veriler</a>
       </div>
+      <div class="footer-badge-row">
+        <span class="footer-badge"><i class="fa-solid fa-code"></i> MIT Lisansı</span>
+        <span class="footer-badge"><i class="fa-solid fa-creative-commons"></i> CC-BY-4.0 İçerik</span>
+        <span class="footer-badge"><i class="fa-solid fa-star"></i> Açık Kaynak</span>
+      </div>
       <div class="footer-meta">
         <span><i class="fa-solid fa-copyright"></i> 2026 Tatta-Archive. MIT / CC-BY-4.0</span>
-        <span>Açık Kaynak Kodlu Bilgi Bankası</span>
+        <span>Son Güncelleme: Haziran 2026</span>
       </div>
     </div>
   </footer>

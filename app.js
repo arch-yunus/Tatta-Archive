@@ -1,10 +1,18 @@
-/* ==========================================================================
-   Tatta-Archive JS: Premium Masterpiece Dashboard Interactivity
-   ========================================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
+  // Loading screen
+  initLoadingScreen();
+
+  // Scroll progress bar
+  initScrollProgress();
+
   // Navigation & SPA Section Switching
   initNavigation();
+
+  // Live lake status widget
+  initLiveStatusPanel();
+
+  // Flamingo population modal
+  initFlamingoModal();
 
   // Basin Map Interactions (Geology)
   initBasinMap();
@@ -48,9 +56,167 @@ document.addEventListener("DOMContentLoaded", () => {
   // Shrinkage Timeline & Chart (Data & Satellite)
   initShrinkageSimulator();
 
+  // Obruk Risk Overlay Toggle
+  initRiskOverlay();
+
   // Multispectral Satellite Comparator (Data & Satellite)
   initSatelliteComparator();
+
+  // Climate Projection Chart (Data & Satellite)
+  initClimateProjection();
 });
+
+/* ==========================================================================
+   0a. LOADING SCREEN
+   ========================================================================== */
+function initLoadingScreen() {
+  const screen = document.getElementById("loadingScreen");
+  const bar = document.getElementById("loadingBar");
+  const text = document.getElementById("loadingText");
+  if (!screen) return;
+
+  const steps = [
+    { pct: 20, msg: "Jeolojik veriler yükleniyor..." },
+    { pct: 45, msg: "Ekoloji kataloğu hazırlanıyor..." },
+    { pct: 70, msg: "Radar sistemi başlatılıyor..." },
+    { pct: 90, msg: "Uydu analiz modülleri aktif..." },
+    { pct: 100, msg: "Arşiv hazır!" }
+  ];
+
+  let i = 0;
+  const tick = setInterval(() => {
+    if (i >= steps.length) {
+      clearInterval(tick);
+      setTimeout(() => screen.classList.add("hidden"), 300);
+      return;
+    }
+    bar.style.width = steps[i].pct + "%";
+    text.innerText = steps[i].msg;
+    i++;
+  }, 360);
+}
+
+/* ==========================================================================
+   0b. SCROLL PROGRESS BAR
+   ========================================================================== */
+function initScrollProgress() {
+  const bar = document.getElementById("scrollProgress");
+  if (!bar) return;
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + "%";
+  }, { passive: true });
+}
+
+/* ==========================================================================
+   0c. LIVE LAKE STATUS WIDGET
+   ========================================================================== */
+function initLiveStatusPanel() {
+  const tsEl = document.getElementById("liveTimestamp");
+  const tempEl = document.getElementById("liveTemp");
+  const waterEl = document.getElementById("liveWater");
+  const phEl = document.getElementById("livePH");
+  const windEl = document.getElementById("liveWind");
+  const flamingoEl = document.getElementById("liveFlamingoSight");
+  const ndwiEl = document.getElementById("liveNDWI");
+  if (!tsEl) return;
+
+  // Realistic seasonal base values (simulated, not real API)
+  const baseData = {
+    temp: 32,    // °C summer
+    water: 3,    // cm thin film
+    ph: 7.1,
+    wind: 8,     // km/s
+    flamingo: 840,
+    ndwi: 0.28
+  };
+
+  function rand(base, jitter) {
+    return (base + (Math.random() - 0.5) * jitter * 2).toFixed(1);
+  }
+
+  function update() {
+    const now = new Date();
+    tsEl.innerText = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    tempEl.innerText = rand(baseData.temp, 0.4);
+    waterEl.innerText = rand(baseData.water, 0.3);
+    phEl.innerText = rand(baseData.ph, 0.05);
+    windEl.innerText = rand(baseData.wind, 1.5);
+    flamingoEl.innerText = Math.round(baseData.flamingo + (Math.random() - 0.5) * 40);
+    ndwiEl.innerText = rand(baseData.ndwi, 0.02);
+  }
+
+  update();
+  setInterval(update, 5000);
+}
+
+/* ==========================================================================
+   0d. FLAMINGO POPULATION MODAL
+   ========================================================================== */
+let flamingoChartInstance = null;
+
+function initFlamingoModal() {
+  const triggerCard = document.getElementById("stat-card-flamingo");
+  const modal = document.getElementById("flamingoModal");
+  const closeBtn = document.getElementById("closeFlamingoModal");
+  if (!triggerCard || !modal) return;
+
+  const flamingoPopData = {
+    years: [1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025],
+    counts: [3200, 4800, 6500, 8200, 10500, 13000, 15200, 17800, 19500, 21000, 22400]
+  };
+
+  function openModal() {
+    modal.classList.add("open");
+    if (!flamingoChartInstance) {
+      const ctx = document.getElementById("flamingoChart");
+      if (!ctx) return;
+      flamingoChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: flamingoPopData.years,
+          datasets: [{
+            label: "Flamingo Popülasyonu (Birey)",
+            data: flamingoPopData.counts,
+            borderColor: "#ff7597",
+            backgroundColor: "rgba(255,117,151,0.12)",
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2.5,
+            pointBackgroundColor: "#ff7597",
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: "#94a3b8", font: { family: "Outfit", size: 11 } } }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(255,255,255,0.05)" },
+              ticks: { color: "#94a3b8", font: { family: "Outfit" } }
+            },
+            y: {
+              grid: { color: "rgba(255,255,255,0.05)" },
+              ticks: { color: "#ff7597", font: { family: "Outfit" } },
+              title: { display: true, text: "Birey Sayısı", color: "#ff7597" }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  triggerCard.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", () => modal.classList.remove("open"));
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") modal.classList.remove("open"); });
+}
+
 
 /* ==========================================================================
    1. NAVIGATION SYSTEM
@@ -156,6 +322,8 @@ function initCoreDrillSimulator() {
   const drillBit = document.getElementById("drillBit");
   const layers = document.querySelectorAll(".drill-layer");
   const outputCard = document.getElementById("drillOutputCard");
+  const reportBtnWrap = document.getElementById("drillReportBtn");
+  const btnReport = document.getElementById("btn-drill-report");
 
   if (!btnStart) return;
 
@@ -163,6 +331,7 @@ function initCoreDrillSimulator() {
     // Reset state
     btnStart.disabled = true;
     btnStart.innerHTML = '<i class="fa-solid fa-sync fa-spin"></i> Sondaj Sürüyor...';
+    if (reportBtnWrap) reportBtnWrap.style.display = "none";
     
     layers.forEach(layer => layer.classList.remove("extracted"));
     drillBit.classList.remove("drilling");
@@ -180,44 +349,78 @@ function initCoreDrillSimulator() {
       </div>
     `;
 
-    // Timeline of drilling through layers
-    // Layer 1: Halite (0 - 2m) - 1.5s
+    // Layer 1: Halite (0-2m) — 1.5s
+    setTimeout(() => { layers[0].classList.add("extracted"); updateDrillLog(layers[0]); }, 1500);
+    // Layer 2: Gypsum (2-5m) — 3.0s
+    setTimeout(() => { layers[1].classList.add("extracted"); updateDrillLog(layers[1]); }, 3000);
+    // Layer 3: Clay (5-10m) — 4.5s
+    setTimeout(() => { layers[2].classList.add("extracted"); updateDrillLog(layers[2]); }, 4500);
+    // Layer 4: Sandstone (10-15m) — 6.0s
+    setTimeout(() => { layers[3].classList.add("extracted"); updateDrillLog(layers[3]); }, 6000);
+    // Layer 5: Basalt (15-20m) — 7.5s
     setTimeout(() => {
-      layers[0].classList.add("extracted");
-      updateDrillLog(layers[0]);
-    }, 1500);
-
-    // Layer 2: Gypsum (2 - 5m) - 3.0s
-    setTimeout(() => {
-      layers[1].classList.add("extracted");
-      updateDrillLog(layers[1]);
-    }, 3000);
-
-    // Layer 3: Clay (5 - 10m) - 4.5s
-    setTimeout(() => {
-      layers[2].classList.add("extracted");
-      updateDrillLog(layers[2]);
-    }, 4500);
-
-    // Layer 4: Sandstone (10 - 15m) - 6.0s
-    setTimeout(() => {
-      layers[3].classList.add("extracted");
-      updateDrillLog(layers[3]);
-      
+      layers[4] && layers[4].classList.add("extracted");
+      layers[4] && updateDrillLog(layers[4]);
       // Completion State
       btnStart.disabled = false;
-      btnStart.innerHTML = '<i class="fa-solid fa-check"></i> Sondaj Tamamlandı';
-    }, 6000);
+      btnStart.innerHTML = '<i class="fa-solid fa-check"></i> Sondaj Tamamlandı — Yeniden Başlat';
+      if (reportBtnWrap) reportBtnWrap.style.display = "block";
+    }, 7500);
   });
 
   // Layer click handler
   layers.forEach(layer => {
     layer.addEventListener("click", () => {
-      if (layer.classList.contains("extracted")) {
-        updateDrillLog(layer);
-      }
+      if (layer.classList.contains("extracted")) updateDrillLog(layer);
     });
   });
+
+  // Drill report button
+  if (btnReport) {
+    btnReport.addEventListener("click", () => {
+      const reportLines = Array.from(layers)
+        .filter(l => l.classList.contains("extracted"))
+        .map(l => `<tr>
+          <td><strong>${l.getAttribute("data-depth")}</strong></td>
+          <td>${l.getAttribute("data-layer")}</td>
+          <td>${l.getAttribute("data-age")}</td>
+          <td style="color:var(--secondary-cyan);font-size:0.75rem">${l.getAttribute("data-composition")}</td>
+        </tr>`).join("");
+
+      const reportHTML = `
+        <div style="position:fixed;inset:0;background:rgba(6,9,19,0.9);backdrop-filter:blur(10px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px" id="drillReportModal">
+          <div style="background:var(--bg-dark);border:1px solid var(--border-active);border-radius:16px;padding:32px;max-width:650px;width:100%;max-height:80vh;overflow-y:auto">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+              <div>
+                <div style="font-size:0.7rem;color:var(--secondary-cyan);font-family:var(--font-title);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">TATTA-ARCHIVE / Jeoloji Modülü</div>
+                <h3 style="font-family:var(--font-title);font-size:1.3rem">Stratigrafik Sondaj Raporu</h3>
+              </div>
+              <button onclick="document.getElementById('drillReportModal').remove()" style="background:none;border:1px solid var(--border-light);color:var(--text-muted);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem">✕ Kapat</button>
+            </div>
+            <div style="display:flex;gap:20px;margin-bottom:20px;font-size:0.82rem;color:var(--text-secondary)">
+              <span><strong>Koordinat:</strong> 38.7°K / 33.4°D</span>
+              <span><strong>Toplam Derinlik:</strong> 20m</span>
+              <span><strong>Tarih:</strong> ${new Date().toLocaleDateString("tr-TR")}</span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-active)">
+                  <th style="text-align:left;padding:8px;color:var(--secondary-cyan);font-family:var(--font-title)">Derinlik</th>
+                  <th style="text-align:left;padding:8px;color:var(--secondary-cyan);font-family:var(--font-title)">Formasyon</th>
+                  <th style="text-align:left;padding:8px;color:var(--secondary-cyan);font-family:var(--font-title)">Jeolojik Dönem</th>
+                  <th style="text-align:left;padding:8px;color:var(--secondary-cyan);font-family:var(--font-title)">Kompozisyon</th>
+                </tr>
+              </thead>
+              <tbody style="color:var(--text-secondary)">${reportLines}</tbody>
+            </table>
+            <div style="margin-top:16px;font-size:0.72rem;color:var(--text-muted);border-top:1px solid var(--border-light);padding-top:12px">
+              Kaynak: Tatta-Archive Jeoloji Simülatörü — Referans: MTA Karot Veri Bankası &amp; DSİ Sondaj Arşivi
+            </div>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML("beforeend", reportHTML);
+    });
+  }
 
   function updateDrillLog(layer) {
     const depth = layer.getAttribute("data-depth");
@@ -238,6 +441,7 @@ function initCoreDrillSimulator() {
     `;
   }
 }
+
 
 /* ==========================================================================
    4. GEOLOGY: SU BÜTÇESİ HESAPLAYICI
@@ -1399,3 +1603,129 @@ function renderChart() {
     }
   });
 }
+
+/* ==========================================================================
+   17. OBRUK RİSK ZONE OVERLAY TOGGLE
+   ========================================================================== */
+function initRiskOverlay() {
+  const btn = document.getElementById("btnRiskOverlay");
+  const overlay = document.getElementById("svg-risk-overlay");
+  if (!btn || !overlay) return;
+
+  let active = false;
+  btn.addEventListener("click", () => {
+    active = !active;
+    overlay.style.display = active ? "block" : "none";
+    btn.classList.toggle("active", active);
+    btn.innerHTML = active
+      ? '<i class="fa-solid fa-eye-slash"></i> Risk Zonlarını Gizle'
+      : '<i class="fa-solid fa-layer-group"></i> Risk Zonları';
+  });
+}
+
+/* ==========================================================================
+   18. İKLİM PROJEKSİYON GRAFİĞİ (YENİ)
+   ========================================================================== */
+let projectionChartInstance = null;
+
+const projectionData = {
+  labels: [2025, 2030, 2035, 2040, 2045, 2050, 2055],
+  sustainable: [520, 535, 548, 558, 566, 574, 580],
+  rcp45:       [520, 495, 465, 430, 385, 345, 310],
+  rcp85:       [520, 470, 408, 330, 245, 175, 120]
+};
+
+function buildProjectionDatasets(scenario) {
+  const all = [
+    {
+      label: 'Sürdürülebilir Senaryo',
+      data: projectionData.sustainable,
+      borderColor: '#4ade80',
+      backgroundColor: 'rgba(74,222,128,0.08)',
+      tension: 0.4, borderWidth: 2.5, fill: true,
+      hidden: scenario !== 'all' && scenario !== 'sustainable'
+    },
+    {
+      label: 'RCP 4.5 (Orta)',
+      data: projectionData.rcp45,
+      borderColor: '#fbbf24',
+      backgroundColor: 'rgba(251,191,36,0.08)',
+      tension: 0.4, borderWidth: 2.5, fill: true,
+      hidden: scenario !== 'all' && scenario !== 'rcp45'
+    },
+    {
+      label: 'RCP 8.5 (Aşırı)',
+      data: projectionData.rcp85,
+      borderColor: '#ef4444',
+      backgroundColor: 'rgba(239,68,68,0.08)',
+      tension: 0.4, borderWidth: 2.5, fill: true,
+      hidden: scenario !== 'all' && scenario !== 'rcp85'
+    }
+  ];
+  return all;
+}
+
+function initClimateProjection() {
+  const ctx = document.getElementById("projectionChart");
+  if (!ctx) return;
+
+  const scenBtns = document.querySelectorAll(".btn-scenario");
+
+  projectionChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: projectionData.labels,
+      datasets: buildProjectionDatasets('all')
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y} km²`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8', font: { family: 'Outfit' } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#94a3b8', font: { family: 'Outfit' } },
+          title: { display: true, text: 'Göl Alanı (km²)', color: '#94a3b8' },
+          min: 0,
+          max: 650
+        }
+      }
+    }
+  });
+
+  scenBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      scenBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const scenario = btn.getAttribute('data-scenario');
+      // Update chart dataset visibility
+      projectionChartInstance.data.datasets.forEach(ds => {
+        if (scenario === 'all') {
+          ds.hidden = false;
+        } else if (scenario === 'sustainable') {
+          ds.hidden = !ds.label.includes('Sürdürülebilir');
+        } else if (scenario === 'rcp45') {
+          ds.hidden = !ds.label.includes('4.5');
+        } else if (scenario === 'rcp85') {
+          ds.hidden = !ds.label.includes('8.5');
+        }
+      });
+      projectionChartInstance.update();
+    });
+  });
+}
+
