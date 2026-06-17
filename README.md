@@ -2,12 +2,14 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-2.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-3.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
 
 **[🌐 Canlı Demo → GitHub Pages](https://arch-yunus.github.io/Tatta-Archive/)** | **[📊 Veri Setleri](./data/)** | **[🔬 Analiz Scriptleri](./scripts/)** | **[🤝 Katkıda Bulun](./CONTRIBUTING.md)**
+
+![Tuz Gölü — Gökyüzünün Yeryüzündeki Aynası](./banner.png)
 
 </div>
 

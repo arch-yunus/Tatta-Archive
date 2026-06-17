@@ -181,8 +181,129 @@ body {
 .content-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 120px 24px 60px 24px;
+  padding: 80px 24px 60px 24px;
   min-height: calc(100vh - 150px);
+}
+
+/* ==========================================================================
+   HEROSİNEMATİK BANNER
+   ========================================================================== */
+.hero-banner-wrap {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 0;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 80px rgba(255,117,151,0.08);
+  animation: banner-reveal 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes banner-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hero-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+  transition: transform 8s ease;
+  transform: scale(1.04);
+}
+
+.hero-banner-wrap:hover .hero-banner-img {
+  transform: scale(1.0);
+}
+
+/* Katmanlı degrade overlay */
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(6, 9, 19, 0.55) 0%,
+      rgba(6, 9, 19, 0.10) 40%,
+      rgba(6, 9, 19, 0.55) 75%,
+      rgba(6, 9, 19, 0.92) 100%
+    );
+  pointer-events: none;
+}
+
+/* İnce üst tarama efekti */
+.hero-banner-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+/* Banner altyazı etiketleri */
+.hero-banner-caption {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.banner-caption-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(6, 9, 19, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.75);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  font-family: var(--font-title);
+}
+
+.banner-caption-tag i {
+  color: var(--primary-pink);
+  font-size: 0.75rem;
+}
+
+/* Banner üstüne gelen hero block */
+.hero-block {
+  margin-top: -60px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .hero-banner-wrap {
+    height: 220px;
+    border-radius: 14px;
+  }
+  .hero-block {
+    margin-top: -30px;
+  }
 }
 
 /* Bölüm Yapısı */
@@ -277,9 +398,10 @@ body {
 }
 
 /* HERO SECTION ÖZELLEŞTİRMELERİ */
+/* hero-block temel stilleri banner bloğuyla üstte yönetilmektedir */
 .hero-block {
   text-align: center;
-  padding: 60px 20px;
+  padding: 40px 20px 60px 20px;
   max-width: 850px;
   margin: 0 auto;
 }
