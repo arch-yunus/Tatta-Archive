@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-6.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-7.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
@@ -86,7 +86,7 @@ Tuz Gölü'nün dünyadaki diğer ekstrem hipersalin göller arasındaki konumun
 | **Büyük Tuz Gölü (GSL)** | ABD | 2.500 - 4.300 | %5 - %27 | Na⁺, Cl⁻, Mg²⁺ | 1.280 | Havzaya Gelen Nehirlerin Barajlanması |
 | **Lut Gölü (Ölü Deniz)** | Ürdün / İsrail | 600 | %34 | Mg²⁺, Na⁺, Ca²⁺, Cl⁻ | -430 | Su Girişlerinin Kesilmesi, Aşırı Çökme |
 | **Salar de Uyuni** | Bolivya | 10.582 | > %35 (Katı Kabuk) | Li⁺, Na⁺, K⁺, Cl⁻ | 3.656 | Lityum Madenciliği, Su Kaynakları Basıncı |
-| **Urmiye Gölü** | İran | 1.000 - 5.200 | %15 - %30 | Na⁺, Cl⁻, Mg²⁺ | 1.275 | Baraj İnşaatları ve Tarımsal Aşırı Sulama |
+| **Urmiye Gölü** | Iran | 1.000 - 5.200 | %15 - %30 | Na⁺, Cl⁻, Mg²⁺ | 1.275 | Baraj İnşaatları ve Tarımsal Aşırı Sulama |
 
 ---
 
@@ -110,7 +110,10 @@ Tatta-Archive/
 ├── index.html                   # SPA yapısında, Tailwind ve harici kütüphane içermeyen ana HTML
 ├── styles.css                   # Değişkenler tabanlı premium CSS (Glassmorphism ve animasyonlar)
 ├── app.js                       # Simülasyon motorları, Chart.js çizimleri ve veri bağlama mantığı
-├── banner.png                   # Tuz Gölü ayna efekti kahraman görseli
+├── banner.png                   # Hero banner görseli (Ayna efekti)
+├── banner_pink_algae.png        # Pembe alg ve flamingo temalı banner görseli
+├── banner_caverns.png           # Doğalgaz depolama kavernaları mühendislik banner görseli
+├── banner_satellite.png         # Uydu spektroskopisi ve GIS analiz banner görseli
 │
 ├── data/                        # Web arayüzü ve scriptlerin tükettiği JSON veri tabanları
 │   ├── lake_tuz_shrinkage.json  # 1975-2025 yılları arası 11 zaman serisi ölçüm matrisi
@@ -131,55 +134,11 @@ Tatta-Archive/
 
 Tuz Gölü Havzası, Geç Kretase'den itibaren süregelen Arabistan–Avrasya levha çarpışması ve ardından gelişen Anadolu bloğunun batıya kaçış kinematiğinin bir ürünüdür. Havza **Neojen (Miyosen–Pliyosen)** dönemde gelişmiş, büyük bir pull-apart (açılma) havzası niteliğindedir.
 
-```
-                  BATI HAVZA                                 DOĞU HAVZA
-      (Tuz Gölü Batı Fay Zonu - Sol Yönlü)     (Şereflikoçhisar-Aaksaray Fayı - Sağ Yönlü)
-                 │                                                │
-                 ▼                                                ▼
-           ┌──────────┐                                     ┌──────────┐
-           │ Cihanbeyli│                                     │  Koçhisar│
-           │  Bloku   │   ◄──── (Genişleme Kinematiği) ────► │  Bloku   │
-           └──────────┘                                     └──────────┘
-                 │                                                │
-                 ▼                                                ▼
-     [ 0 - 2m ]  Saf Halit Düzlüğü (Holosen Evaporit Çökelimi)
-     [ 2 - 5m ]  Karstik Jips ve Anhidrit Geçişi (Üst Pliyosen Kuru Fazı)
-     [ 5 - 10m]  Gölsel Killi Yeşil Çamur Sedimanları (Orta Pleyistosen Pluviyal Faz)
-     [10 - 15m]  Kırıntılı Kumtaşı ve Marn Formasyonu (Miyosen Karasal Akarsu Fazı)
-     [15 - 20m]  Magmatik Temel: Volkanik Bazalt ve Kül Taşı (Oligosen Öncesi Altlık)
-```
-
-### 🌋 Jeotermal Sirkülasyon Modeli
-
-Havzanın tabanındaki evaporit birikimi, sadece göl yüzeyine düşen suyun buharlaşmasıyla değil, derin jeotermal akışkanlarla da beslenir. Şereflikoçhisar fayı boyunca derin kırıklara süzülen meteorik sular, yerin derinliklerindeki magmatik ısıtıcı kaynaklara ulaşır:
-
-$$\text{Sıcaklık Gradiyenti} \approx 30^\circ\text{C} / \text{km}$$
-
-Isınan su, havza çevresindeki evaporit mineral yataklarını (özellikle anhidrit ve kaya tuzu katmanlarını) çözerek bünyesine sodyum ($Na^+$), klor ($Cl^-$) ve sülfat ($SO_4^{2-}$) iyonları alır. Yoğunlaşan bu akışkanlar göl tabanındaki artezyen termal kaynaklar aracılığıyla gölün güney ve doğu çeperinden süzülerek evaporit döngüsünü sürekli besler.
-
 ---
 
 ## 💧 Havza Hidrolojisi ve Su Dengesi Modellemesi
 
-Tuz Gölü kapalı havzası, dışa akışı olmayan endorik bir havzadır. Bu nedenle gölün su seviyesi doğrudan girdi-çıktı bileşenlerinin dengesine bağlıdır. Havzanın yıllık su hacmi değişimi ($\frac{dV}{dt}$) aşağıdaki diferansiyel denklem ile modellenmektedir:
-
-$$\frac{dV}{dt} = \left( P \cdot A_{lake} + Q_{rivers} + Q_{gw\_inflow} \right) - \left( ET \cdot A_{lake} + Q_{pumping} + Q_{agri\_extraction} \right)$$
-
-Burada kullanılan değişkenler ve fiziksel karşılıkları:
-*   $V$: Gölün toplam hacmi ($m^3$)
-*   $P$: Yıllık ortalama yağış miktarı ($m/\text{yıl}$)
-*   $A_{lake}$: Gölün aktif su yüzey alanı ($m^2$)
-*   $Q_{rivers}$: Akarsularla gelen yıllık toplam yüzeysel su girdisi ($m^3/\text{yıl}$)
-*   $Q_{gw\_inflow}$: Doğal yeraltı suyu sızıntıları ($m^3/\text{yıl}$)
-*   $ET$: Potansiyel Evapotranspirasyon (Buharlaşma) hızı ($m/\text{yıl}$)
-*   $Q_{pumping}$: Tuzlalardan çekilen su miktarı ($m^3/\text{yıl}$)
-*   $Q_{agri\_extraction}$: Tarımsal yeraltı suyu kuyularından çekilen miktar ($m^3/\text{yıl}$)
-
-### 💧 Buharlaşma Dinamikleri (Penman-Monteith Yaklaşımı)
-
-Tuz Gölü'nün buharlaşma hızının hesaplanmasında, rüzgar hızı, net radyasyon, nemlilik ve tuzluluk düzeltme katsayısı ($K_s$) içeren Penman-Monteith modeli esas alınır:
-
-$$ET_{salt} = K_s \cdot \left[ \frac{\Delta (R_n - G) + \rho_a c_p \frac{(e_s - e_a)}{r_a}}{\Delta + \gamma \left( 1 + \frac{r_s}{r_a} \right)} \right]$$
+Tuz Gölü kapalı havzası, dışa akışı olmayan endorik bir havzadır. Bu nedenle gölün su seviyesi doğrudan girdi-çıktı bileşenlerinin dengesine bağlıdır.
 
 ---
 
@@ -187,78 +146,53 @@ $$ET_{salt} = K_s \cdot \left[ \frac{\Delta (R_n - G) + \rho_a c_p \frac{(e_s - 
 
 Tuz Gölü Havzası'ndaki karstik çöküntüler (obruklar), havza tabanındaki çözünebilir evaporit ve karbonat kayaçlarının (özellikle jips ve kireçtaşı) yeraltı suları tarafından aşındırılmasıyla oluşur.
 
-### 🕳️ Karstik Kararlılık Kriteri (Geoteknik Stabilite)
-
-Bir karstik boşluğun tavanının çökmeksizin taşıyabileceği maksimum kritik kalınlık ($T_{crit}$), kayaç makaslama mukavemeti ($\tau$) ve toprak yoğunluğu ($\rho$) cinsinden hesaplanır:
-
-$$T_{crit} = \sqrt{\frac{3 \cdot \rho \cdot g \cdot R^2}{2 \cdot \sigma_t}}$$
-
 ---
 
 ## 🛢️ Dev Mühendislik: Yeraltı Doğalgaz Depolama Projesi
 
 Tuz Gölü'nün derinliklerindeki devasa tuz kubbeleri, dünyanın en büyük yapay yeraltı doğalgaz depolama tesislerinden birine ev sahipliği yapmaktadır. Bu proje, Türkiye'nin enerji arz güvenliğinin omurgasını oluşturur.
 
+![Tuz Gölü Yeraltı Doğalgaz Depolama Tesisleri](./banner_caverns.png)
+
 ### 🔌 Çözelti Madenciliği (Solution Mining) ve Mağara Oluşturma Prosesi
 
-Yüzeyin 1.100 ila 1.500 metre altındaki kalın halit (tuz) tabakalarında gaz depolayacak devasa odalar (kavernalar) açmak için **çözelti madenciliği** tekniği uygulanmıştır:
-
-```
-        Hirfanlı Barajı (Taze Su Girişi)
-                    │
-                    ▼
-     ┌─────────────────────────────┐
-     │  Derin Sondaj Borusu (1.4km)│
-     └──────────────┬──────────────┘
-                    │
-                    ▼
-    [Tuz Katmanına Taze Su Pompalanır] ──► Tuzu çözerek doymuş salamura ($NaCl$ su) oluşturur
-                    │
-                    ▼
-    [Doymuş Salamura Yüzeye Çekilir]    ──► Tuz Gölü yüzeyindeki evaporasyon havuzlarına deşarj edilir
-                    │
-                    ▼
-    [Oluşan Dev Mağara (Kaverna)]      ──► Hacim: ~630.000 m³ (Her bir kaverna için)
-```
+Yüzeyin 1.100 ila 1.500 metre altındaki kalın halit (tuz) tabakalarında gaz depolayacak devasa odalar (kavernalar) açmak için **çözelti madenciliği** tekniği uygulanmıştır. Taze su borularla pompalanıp kaya tuzunu eritir ve elde edilen doymuş salamura yüzeye çekilerek göle tahliye edilir.
 
 ### 📊 Teknik ve Yapısal Parametreler
 
 *   **Toplam Kaverna Sayısı:** 52 adet devasa tuz mağarası.
-*   **Derinlik:** Yüzeyden 1.150 m – 1.450 m aşağıda.
-*   **Kaverna Boyutları:** Her bir mağara yaklaşık 300 m yüksekliğinde (Eyfel Kulesi boyutlarında) ve 80 m çapındadır.
-*   **Depolama Kapasitesi:** Toplam 5,4 milyar metreküp doğalgaz (Türkiye'nin yıllık doğalgaz ihtiyacının yaklaşık %10'u).
+*   **Boyutlar:** Her bir mağara yaklaşık 300 m yüksekliğinde ve 80 m çapındadır.
+*   **Depolama Kapasitesi:** Toplam 5,4 milyar metreküp doğalgaz.
 *   **Sızdırmazlık Güvencesi:** Kaya tuzu ($NaCl$), kristal gözeneksiz yapısı ve yüksek plastik deformasyon (akma) özelliği sayesinde gazı sızdırmadan tutabilen dünyanın en güvenli doğal depolama ortamıdır. Herhangi bir çatlak oluşumu, tuzun plastik davranışı sayesinde kendi kendini kapatır ($Self-Healing$).
 
 ---
 
 ## 🦠 Ekstrem Mikrobiyoloji ve Moleküler Adaptasyon
 
-Tuz Gölü suyunun yaz aylarındaki tuzluluk oranı, deniz suyunun yaklaşık 10 katıdır. Bu ekstrem osmotik basınç altında normal hücreler su kaybederek büzüşür ve ölür. Havzadaki halofilik organizmalar ise hayatta kalabilmek için gelişmiş moleküler mekanizmalar kullanırlar:
+Tuz Gölü suyunun yaz aylarındaki tuzluluk oranı, deniz suyunun yaklaşık 10 katıdır. Bu ekstrem osmotik basınç altında normal hücreler su kaybederek büzüşür ve ölür. Havzadaki halofilik organizmalar ise hayatta kalabilmek için gelişmiş moleküler mekanizmalar kullanırlar.
+
+![Tuz Gölü Pembe Alg ve Flamingo Yaşam Alanı](./banner_pink_algae.png)
 
 ### 🧬 *Dunaliella salina*'nın Osmotik Dengeleyici Gliserol Yolağı
 
-Yeşil mikro alg *Dunaliella salina*, hücre duvarına sahip değildir. Hücre içi osmotik basıncı dış ortamdaki yoğun sodyum klorür ($NaCl$) konsantrasyonuyla dengelemek için **gliserol sentezler**.
+Yeşil mikro alg *Dunaliella salina*, hücre duvarına sahip değildir. Hücre içi osmotik basıncı dış ortamdaki yoğun sodyum klorür ($NaCl$) konsantrasyonuyla dengelemek için **gliserol sentezler** (GPDH ve GPP enzimatik reaksiyonları ile).
+
+### 🔋 *Halobacterium salinarum*'un Bakteriorodopsin Foton Motoru
+
+*Halobacterium salinarum* (bir Arkea üyesi), ATP üretmek için klorofil içermeyen, bakteriorodopsin tabanlı alternatif bir fotosentez mekanizması kullanır. Hücre zarında mor renkli bakteriorodopsin uyarılmasıyla proton ($H^+$) pompası çalıştırılarak ATP sentezlenir.
 
 ---
 
 ## 🦩 Flamingo Popülasyon Dinamikleri ve Genişletilmiş Avifauna
 
-Tuz Gölü, sadece flamingolar (*Phoenicopterus roseus*) için değil, hipersalin koşullara ve çorak kıyılara uyum sağlamış zengin bir kuş (avifauna) topluluğu için uluslararası öneme sahip bir sulak alandır (Ramsar Kriterleri A1 ve A4).
+Tuz Gölü, sadece flamingolar (*Phoenicopterus roseus*) için değil, hipersalin koşullara ve çorak kıyılara uyum sağlamış zengin bir kuş (avifauna) topluluğu için uluslararası öneme sahip bir sulak alandır.
 
 ### 🦆 Havzada Üreyen Diğer Kritik Kuş Türleri
 
-Gölün mevsimsel dinamiklerine bağlı olarak beslenen ve üreyen diğer ana türler:
-
-| Tür (Bilimsel Adı) | Türkçe Adı | Beslenme Alanı / Rejimi | Yuvalama Habitatı | Kritik Tehdit |
-|---|---|---|---|---|
-| *Tadorna tadorna* | **Suna** | Çeperlerdeki sığ sularda omurgasızlar ve algler | Tuzlu düzlüklerin gerisindeki toprak kovukları | Çoban ve avcı baskısı |
-| *Charadrius alexandrinus*| **Akça Cılıbıt** | Çamurlu kıyılarda dip böcekleri ve tuz sinekleri | Doğrudan tuzlu kum ve çakıl zemin üzerine | Turistik kontrolsüz yürüyüşler |
-| *Larus genei* | **İnce Gagalı Martı** | Göl havzalarındaki eklembacaklılar (*Artemia*) | İzole tuz adacıkları ve seddeler | Su çekilmesiyle adaların karaya bağlanması |
-| *Anas crecca* | **Çamurcun** | Tatlı su girişlerindeki bitkisel tohumlar | Sazlık bataklıklar (Peçenek ağzı) | Tarımsal kirlilik |
-
-### 🦩 Kuluçka Adacıklarının Termal ve Ekolojik İzolasyonu
-
-Flamingoların yumurtalarını bıraktıkları çamur tepeciklerinin çevre sıcaklığı yaz aylarında $45^\circ\text{C}$'ye kadar ulaşabilir. Ebeveynler yumurtaları aşırı sıcaktan korumak için gövdeleriyle gölge yapar ve sığ göl suyunu ayaklarıyla yuva çamuruna taşıyarak evaporatif soğutma sağlarlar. Göldeki su bütçesinin düşmesi yuva mikro-klimasını bozarak embriyo ölümlerine sebep olmaktadır.
+*   *Tadorna tadorna* (**Suna**)
+*   *Charadrius alexandrinus* (**Akça Cılıbıt**)
+*   *Larus genei* (**İnce Gagalı Martı**)
+*   *Anas crecca* (**Çamurcun**)
 
 ---
 
@@ -271,35 +205,6 @@ Tuz Gölü çevresi, **%80'i Türkiye'ye özgü** halofit bitkilerden oluşan na
 ## ⚗️ Endüstriyel Tuzla Teknolojileri ve Rafinasyon Prosesi
 
 Tuz Gölü, Türkiye'nin yıllık sodyum klorür ($NaCl$) ihtiyacının yaklaşık **%60'ını** tek başına karşılar. Kaldırım, Yavşan ve Kayacık tuzlalarındaki üretim, mevsimsel buharlaşmaya dayanan kademeli bir kristalizasyon prosesidir.
-
-```
-       Göl Suyu Pompajı (Tuzluluk: ~%26-28 Baumé)
-                      │
-                      ▼
-        ┌────────────────────────────┐
-        │ Evaporasyon Havuzu (Çökelme)│  ──► Kalsiyum karbonat ($CaCO_3$) ve jips çökelerek ayrılır
-        └─────────────┬──────────────┘
-                      │ (Tuzluluk %29 Baumé'ye ulaşır)
-                      ▼
-        ┌────────────────────────────┐
-        │Kristalizasyon Havuzu (Halit)│  ──► Sodyum klorür ($NaCl$) tabaka halinde tabana çöker
-        └─────────────┬──────────────┘
-                      │ (Kalan biter su tahliye edilir)
-                      ▼
-        ┌────────────────────────────┐
-        │ Toplama & Mekanik Hasat     │  ──► Özel kazıcı iş makineleriyle tuz tabakası sıyrılır
-        └─────────────┬──────────────┘
-                      │
-                      ▼
-        ┌────────────────────────────┐
-        │ Yıkama ve Santrifüj         │  ──► Killi çamur ve çözünmeyen mineraller yıkanarak ayrılır
-        └─────────────┬──────────────┘
-                      │
-                      ▼
-        ┌────────────────────────────┐
-        │ İyotlama ve Paketleme       │  ──► %99.2 saflıkta rafine gıda ve sanayi tuzu eldesi
-        └────────────────────────────┘
-```
 
 ### 📊 Endüstriyel Tuz Kalite Parametreleri
 
@@ -328,29 +233,7 @@ Tuz Gölü'ndeki düz ayna etkisi ve tuz kristali yansımaları, Snell Kırılma
 
 ## 🌪️ Rüzgar Erozyonu, Çölleşme ve Tuz Tozu Fırtınaları
 
-Gölün yaz aylarında kurumasıyla geriye kalan gevşek tuz kristalleri ve killi-marnlı dip çökelleri, rüzgar erozyonuna karşı son derece hassastır. Bu durum İç Anadolu'da ciddi ekolojik ve tarımsal tehditler oluşturur.
-
-### 💨 Tuz Tozu Fırtınalarının Mekanizması ve Tarımsal Etkileri
-
-Kuzey ve kuzeydoğudan esen şiddetli rüzgarlar (özellikle poyraz), göl tabanındaki ince taneli tuz tozlarını ve sülfat minerallerini atmosfere kaldırır:
-
-```
-        Kurumuş Göl Yatağı (Gevşek Kristaller)
-                    │
-                    ▼
-     [Şiddetli Rüzgar (Poyraz > 40 km/s)]
-                    │
-                    ▼
-    [Tuz Tozu Fırtınası (Aerosol Taşınımı)] ──► Rüzgar yönünde (Aksaray, Konya, Niğde ovalarına) taşınır
-                    │
-                    ▼
-    [Tarımsal Alanlara Çökelme]            ──► Şeker pancarı, buğday ve yonca yapraklarına çöker
-                    │
-                    ▼
-    [Tarımsal Toprakların Tuzlanması]      ──► Toprak osmotik basıncını artırarak bitkilerin su alımını engeller
-```
-
-Bu aerosol taşınımı, Konya ve Aksaray gibi Türkiye'nin tahıl ambarı olan ovalarda verim düşüşüne ve yapraklarda kimyasal yanıklara ($plasmolysis$) yol açmaktadır.
+Gölün yaz aylarında kurumasıyla geriye kalan gevşek tuz kristalleri ve killi-marnlı dip çökelleri, rüzgar erozyonuna karşı son derece hassastır. Poyraz rüzgarları ($>40\text{ km/s}$) ile kalkan tuz tozları tarım ovalarına (Aksaray ve Konya) çökerek tarımsal plazmolize neden olur.
 
 ---
 
@@ -368,7 +251,9 @@ Tuz Gölü'nün uçsuz bucaksız sonsuz beyazlığı, sadece bilimsel araştırm
 
 ## 🛰️ Spektral Uzaktan Algılama ve İleri İndeks Formülleri
 
-Tuz Gölü havzasının spektral analizinde NDWI indeksinin yanı sıra, tuz kabuğu gürültüsünü engellemek ve toprak tuzluluğunu ölçmek için ileri seviye indeksler kullanılır:
+Tuz Gölü havzasının spektral analizinde NDWI indeksinin yanı sıra, tuz kabuğu gürültüsünü engellemek ve toprak tuzluluğunu ölçmek için ileri seviye indeksler kullanılır.
+
+![Tuz Gölü Spektral NDWI ve Coğrafi Bilgi Sistemleri (GIS) Görünümü](./banner_satellite.png)
 
 ### 1. MNDWI (Modified Normalized Difference Water Index)
 
@@ -383,8 +268,6 @@ $$\text{MNDWI} = \frac{\text{Green} - \text{SWIR}}{\text{Green} + \text{SWIR}}$$
 Göl kıyısındaki tarım arazilerinin çölleşme ve tuzlanma oranını saptamak için mavi ve kırmızı spektral bantların geometrik ortalaması kullanılır:
 
 $$\text{SI} = \sqrt{\text{Blue} \times \text{Red}}$$
-
-*   **Sentinel-2 Bantları:** Mavi = Band 2 ($490\text{ nm}$), Kırmızı = Band 4 ($665\text{ nm}$)
 
 ### 3. NDTI (Normalized Difference Turbidity Index - Bulanıklık İndeksi)
 
@@ -482,7 +365,7 @@ Bu depodaki kodlar ve veri yapıları **[MIT Lisansı](./LICENSE)** altındadır
 
 Projeden alıntı yaparken aşağıdaki formatı kullanabilirsiniz:
 
-> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v6.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
+> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v7.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
 
 ---
 
