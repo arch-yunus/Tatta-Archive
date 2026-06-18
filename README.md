@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-4.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-5.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
-![Disciplines](https://img.shields.io/badge/disiplin-8%20alan-f97316?style=for-the-badge)
+![Disciplines](https://img.shields.io/badge/disiplin-10%20alan-f97316?style=for-the-badge)
 ![Data](https://img.shields.io/badge/veri-Açık%20Kaynak-22d3ee?style=for-the-badge)
 
 **[🌐 Canlı Platform](https://arch-yunus.github.io/Tatta-Archive/)** · **[📊 Veri Setleri](./data/)** · **[🔬 Analiz Scriptleri](./scripts/)** · **[🤝 Katkıda Bulun](./CONTRIBUTING.md)**
@@ -19,11 +19,11 @@
 
 ---
 
-> *"Hiçbir şeyin olmadığı uçsuz bucaksız bir beyazlıkta, doğanın en karmaşık jeolojik ve biyokimyasal sistemleri çalışır."*
+> *"Hiçbir şeyin olmadığı uçsuz bucaksız bir beyazlıkta, doğanın en karmaşık jeolojik, biyokimyasal ve folklorik sistemleri çalışır."*
 
-**Tatta-Archive**, Türkiye'nin en büyük ikinci gölü ve Yakın Doğu'nun en büyük hipersalin kapalı havzası olan **Tuz Gölü'nün** (Antik coğrafyacıların adlandırmasıyla *Tatta* — Τάττα) fiziki, kimyasal, biyolojik ve sosyo-kültürel katmanlarını inceleyen **disiplinlerarası, açık kaynaklı akademik araştırma deposudur**.
+**Tatta-Archive**, Türkiye'nin en büyük ikinci gölü ve Yakın Doğu'nun en büyük hipersalin kapalı havzası olan **Tuz Gölü'nün** (Antik coğrafyacıların adlandırmasıyla *Tatta* — Τάττα) fiziki, kimyasal, biyolojik, folklorik ve gizemli tüm yönlerini inceleyen **disiplinlerarası, açık kaynaklı akademik araştırma deposudur**.
 
-Bu depo; jeomorfoloji, yapısal jeoloji, havza hidrolojisi, ekstrem mikrobiyoloji, ornitoloji, halofit botanik, uzaktan algılama ve bölgesel arkeoloji alanlarında dağınık halde bulunan bilimsel verileri sistematik bir çatı altında toplar. Platform, araştırmacılara hem ham veri tabanlarını hem de interaktif simülatörler barındıran bir web arayüzü sunar.
+Bu depo; jeomorfoloji, yapısal jeoloji, havza hidrolojisi, ekstrem mikrobiyoloji, ornitoloji, halofit botanik, uzaktan algılama, bölgesel arkeoloji, yerel mitoloji ve atmosferik optik anomaliler alanlarında dağınık halde bulunan bilimsel ve kültürel verileri sistematik bir çatı altında toplar. Platform, araştırmacılara hem ham veri tabanlarını hem de interaktif simülatörler barındıran bir web arayüzü sunar.
 
 ---
 
@@ -32,23 +32,24 @@ Bu depo; jeomorfoloji, yapısal jeoloji, havza hidrolojisi, ekstrem mikrobiyoloj
 1. [🌍 Genel Bakış & Coğrafi Konum](#-genel-bakış--coğrafi-konum)
 2. [📊 Küresel Hipersalin Göller Karşılaştırma Matrisi](#-küresel-hipersalin-göller-karşılaştırma-matrisi)
 3. [🌐 İnteraktif Web Platformu Detayları](#-initeraktif-web-platformu-detayları)
-4. [🗂️ Repo Yapısı ve Dizin Açıklamaları](#️-repo-yapısı-ve-dizin-açıklamaları)
+4. [🗂️ Repo Yapısı ve Dizin Açıklamaları](#-repo-yapısı-ve-dizin-açıklamaları)
 5. [🪨 Yapısal Jeoloji ve Havza Stratigrafisi](#-yapısal-jeoloji-ve-havza-stratigrafisi)
 6. [💧 Havza Hidrolojisi ve Su Dengesi Modellemesi](#-havza-hidrolojisi-ve-su-dengesi-modellemesi)
-7. [🕳️ Karstik Çökme Teorisi ve Obruk Krizi](#️-karstik-çökme-teorisi-ve-obruk-krizi)
+7. [🕳️ Karstik Çökme Teorisi ve Obruk Krizi](#-karstik-çökme-teorisi-ve-obruk-krizi)
 8. [🦠 Ekstrem Mikrobiyoloji ve Moleküler Adaptasyon](#-ekstrem-mikrobiyoloji-ve-moleküler-adaptasyon)
 9. [🦩 Flamingo Popülasyon Dinamikleri ve Koruma Ekolojisi](#-flamingo-popülasyon-dinamikleri-ve-koruma-ekolojisi)
 10. [🌿 Flora Ekolojisi ve Hücresel Halofit Fizyolojisi](#-flora-ekolojisi-ve-hücresel-halofit-fizyolojisi)
-11. [🏛️ Tarih, Arkeoloji ve Kervansaray Ticaret Ağları](#️-tarih-arkeoloji-ve-kervansaray-ticaret-ağları)
-12. [👁️ Optik Anomaliler ve Atmosferik Işık Fiziği](#️-optik-anomaliler-ve-atmosferik-ışık-fiziği)
-13. [🛰️ Spektral Uzaktan Algılama ve NDWI Hesaplama](#️-spektral-uzaktan-algılama-ve-ndwi-hesaplama)
-14. [📉 Klimatolojik Trendler ve Projeksiyonlar (2025–2055)](#-klimatolojik-trendler-ve-projeksiyonlar-20252055)
-15. [⚗️ Tortu Kimyası ve Evaporit İyon Analizi](#️-tortu-kimyası-ve-evaporit-iyon-analizi)
-16. [📦 Veri Setleri Referansı](#-veri-setleri-referansı)
-17. [🔬 Python Analiz Scriptleri İşleyişi](#-python-analiz-scriptleri-işleyişi)
-18. [📚 Bilimsel Kaynakça ve Genişletilmiş Referanslar](#-bilimsel-kaynakça-ve-genişletilmiş-referanslar)
-19. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
-20. [📄 Lisans ve Atıf Bilgisi](#-lisans-ve-atıf-bilgisi)
+11. [🏛️ Tarih, Arkeoloji ve Kervansaray Ticaret Ağları](#-tarih-arkeoloji-ve-kervansaray-ticaret-ağları)
+12. [👁️ Optik Anomaliler ve Atmosferik Işık Fiziği](#-optik-anomaliler-ve-atmosferik-ışık-fiziği)
+13. [🔮 Efsaneler, Doğaüstü Söylenceler ve Gizemli Anomaliler](#-efsaneler-doğaüstü-söylenceler-ve-gizemli-anomaliler)
+14. [🛰️ Spektral Uzaktan Algılama ve NDWI Hesaplama](#-spektral-uzaktan-algılama-ve-ndwi-hesaplama)
+15. [📉 Klimatolojik Trendler ve Projeksiyonlar (2025–2055)](#-klimatolojik-trendler-ve-projeksiyonlar-20252055)
+16. [⚗️ Tortu Kimyası ve Evaporit İyon Analizi](#-tortu-kimyası-ve-evaporit-iyon-analizi)
+17. [📦 Veri Setleri Referansı](#-veri-setleri-referansı)
+18. [🔬 Python Analiz Scriptleri İşleyişi](#-python-analiz-scriptleri-işleyişi)
+19. [📚 Bilimsel Kaynakça ve Genişletilmiş Referanslar](#-bilimsel-kaynakça-ve-genişletilmiş-referanslar)
+20. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
+21. [📄 Lisans ve Atıf Bilgisi](#-lisans-ve-atıf-bilgisi)
 
 ---
 
@@ -125,7 +126,7 @@ Tatta-Archive/
 
 ## 🪨 Yapısal Jeoloji ve Havza Stratigrafisi
 
-Tuz Gölü Havzası, kuzeyde Galatya Volkanik Eyaleti, doğuda Kırşehir Masifi ve güneyde Niğde Masifi ile sınırlanmış asimetrik bir grabendir. Havzanın tektonik gelişimini doğu kıyısında uzanan sağ yönlü doğrultu atımlı **Şereflikoçhisar-Aksaray Fay Zonu** ile batı kıyısındaki sol yönlü doğrultu atımlı **Tuz Gölü Batı Fay Zonu** belirler.
+Tuz Gölü Havzası, Geç Kretase'den itibaren süregelen Arabistan–Avrasya levha çarpışması ve ardından gelişen Anadolu bloğunun batıya kaçış kinematiğinin bir ürünüdir. Havza **Neojen (Miyosen–Pliyosen)** dönemde gelişmiş, büyük bir pull-apart (açılma) havzası niteliğindedir.
 
 ```
                   BATI HAVZA                                 DOĞU HAVZA
@@ -281,13 +282,11 @@ Büyük Flamingo (*Phoenicopterus roseus*), Tuz Gölü ekosisteminin gösterge t
 | 2015 | 6.200 | %48 | 480 km² | -45,1 m |
 | 2025 | **9.500** | **%32 (Düşüş Eğilimi)** | **310 km²** | **-78,4 m** |
 
-*Tuz Gölü'ndeki kuluçka adalarının suyla çevrili kalma süresi kısaldıkça, yavrular yırtıcı tehlikesine açık hale gelmekte ve besin kaynağı olan Artemia salina popülasyonu suyun aşırı tuzlanıp erken kuruması nedeniyle çökmektedir.*
-
 ---
 
 ## 🌿 Flora Ekolojisi ve Hücresel Halofit Fizyolojisi
 
-Tuz Gölü çeperindeki endemik halofitler, yüksek sodyum ($Na^+$) iyonu zehirlenmesine karşı hücresel düzeyde koruma mekanizmaları geliştirmiştir. Hücre sitoplazmasında yüksek sodyum birikmesi enzimatik reaksiyonları durdurur. Bu nedenle halofitler sodyumu sitoplazmadan uzak tutmak zorundadır.
+Tuz Gölü çevresi, **%80'i Türkiye'ye özgü** halofit bitkilerden oluşan nadir bir flora alanıdır. Bu bitkiler, tuz konsantrasyonunun toprak tuz oranı %2–15 olan alanlarda yetişir ve özel fizyolojik adaptasyonlara sahiptir.
 
 ### 🔬 Hücresel Sodyum ($Na^+$) Pompa Mekanizması
 
@@ -338,17 +337,6 @@ Tuz Gölü, antik çağlardan bu yana Anadolu'nun en önemli tuz üretim ve tica
                          (Güney - Konya)
 ```
 
-### 🐪 Selçuklu Kervansaray Ağı Lojistik İstasyonları
-
-Selçuklu Hanedanlığı, gölden çıkarılan beyaz altının (tuzun) ticaretini güvenli kılmak için günde ortalama 30 km (deve yürüyüş hızı) mesafe aralıklarla kervansaraylar inşa ettirmiştir:
-
-| Kervansaray Adı | Yapım Yılı | Koordinat / Konum | Tuzlaya Uzaklık | Yapısal Özelliği |
-|---|---|---|---|---|
-| **Sultanhanı** | 1229 | Aksaray Havzası | 42 km | Anadolu'nun en büyük kervansarayı |
-| **Ağzıkarahan** | 1231 | Aksaray Doğu Rotası | 55 km | Yoğun süslemeli kale tipi koruma |
-| **Obruk Hanı** | ~1230 | Konya Obruk Köyü | 18 km | Hemen yanında derin bir karstik obruk gölü yer alır |
-| **Zinciriye Hanı** | 1278 | Aksaray Merkez | 38 km | Eğitim ve lojistik depolama merkezi |
-
 ---
 
 ## 👁️ Optik Anomaliler ve Atmosferik Işık Fiziği
@@ -362,6 +350,43 @@ Yazın kuruyan beyaz tuz tabakası güneş ışınlarını yansıtır (yüksek a
 $$\frac{dn}{dz} < 0$$
 
 Işık ışınları yere doğru ilerlerken kırılma indisinin sürekli değişmesi sebebiyle bükülür ve yukarıya doğru kavis çizer. Gözlemci, ışığı geldiği doğrusal doğrultuda algıladığı için, ufuk çizgisi altındaki nesneler (örneğin uzaktaki bir kervan veya araç) havada ters dönmüş veya havada asılı duran devasa yapılar olarak görünür.
+
+---
+
+## 🔮 Efsaneler, Doğaüstü Söylenceler ve Gizemli Anomaliler
+
+Tuz Gölü'nün uçsuz bucaksız sonsuz beyazlığı, sadece bilimsel araştırmaların değil, yerel halk inanışlarının, açıklanamayan doğaüstü olayların ve jeofiziksel gizemlerin de merkezidir. Yüzyıllardır aktarılan efsanelerden modern askeri sırlara kadar uzanan gizem haritası aşağıda belgelenmiştir:
+
+### 1. Taşlaşan Gelin Efsanesi (The Legend of the Petrified Caravan)
+Gölün güney kıyısında yer alan, rüzgar erozyonuyla şekillenmiş kaya ve tuz oluşumları yerel halk arasında "Taşlaşan Gelin Alayı" olarak adlandırılır. 
+*   **Mitolojik Anlatı:** Efsaneye göre, çok eski dönemlerde göl çeperinden geçmekte olan zengin ve kibirli bir düğün kervanı, yolda susuzluktan ve açlıktan bitap düşmüş bir derviş ile karşılaşır. Derviş kervan sahibinden bir damla su ve çocukları için bir parça ekmek dilenir. Kervan sahibi dervişi kırbaçla kovar ve yiyeceklerini paylaşmayı reddeder. Derviş, asasını beyaz tuz yatağına vurarak şu bedduayı okur: *"Cimriliğinizle bu sonsuz beyazlıkta boğulun; kervanınız da, altınlarınız da, gelin alayınız da taş kesilsin!"*
+*   **Fiziki Yansıma:** Bugün Cihanbeyli ile Eskil sınırları arasında kalan ve kervan develerine benzeyen dikit karstik sütunlar, bu bedduanın kanıtı olarak efsaneleştirilmiştir.
+
+### 2. Tuz Altında Yiten Kayıp Kervanlar (The Sinking Caravans)
+Gölün kuru döneminde (Ağustos-Ekim), üst yüzeyde 10-30 cm kalınlığında oldukça sert bir halit (tuz) kabuğu oluşur. Ancak bu kabuğun altında **jipsli ve kükürtlü, akışkan bir balçık yatağı** (quick-mud) yer alır.
+*   **Gizem:** Antik ve Selçuklu döneminde, İpek Yolu'ndan saparak gölü diklemesine geçmeye çalışan bazı kervanların, tuz kabuğunun zayıf noktalarında çökerek saniyeler içinde altlarındaki balçık tarafından yutulduğu söylenir.
+*   **Litolojik Gerçeklik:** Son yıllarda kuraklık nedeniyle su seviyesinin aşırı düşmesiyle birlikte, gölün orta kesimlerindeki bataklık alanlarda tarihsel kervanlara ait ahşap tekerlek parçaları ve tuzla mumyalanmış yük hayvanı kemikleri saptanmıştır. Havzanın anoksik (oksijensiz) ve aşırı tuzlu dip çamuru, organik maddelerin çürümesini engelleyerek onları yüzyıllarca korumaktadır.
+
+### 3. UFO/UAP Işıkları ve Elektrostatik Anomaliler
+Tuz Gölü, Türkiye'de gökyüzünde açıklanamayan ışıklı kürelerin (UAP) en çok rapor edildiği bölgelerin başında gelir. Özellikle gece yarısından sonra gölün ıssız orta kesimlerinde beliren mavi-yeşil parlayan ışıklar yerel folklora girmiştir.
+*   **Bilimsel Jeofiziksel Açıklama:** Yaz aylarında kuru rüzgarların tuz kristalleri üzerinde yarattığı **sürtünme (triboelektrik etki)** ve havzanın altındaki fay hatlarından sızan **metan/helyum** gazlarının elektrostatik deşarjla havada alevlenmesi (Will-o'-the-wisp / Bataklık gazı yanması). Değişen sıcaklık inversiyonları ile birleştiğinde bu plazma parlamaları, gökyüzünde hareket eden UFO filoları illüzyonu yaratmaktadır.
+
+### 4. Askeri Radar & Uydu Kalibrasyonu Sırları
+Tuz Gölü'nün homojen, düz ve yüksek yansıtıcılığa sahip (yüksek albedo) yüzeyi, uzay endüstrisi ve askeri teknolojiler için mükemmel bir **doğal laboratuvardır**.
+*   **Gizemli Testler:** Bölge halkı tarafından zaman zaman göl semalarında gözlenen elektromanyetik parlamalar ve geçici radyo parazitleri, gölün güneyinde yer alan roket ve füze test alanları (Aksaray Atış Alanı) ile ilişkilendirilir.
+*   **Uzay Optik Kalibrasyonu:** ESA (Avrupa Uzay Ajansı) ve NASA, Sentinel ve Landsat gibi yer gözlem uydularının optik sensörlerini kalibre etmek için Tuz Gölü'nün beyaz tuz düzlüklerini referans "kuru zemin" ($Dry\_Target$) olarak kullanır. Uydular gölün üzerinden geçerken yansıma doğruluğunu ölçer.
+
+### 5. Astrobiyoloji: Mars Kraterlerindeki Yaşamın Tuz Gölü Modeli
+Tuz Gölü'nün dip tortularında yaşayan ekstrem halofilik arkelerin (Archaea) genetik yapıları, NASA astrobiyologlarının ilgisini çekmektedir.
+*   **Mars Bağlantısı:** Mars yüzeyinde keşfedilen antik klorür ve sülfat evaporit yatakları (örneğin Gale Krateri), milyarlarca yıl önce Tuz Gölü'ne benzer bir kuruma evresi geçirmiştir. Tuz Gölü'ndeki *Halobacterium* hücrelerinin milyarlarca yıllık tuz kristallerinin içinde sıvı kabarcıklarında (fluid inclusions) uyku modunda canlı kalabilme yeteneği, Mars'ta hala mikrobiyal düzeyde yaşam bulunabileceğine dair en güçlü analog modeldir.
+
+### 6. Antik Tatta Limanları ve Batık Kent Efsaneleri
+Gölün Roma ve Bizans döneminde bugünkünden çok daha derin (maksimum 4-5 metre) olduğu ve Şereflikoçhisar yakınlarında antik tuz yükleme limanlarının bulunduğu arkeolojik yüzey araştırmalarıyla bilinmektedir.
+*   **Batık Şehir Söylencesi:** Sular çekilmeden önce gölün ortasında yer alan bazı adacıklarda kurulmuş küçük Bizans manastırlarının ve tahkimatlarının sular altında kaldığı söylentisi halk arasında yaygındır. Kurak dönemde suların çekilmesiyle tuz kabuğu üzerinde beliren geometrik şekillerin antik tapınak temelleri olduğu iddia edilse de, bunların çoğu jeolojik tuz poligonlarıdır (büzülme çatlakları).
+
+### 7. Şifalı Kara Çamur (Black Mud Therapy) ve Ekolojik Sırlar
+Gölün dip katmanlarında biriken siyah, kükürt kokulu balçık mineral açısından zengindir.
+*   **Folklorik Tıp:** Çevre köylerde yaşayanlar bu çamurun romatizmal hastalıklara, egzama ve sedef gibi cilt rahatsızlıklarına iyi geldiğine inanarak vücutlarını çamurla kaplarlar. Kimyasal analizler, bu çamurda yüksek konsantrasyonda magnezyum sülfat ($MgSO_4$) ve lityum tuzları bulunduğunu, bunun da kas gevşetici ve anti-enflamatuar etki gösterdiğini doğrulamaktadır.
 
 ---
 
@@ -395,8 +420,6 @@ $$\text{NDWI} = \frac{\text{Green} - \text{NIR}}{\text{Green} + \text{NIR}}$$
 
 *   **Sentinel-2 Bantları:** Yeşil = Band 3 ($560\text{ nm}$), NIR = Band 8 ($842\text{ nm}$)
 *   **Landsat 8-9 Bantları:** Yeşil = Band 3 ($560\text{ nm}$), NIR = Band 5 ($865\text{ nm}$)
-
-Su yüzeyleri için NDWI sonucu $> 0$ çıkarken, beyaz tuz kabuğu ve kuru topraklar için $< 0$ değerleri elde edilir. Böylelikle su kaplama alanı piksel düzeyinde izole edilebilir.
 
 ---
 
@@ -441,8 +464,6 @@ Tuz Gölü tortul dolgusu, evaporit çökelim basamaklarının kimyasal evrimini
 | **TG-C1-10** | 9,2 | %8,2 | %12,4 | %48,2 | %25,4 | %5,8 | 112 |
 | **TG-C1-15** | 14,1 | %1,5 | %4,1 | %72,8 | %15,2 | %6,4 | 85 |
 | **TG-C1-20** | 18,5 | %0,1 | %0,2 | %12,5 | %52,4 | %34,8 | 32 |
-
-*Halit mineralinin yüzeye yakın alanda yoğunlaşması, gölün evriminde son kuruma fazının Holosen döneminde zirveye ulaştığını doğrulamaktadır. Derinlerdeki yüksek Lityum ($Li$) konsantrasyonu ise Hasan Dağı kaynaklı volkanik girdileri işaret eder.*
 
 ---
 
@@ -497,7 +518,6 @@ GeoTIFF formatındaki uydu bantlarını (Sentinel-2 Yeşil ve NIR bantları) kul
     ```bash
     python scripts/satellite_analysis.py
     ```
-*   **Çıktı:** Simüle edilmiş göl alanı GeoTIFF harita görseli ve su alanı istatistiği ($km^2$).
 
 ### 2. `scripts/climate_projection.py`
 
@@ -547,7 +567,7 @@ Bu depodaki kodlar ve veri yapıları **[MIT Lisansı](./LICENSE)** altındadır
 
 Projeden alıntı yaparken aşağıdaki formatı kullanabilirsiniz:
 
-> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v4.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
+> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v5.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
 
 ---
 
