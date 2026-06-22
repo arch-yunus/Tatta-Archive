@@ -64,6 +64,7 @@
         <a href="#mysteries" class="nav-link" id="nav-mysteries"><i class="fa-solid fa-ghost"></i> Gizemler</a>
         <a href="#tourism" class="nav-link" id="nav-tourism"><i class="fa-solid fa-camera-retro"></i> Turizm</a>
         <a href="#satellite" class="nav-link" id="nav-satellite"><i class="fa-solid fa-chart-line"></i> Veri & Uydu</a>
+        <a href="#technology" class="nav-link" id="nav-technology"><i class="fa-solid fa-flask-vial"></i> Mühendislik</a>
       </nav>
       
       <button class="menu-toggle" id="menuToggle" aria-label="Menüyü Aç">
@@ -74,18 +75,18 @@
 
   <main class="content-container">
 
+    <!-- Sinematik Hero Banner (Paylaşılan / Dinamik) -->
+    <div class="hero-banner-wrap" id="heroBanner">
+      <img src="banner.png" alt="Tuz Gölü — Gökyüzünün Yeryüzündeki Aynası" class="hero-banner-img" id="heroBannerImg">
+      <div class="hero-banner-overlay"></div>
+      <div class="hero-banner-caption">
+        <span class="banner-caption-tag" id="banner-tag-location"><i class="fa-solid fa-location-dot"></i> Tuz Gölü, İç Anadolu, Türkiye</span>
+        <span class="banner-caption-tag" id="banner-tag-type"><i class="fa-solid fa-camera"></i> Bahar Aynası — Nisan</span>
+      </div>
+    </div>
+
     <!-- HERO SECTION -->
     <section id="home" class="section active-section">
-
-      <!-- Sinematik Hero Banner -->
-      <div class="hero-banner-wrap" id="heroBanner">
-        <img src="banner.png" alt="Tuz Gölü — Gökyüzünün Yeryüzündeki Aynası" class="hero-banner-img" id="heroBannerImg">
-        <div class="hero-banner-overlay"></div>
-        <div class="hero-banner-caption">
-          <span class="banner-caption-tag"><i class="fa-solid fa-location-dot"></i> Tuz Gölü, İç Anadolu, Türkiye</span>
-          <span class="banner-caption-tag"><i class="fa-solid fa-camera"></i> Bahar Aynası — Nisan</span>
-        </div>
-      </div>
 
       <div class="hero-block">
         <span class="badge"><i class="fa-solid fa-atom"></i> Tuz Gölü Multidisipliner Veri Bankası</span>
@@ -942,6 +943,142 @@
       </div>
     </section>
 
+    <!-- MÜHENDİSLİK VE YEŞİL ENERJİ PROJELERİ -->
+    <section id="technology" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-flask-vial"></i> Bölüm 7</span>
+        <h2>Mühendislik & Yeşil Enerji Projeleri</h2>
+        <p>Tuz Gölü'nün derin tuz kavernaları geleceğin yeşil hidrojen depolama üssü olarak tasarlanırken, acı sularındaki (brine) lityum geri kazanım prosesleri stratejik önem taşır.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Sol: Tuz Kavernalarında Yeşil Hidrojen Simülatörü -->
+        <div class="card glass-card">
+          <h3>Yeşil Hidrojen Kaverna Depolama & Termodinamik</h3>
+          <p class="card-desc">Gölün 1000m altındaki tuz kavernalarında gaz enjeksiyon/çekim dinamiklerini ve Joule-Thomson genleşme fiziğini simüle edin.</p>
+          
+          <div class="cavern-simulator-layout">
+            <div class="cavern-visual-container">
+              <!-- Animated Salt Cavern Canvas -->
+              <canvas id="cavernCanvas" width="220" height="220"></canvas>
+              <div class="cavern-depth-tag">1000 m Derinlik</div>
+            </div>
+            
+            <div class="cavern-controls">
+              <div class="sim-slider-group">
+                <label for="cavern-inject">H₂ Enjeksiyon Hızı (kg/s): <span class="val-display" id="val-cavern-inject">15 kg/s</span></label>
+                <input type="range" id="cavern-inject" min="0" max="50" value="15" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="cavern-withdraw">H₂ Çekim Hızı (kg/s): <span class="val-display" id="val-cavern-withdraw">0 kg/s</span></label>
+                <input type="range" id="cavern-withdraw" min="0" max="50" value="0" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="cavern-volume">Kaverna Geometrik Hacmi (m³): <span class="val-display" id="val-cavern-volume">100,000 m³</span></label>
+                <input type="range" id="cavern-volume" min="50000" max="150000" step="10000" value="100000" class="slider-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Cavern Telemetry Outputs -->
+          <div class="cavern-telemetry-grid">
+            <div class="telemetry-card">
+              <span class="tel-label">Kaverna Basıncı</span>
+              <span class="tel-val" id="cavern-pressure">12.0 MPa</span>
+              <span class="tel-sub">Limit: 6 - 18 MPa</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">Kaverna Sıcaklığı</span>
+              <span class="tel-val" id="cavern-temp">35.0 °C</span>
+              <span class="tel-sub" id="cavern-jt-effect">Termodinamik Bakiye</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">Depolanan Hidrojen</span>
+              <span class="tel-val" id="cavern-mass">820 ton</span>
+              <span class="tel-sub">Saf H₂ Kütlesi</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">Net Enerji Eşdeğeri</span>
+              <span class="tel-val" id="cavern-energy">27.3 GWh</span>
+              <span class="tel-sub">Elektriksel Karşılık</span>
+            </div>
+          </div>
+
+          <!-- Stability warning -->
+          <div class="cavern-stability-alert" id="cavernStabilityAlert">
+            <i class="fa-solid fa-circle-check"></i>
+            <span><strong>Kaverna Durumu:</strong> Stabil ve Güvenli. İşletme sınırları içerisinde.</span>
+          </div>
+        </div>
+
+        <!-- Sağ: Lityum ve Stratejik Element Geri Kazanım Prosesi -->
+        <div class="card glass-card">
+          <h3>Lityum Geri Kazanım & Kimyasal Proses Simülatörü</h3>
+          <p class="card-desc">Göl suyundan (Mother-liquor) selektif adsorpsiyon ve kristalizasyon yöntemiyle batarya kalitesinde Lityum Karbonat ($Li_2CO_3$) geri kazanın.</p>
+
+          <div class="lithium-simulator-layout">
+            <div class="lithium-controls">
+              <div class="sim-slider-group">
+                <label for="li-evap">Buharlaştırma Katsayısı (Konsantrasyon): <span class="val-display" id="val-li-evap">10x</span></label>
+                <input type="range" id="li-evap" min="5" max="25" value="10" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="li-dosing">Reaktif Kalsiyum/Magnezyum Giderim Oranı (%): <span class="val-display" id="val-li-dosing">%100</span></label>
+                <input type="range" id="li-dosing" min="80" max="120" value="100" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="li-adsorb">Resin Adsorpsiyon Seçiciliği (%): <span class="val-display" id="val-li-adsorb">%85</span></label>
+                <input type="range" id="li-adsorb" min="70" max="98" value="85" class="slider-input">
+              </div>
+            </div>
+
+            <!-- Process stage tracker -->
+            <div class="process-stages-container">
+              <div class="process-stage active" id="stage-evap" data-stage="1">
+                <div class="stage-num">1</div>
+                <div class="stage-name">Buharlaştırma</div>
+              </div>
+              <div class="process-stage" id="stage-precip" data-stage="2">
+                <div class="stage-num">2</div>
+                <div class="stage-name">Safsızlık Arıtma</div>
+              </div>
+              <div class="process-stage" id="stage-adsorb" data-stage="3">
+                <div class="stage-num">3</div>
+                <div class="stage-name">Resin Yakalama</div>
+              </div>
+              <div class="process-stage" id="stage-crystallize" data-stage="4">
+                <div class="stage-num">4</div>
+                <div class="stage-name">Kristalizasyon</div>
+              </div>
+            </div>
+
+            <div class="process-details-box" id="processDetailsBox">
+              <h4 id="li-stage-title">Aşama 1: Güneş Enerjili Doğal Buharlaştırma</h4>
+              <p id="li-stage-desc">Göl suyu evaporasyon havuzlarında yoğunlaştırılarak Lityum iyon derişimi yükseltilir. Sodyum ve Klor tuzları bu aşamada çöktürülerek ayrılır.</p>
+            </div>
+
+            <!-- Process outputs metrics -->
+            <div class="lithium-metrics-row">
+              <div class="li-metric">
+                <span class="lm-label">Li₂CO₃ Verimi</span>
+                <span class="lm-val" id="li-yield">-- kg/gün</span>
+              </div>
+              <div class="li-metric">
+                <span class="lm-label">Ürün Saflığı</span>
+                <span class="lm-val" id="li-purity">-- %</span>
+              </div>
+              <div class="li-metric">
+                <span class="lm-label">Sürdürülebilirlik</span>
+                <span class="lm-val" id="li-sustain">-- / 100</span>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary btn-full margin-top-20" id="btn-next-li-stage"><i class="fa-solid fa-arrow-right"></i> Sonraki Aşamaya Geç</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Alt Bilgi / Footer -->
@@ -966,6 +1103,7 @@
         <a href="#mysteries">Gizemler</a>
         <a href="#tourism">Turizm</a>
         <a href="#satellite">Veriler</a>
+        <a href="#technology">Mühendislik</a>
       </div>
       <div class="footer-badge-row">
         <span class="footer-badge"><i class="fa-solid fa-code"></i> MIT Lisansı</span>

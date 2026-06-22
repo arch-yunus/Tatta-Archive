@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-9.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-10.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
-![Disciplines](https://img.shields.io/badge/disiplin-15%20alan-f97316?style=for-the-badge)
+![Disciplines](https://img.shields.io/badge/disiplin-16%20alan-f97316?style=for-the-badge)
 ![Data](https://img.shields.io/badge/veri-Açık%20Kaynak-22d3ee?style=for-the-badge)
 
 **[🌐 Canlı Platform](https://arch-yunus.github.io/Tatta-Archive/)** · **[📊 Veri Setleri](./data/)** · **[🔬 Analiz Scriptleri](./scripts/)** · **[🤝 Katkıda Bulun](./CONTRIBUTING.md)**
@@ -164,13 +164,48 @@ Tuz Gölü'nün derinliklerindeki devasa tuz kubbeleri, dünyanın en büyük ya
 
 ## 🌡️ Kaverna Termodinamiği ve Joule-Thomson Fiziği
 
-Yeraltı doğalgaz depolama mağaralarında (kavernalarda) gaz enjeksiyonu ve çekimi sırasında aşırı termodinamik yükler oluşur. Bu yüklerin fiziksel analizi kaverna stabilitesi için kritiktir.
+Yeraltı doğalgaz ve yeşil hidrojen depolama mağaralarında (kavernalarda) gaz enjeksiyonu ve çekimi sırasında aşırı termodinamik yükler oluşur. Bu yüklerin fiziksel analizi kaverna stabilitesi için kritiktir.
+
+### 1. Joule-Thomson Etkisi ve Hidrojen Anomalisi
+
+Bir gazın yüksek basınçtan düşük basınca kısılma valfleri üzerinden genleşmesi sırasındaki sıcaklık değişimi **Joule-Thomson Katsayısı ($\mu_{JT}$)** ile ifade edilir:
+
+$$\mu_{JT} = \left(\frac{\partial T}{\partial P}\right)_H = \frac{1}{C_p}\left[ T\left(\frac{\partial V}{\partial T}\right)_P - V \right]$$
+
+*   **Klasik Gazlar (Doğalgaz/Metan):** Oda sıcaklığında $\mu_{JT} > 0$ olduğu için genleşirken soğurlar.
+*   **Hidrojen ($H_2$) Anomalisi:** Hidrojenin oda sıcaklığındaki inversiyon sıcaklığı ($T_{inv} \approx 193\text{ K}$) çok düşük olduğu için, normal işletme koşullarında ($>0^\circ\text{C}$) $\mu_{JT} < 0$ değerine sahiptir. Bu sebeple hidrojen kavernadan çekilirken genleştikçe **ısınır** ($\approx +0.03\text{ K/bar}$). Bu ısınma, kaya tuzu yapısının termal genleşmesine ve mekanik stabilitesinin bozulmasına yol açabileceği için simülatörler vasıtasıyla hassas şekilde izlenmelidir.
+
+### 2. Kompresyon Fiziği (Enjeksiyon)
+
+Kavernaya gaz basılırken, sistem adiyabatiğe yakın sıkışma yaşar. Oluşan sıcaklık artışı ideal sıkıştırma denklemine göre modellenir:
+
+$$\Delta T = T_{in} \left(\frac{P_{final}}{P_{init}}\right)^{\frac{\gamma - 1}{\gamma}} - T_{in}$$
+
+Burada $\gamma$ (adiyabatik indeks, $H_2$ için $\approx 1.4$) sıkışma ısınmasının ana parametresidir.
+
+### 3. Kaya Tuzu Isı Geçişi
+
+Kaverna duvarlarını çevreleyen kaya tuzu, devasa bir termal kütle gibi davranarak gaz sıcaklığını jeotermal gradyana ($35^\circ\text{C}$) doğru dengeler:
+
+$$\frac{dQ}{dt} = h A (T_{kaya} - T_{gaz})$$
 
 ---
 
 ## 🔋 Lityum ve Stratejik Element Geri Kazanım Potansiyeli
 
 Tuz Gölü acı suları (mother-liquor) ve derin jeotermal sızıntıları, yüksek miktarda çözünmüş nadir element barındırır. Son yıllarda yeşil enerji teknolojileri için hayati öneme sahip olan **Lityum ($Li$)** ve **Magnezyum ($Mg$)** geri kazanımı üzerine havzada ar-ge çalışmaları yürütülmektedir.
+
+### Çok Aşamalı Lityum Karbonat ($Li_2CO_3$) Geri Kazanım Prosesi
+
+Platformumuzdaki simülatör, havzada planlanan 4 aşamalı kimyasal geri kazanım modelini temel alır:
+
+1.  **Doğal Yoğunlaştırma (Güneş Evaporasyonu):** Göl suyu buharlaştırma havuzlarında konsantre edilir. NaCl kristallenerek çökerken, lityum derişimi ~10x-25x katına çıkarılarak ana çözelti izole edilir.
+2.  **Safsızlık Çöktürme (Mg/Ca Ayrıştırma):** Çözeltideki kalsiyum ve yüksek oranlı magnezyum iyonları, kireç ($Ca(OH)_2$) ve sodyum karbonat ($Na_2CO_3$) ilavesiyle magnezyum hidroksit ve kalsiyum karbonat formunda çöktürülür:
+    $$Mg^{2+} + Ca(OH)_2 \rightarrow Mg(OH)_2 \downarrow + Ca^{2+}$$
+    $$Ca^{2+} + Na_2CO_3 \rightarrow CaCO_3 \downarrow + 2Na^+$$
+3.  **Seçici Adsorpsiyon (Resin Yakalama):** Lityum iyonları ($Li^+$) selektif reçineler barındıran kolonlarda tutulur. Asidik desorpsiyon elüsyonu ile lityum konsantrasyonu kristalleşme eşiğine getirilir.
+4.  **Ürün Kristalizasyonu:** Çözelti $90^\circ\text{C}$ sıcaklığa ısıtılarak sodyum karbonat eklenir. Lityum karbonatın ters çözünürlük özelliği (yüksek sıcaklıkta çözünürlüğünün düşmesi) sayesinde yüksek saflıkta batarya kalitesinde ($>99.5\%$) çökelim gerçekleşir:
+    $$2Li^+ + Na_2CO_3 \rightarrow Li_2CO_3 \downarrow + 2Na^+$$
 
 ---
 
@@ -378,7 +413,7 @@ Bu depodaki kodlar ve veri yapıları **[MIT Lisansı](./LICENSE)** altındadır
 
 Projeden alıntı yaparken aşağıdaki formatı kullanabilirsiniz:
 
-> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v9.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
+> *Tatta-Archive (2026). Tuz Gölü Disiplinlerarası Açık Kaynak Araştırma ve Analiz Platformu. GitHub Sürümü v10.0. Erişim Adresi: https://github.com/arch-yunus/Tatta-Archive*
 
 ---
 

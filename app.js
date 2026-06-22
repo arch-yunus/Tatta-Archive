@@ -64,6 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Climate Projection Chart (Data & Satellite)
   initClimateProjection();
+
+  // Cavern Thermodynamics (Mühendislik)
+  initHydrogenCavernSimulator();
+
+  // Lithium Recovery (Mühendislik)
+  initLithiumRecoverySimulator();
 });
 
 /* ==========================================================================
@@ -228,6 +234,57 @@ function initNavigation() {
   const menuToggle = document.getElementById("menuToggle");
   const navMenu = document.getElementById("navMenu");
 
+  const bannerConfigs = {
+    home: {
+      img: "banner.png",
+      location: '<i class="fa-solid fa-location-dot"></i> Tuz Gölü, İç Anadolu, Türkiye',
+      type: '<i class="fa-solid fa-camera"></i> Bahar Aynası — Nisan',
+      short: false
+    },
+    geology: {
+      img: "banner_caverns.png",
+      location: '<i class="fa-solid fa-mountain"></i> Cihanbeyli & Şereflikoçhisar',
+      type: '<i class="fa-solid fa-screwdriver"></i> Sondaj Sahası TG-C1',
+      short: true
+    },
+    ecology: {
+      img: "banner_pink_algae.png",
+      location: '<i class="fa-solid fa-location-dot"></i> Eskil Koruma Kuşağı',
+      type: '<i class="fa-solid fa-dove"></i> Dunaliella & Flamingo Yaşam Alanı',
+      short: true
+    },
+    history: {
+      img: "banner.png",
+      location: '<i class="fa-solid fa-clock"></i> Tarihi İpek Yolu Rotası',
+      type: '<i class="fa-solid fa-landmark"></i> Antik Roma & Selçuklu Ticaret Havzası',
+      short: true
+    },
+    mysteries: {
+      img: "banner_pink_algae.png",
+      location: '<i class="fa-solid fa-ghost"></i> Optik Anomali Bölgeleri',
+      type: '<i class="fa-solid fa-eye"></i> Fata Morgana & Serap Simülasyonu',
+      short: true
+    },
+    tourism: {
+      img: "banner.png",
+      location: '<i class="fa-solid fa-location-dot"></i> Şereflikoçhisar Turistik Alanı',
+      type: '<i class="fa-solid fa-camera"></i> Günbatımı & Ayna Yansıma Rotası',
+      short: true
+    },
+    satellite: {
+      img: "banner_satellite.png",
+      location: '<i class="fa-solid fa-satellite"></i> Sentinel-2 Yörünge İzleme',
+      type: '<i class="fa-solid fa-chart-line"></i> MNDWI Spektroskopi Analizi',
+      short: true
+    },
+    technology: {
+      img: "banner_caverns.png",
+      location: '<i class="fa-solid fa-gears"></i> Yeraltı Kaverna Hücreleri',
+      type: '<i class="fa-solid fa-flask-vial"></i> Hidrojen Depolama & Lityum Prosesi',
+      short: true
+    }
+  };
+
   window.addEventListener("scroll", () => {
     if (window.scrollY > 50) {
       header.classList.add("scrolled");
@@ -268,9 +325,40 @@ function initNavigation() {
               resizeIllusionCanvas();
               startRadarSweep();
             }, 100);
+          } else if (targetId === "technology") {
+            setTimeout(() => {
+              startCavernSimulation();
+            }, 100);
           }
         }
       });
+
+      // Dinamik Banner Geliştirmesi
+      const bannerWrap = document.getElementById("heroBanner");
+      const bannerImg = document.getElementById("heroBannerImg");
+      const tagLoc = document.getElementById("banner-tag-location");
+      const tagType = document.getElementById("banner-tag-type");
+      
+      const config = bannerConfigs[targetId] || bannerConfigs.home;
+      
+      if (bannerWrap && bannerImg) {
+        bannerImg.style.transition = "opacity 0.25s ease, transform 8s ease";
+        bannerImg.style.opacity = "0.2";
+        
+        setTimeout(() => {
+          bannerImg.src = config.img;
+          if (tagLoc) tagLoc.innerHTML = config.location;
+          if (tagType) tagType.innerHTML = config.type;
+          
+          if (config.short) {
+            bannerWrap.classList.add("short-banner");
+          } else {
+            bannerWrap.classList.remove("short-banner");
+          }
+          
+          bannerImg.style.opacity = "1";
+        }, 200);
+      }
       
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
@@ -1727,5 +1815,372 @@ function initClimateProjection() {
       projectionChartInstance.update();
     });
   });
+}
+
+/* ==========================================================================
+   19. MÜHENDİSLİK: YEŞİL HİDROJEN SİMÜLATÖRÜ
+   ========================================================================== */
+let cavernInterval = null;
+let cavernParticles = [];
+let cavernState = {
+  pressure: 12.0,      // in MPa
+  temperature: 35.0,   // in °C
+  storedMass: 820.0,   // in tons
+  volume: 100000,      // in m³
+  injectionRate: 15,   // kg/s
+  withdrawalRate: 0,   // kg/s
+};
+
+function initHydrogenCavernSimulator() {
+  const slideInject = document.getElementById("cavern-inject");
+  const slideWithdraw = document.getElementById("cavern-withdraw");
+  const slideVolume = document.getElementById("cavern-volume");
+
+  if (!slideInject) return;
+
+  const valInject = document.getElementById("val-cavern-inject");
+  const valWithdraw = document.getElementById("val-cavern-withdraw");
+  const valVolume = document.getElementById("val-cavern-volume");
+
+  function updateParams() {
+    cavernState.injectionRate = parseFloat(slideInject.value);
+    cavernState.withdrawalRate = parseFloat(slideWithdraw.value);
+    cavernState.volume = parseFloat(slideVolume.value);
+
+    valInject.innerText = `${cavernState.injectionRate} kg/s`;
+    valWithdraw.innerText = `${cavernState.withdrawalRate} kg/s`;
+    valVolume.innerText = `${cavernState.volume.toLocaleString("tr-TR")} m³`;
+  }
+
+  [slideInject, slideWithdraw, slideVolume].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  updateParams();
+  startCavernSimulation();
+}
+
+function startCavernSimulation() {
+  const canvas = document.getElementById("cavernCanvas");
+  if (!canvas) return;
+
+  const ctxC = canvas.getContext("2d");
+  
+  // Initialize particles
+  cavernParticles = [];
+  for (let i = 0; i < 60; i++) {
+    cavernParticles.push(createCavernParticle(canvas.width, canvas.height));
+  }
+
+  if (cavernInterval) clearInterval(cavernInterval);
+  
+  cavernInterval = setInterval(() => {
+    const dt = 0.1;
+    
+    // Mass conservation dM/dt = inject - withdraw
+    const netFlowRateKg = cavernState.injectionRate - cavernState.withdrawalRate;
+    cavernState.storedMass += (netFlowRateKg / 1000) * dt;
+    const maxMassCapacity = cavernState.volume * 0.015;
+    cavernState.storedMass = Math.max(150.0, Math.min(maxMassCapacity, cavernState.storedMass));
+
+    // Joule-Thomson heating on expansion (H2 anomaly) + compression heating
+    const dT_comp = 0.008 * cavernState.injectionRate * dt;
+    const dT_JT = 0.005 * cavernState.withdrawalRate * dt;
+    const dT_rock = -0.04 * (cavernState.temperature - 35.0) * dt;
+    
+    cavernState.temperature += (dT_comp + dT_JT + dT_rock);
+    cavernState.temperature = Math.max(12.0, Math.min(65.0, cavernState.temperature));
+
+    // Pressure calculation: P(MPa) = Mass * 4.124 * (Temp_C + 273.15) / Volume
+    const tempK = cavernState.temperature + 273.15;
+    cavernState.pressure = (cavernState.storedMass * 4.124 * tempK) / cavernState.volume;
+    
+    const energyGWh = cavernState.storedMass * 0.03333;
+
+    // Update UI telemetry
+    const displayPressure = document.getElementById("cavern-pressure");
+    const displayTemp = document.getElementById("cavern-temp");
+    const displayMass = document.getElementById("cavern-mass");
+    const displayEnergy = document.getElementById("cavern-energy");
+    const displayJtEffect = document.getElementById("cavern-jt-effect");
+    const stabilityAlert = document.getElementById("cavernStabilityAlert");
+
+    if (displayPressure) displayPressure.innerText = `${cavernState.pressure.toFixed(1)} MPa`;
+    if (displayTemp) displayTemp.innerText = `${cavernState.temperature.toFixed(1)} °C`;
+    if (displayMass) displayMass.innerText = `${Math.round(cavernState.storedMass)} ton`;
+    if (displayEnergy) displayEnergy.innerText = `${energyGWh.toFixed(1)} GWh`;
+
+    if (displayJtEffect) {
+      if (cavernState.withdrawalRate > 0) {
+        displayJtEffect.innerHTML = '<span style="color:var(--primary-pink)"><i class="fa-solid fa-arrow-trend-up"></i> JT Isınması Aktif</span>';
+      } else if (cavernState.injectionRate > 0) {
+        displayJtEffect.innerHTML = '<span style="color:#fbbf24"><i class="fa-solid fa-arrow-trend-up"></i> Kompresyon Isısı</span>';
+      } else {
+        displayJtEffect.innerHTML = '<span style="color:var(--text-muted)">Termal Denge Durumu</span>';
+      }
+    }
+
+    if (stabilityAlert) {
+      if (cavernState.pressure < 6.0) {
+        stabilityAlert.className = "cavern-stability-alert danger";
+        stabilityAlert.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> <span><strong>KRİTİK HATA:</strong> Basınç çok düşük (<6 MPa)! Kaverna duvarları çökme (tuz sünmesi) riski altında!</span>';
+      } else if (cavernState.pressure > 18.0) {
+        stabilityAlert.className = "cavern-stability-alert danger";
+        stabilityAlert.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444"></i> <span><strong>KRİTİK HATA:</strong> Basınç çok yüksek (>18 MPa)! Kaya tuzu çatlama (hidrolik kırılma) riski altında!</span>';
+      } else if (cavernState.pressure < 8.0) {
+        stabilityAlert.className = "cavern-stability-alert warning";
+        stabilityAlert.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="color:#fbbf24"></i> <span><strong>UYARI:</strong> Düşük basınç seviyesi. Enjeksiyon takviyesi yapılması önerilir.</span>';
+      } else if (cavernState.pressure > 16.0) {
+        stabilityAlert.className = "cavern-stability-alert warning";
+        stabilityAlert.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="color:#fbbf24"></i> <span><strong>UYARI:</strong> Yüksek basınç seviyesi. Gaz çekimi yapılması önerilir.</span>';
+      } else {
+        stabilityAlert.className = "cavern-stability-alert";
+        stabilityAlert.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#4ade80"></i> <span><strong>Kaverna Durumu:</strong> Stabil ve Güvenli. Mekanik bütünlük korunuyor.</span>';
+      }
+    }
+
+    // Render Canvas
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w / 2;
+    const cy = h / 2 + 10;
+    
+    ctxC.clearRect(0, 0, w, h);
+
+    // Draw Salt Rock Background
+    ctxC.fillStyle = "#111827";
+    ctxC.fillRect(0, 0, w, h);
+    
+    ctxC.fillStyle = "rgba(43, 35, 52, 0.4)";
+    ctxC.fillRect(0, 40, w, 15);
+    ctxC.fillRect(0, 160, w, 20);
+
+    // Draw descent casing pipe
+    ctxC.strokeStyle = "#94a3b8";
+    ctxC.lineWidth = 4;
+    ctxC.beginPath();
+    ctxC.moveTo(cx, 0);
+    ctxC.lineTo(cx, cy - 40);
+    ctxC.stroke();
+    
+    ctxC.strokeStyle = cavernState.injectionRate > 0 ? "rgba(0, 229, 255, 0.6)" : (cavernState.withdrawalRate > 0 ? "rgba(255, 117, 151, 0.6)" : "transparent");
+    ctxC.lineWidth = 1.5;
+    ctxC.beginPath();
+    ctxC.moveTo(cx, 0);
+    ctxC.lineTo(cx, cy - 40);
+    ctxC.stroke();
+
+    const ry = 55;
+    const getRx = (yVal) => {
+      const relativeY = (yVal - (cy - ry)) / (2 * ry);
+      if (relativeY < 0 || relativeY > 1) return 0;
+      return 50 * Math.sin(relativeY * Math.PI) * (0.3 + relativeY * 0.7);
+    };
+
+    ctxC.beginPath();
+    ctxC.moveTo(cx, cy - ry);
+    for (let y = cy - ry; y <= cy + ry; y += 2) {
+      ctxC.lineTo(cx + getRx(y), y);
+    }
+    for (let y = cy + ry; y >= cy - ry; y -= 2) {
+      ctxC.lineTo(cx - getRx(y), y);
+    }
+    ctxC.closePath();
+    
+    const normTemp = (cavernState.temperature - 12.0) / 53.0;
+    const glowR = Math.round(normTemp * 255);
+    const glowB = Math.round((1 - normTemp) * 255);
+    const glowColor = `rgba(${glowR}, 100, ${glowB}, 0.15)`;
+    const strokeColor = `rgba(${glowR}, 180, ${glowB}, 0.6)`;
+    
+    ctxC.fillStyle = glowColor;
+    ctxC.fill();
+    
+    ctxC.strokeStyle = strokeColor;
+    ctxC.lineWidth = 2.5;
+    ctxC.stroke();
+
+    const particleSpeed = 0.5 + (cavernState.temperature / 15);
+    const activeParticleCount = Math.min(cavernParticles.length, Math.floor(cavernState.pressure * 4));
+
+    for (let i = 0; i < activeParticleCount; i++) {
+      const p = cavernParticles[i];
+      
+      p.x += p.vx * particleSpeed;
+      p.y += p.vy * particleSpeed;
+
+      const currentRx = getRx(p.y);
+      const isInside = Math.abs(p.x - cx) < currentRx && p.y > cy - ry && p.y < cy + ry - 5;
+      
+      if (!isInside) {
+        p.y = cy - ry + 15 + Math.random() * (2 * ry - 30);
+        p.x = cx + (Math.random() - 0.5) * 2 * getRx(p.y) * 0.8;
+        p.vx = (Math.random() - 0.5) * 1.5;
+        p.vy = (Math.random() - 0.5) * 1.5;
+      }
+
+      ctxC.fillStyle = `rgba(0, 229, 255, ${p.alpha})`;
+      ctxC.beginPath();
+      ctxC.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctxC.fill();
+    }
+
+    if (cavernState.injectionRate > 0) {
+      const offset = (Date.now() / 25) % 30;
+      ctxC.fillStyle = "rgba(0, 229, 255, 0.8)";
+      for (let y = offset; y < cy - 40; y += 30) {
+        ctxC.beginPath();
+        ctxC.moveTo(cx - 3, y);
+        ctxC.lineTo(cx + 3, y);
+        ctxC.lineTo(cx, y + 5);
+        ctxC.fill();
+      }
+    } else if (cavernState.withdrawalRate > 0) {
+      const offset = (Date.now() / 25) % 30;
+      ctxC.fillStyle = "rgba(255, 117, 151, 0.8)";
+      for (let y = cy - 40 - offset; y > 0; y -= 30) {
+        ctxC.beginPath();
+        ctxC.moveTo(cx - 3, y);
+        ctxC.lineTo(cx + 3, y);
+        ctxC.lineTo(cx, y - 5);
+        ctxC.fill();
+      }
+    }
+
+  }, 50);
+}
+
+function createCavernParticle(w, h) {
+  return {
+    x: w / 2,
+    y: h / 2,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: (Math.random() - 0.5) * 1.5,
+    r: 1 + Math.random() * 2,
+    alpha: 0.3 + Math.random() * 0.6
+  };
+}
+
+/* ==========================================================================
+   20. MÜHENDİSLİK: LİTYUM GERİ KAZANIM SİMÜLATÖRÜ
+   ========================================================================== */
+let lithiumCurrentStage = 1;
+const lithiumStages = {
+  1: {
+    title: "Aşama 1: Güneş Enerjili Doğal Buharlaştırma",
+    desc: "Göl yatağındaki evaporasyon havuzlarında, sığ tuzlu su güneş ısısıyla 10x-25x oranında konsantre edilir. Yoğun sodyum klorür (sofra tuzu) kristalleri tabana çökerken, lityum bakımından zenginleşen acı su (mother-liquor) üst katmanda izole edilir.",
+    buttonText: "2. Safsızlık Arıtma Aşamasına Geç"
+  },
+  2: {
+    title: "Aşama 2: Kimyasal Safsızlık Çöktürme",
+    desc: "Elde edilen yoğun acı su içerisindeki yüksek kalsiyum ($Ca^{2+}$) ve magnezyum ($Mg^{2+}$) iyonları, kireç ve sodyum karbonat ($Na_2CO_3$) reaktifleri eklenerek çöktürülür. Doğru reaktif dozajı (>99% giderim) lityumun saflık kalitesi için kritiktir.",
+    buttonText: "3. Resin Adsorpsiyon Aşamasına Geç"
+  },
+  3: {
+    title: "Aşama 3: Seçici Adsorpsiyon (Resin Kolonu)",
+    desc: "Safsızlıklardan arınmış çözelti, lityumu seçici olarak yakalayan moleküler elekli reçine (resin) kolonlarından geçirilir. Lityum iyonları reçineye tutunurken diğer iyonlar deşarj edilir. Daha sonra asidik yıkama ile lityum konsantresi kolonlardan geri kazanılır.",
+    buttonText: "4. Kristalizasyon Aşamasına Geç"
+  },
+  4: {
+    title: "Aşama 4: Nihai Ürün Kristalizasyonu",
+    desc: "Yazılı kimyasal reaksiyonla, sodyum karbonat eklenerek 90°C sıcaklıkta lityum karbonat ($Li_2CO_3$) çökeltilir. Elde edilen kristaller yıkanır, kurutulur ve batarya kalitesinde (%99.5+) ürün olarak paketlenir.",
+    buttonText: "Prosesi Sıfırla ve Baştan Başlat"
+  }
+};
+
+function initLithiumRecoverySimulator() {
+  const slideEvap = document.getElementById("li-evap");
+  const slideDosing = document.getElementById("li-dosing");
+  const slideAdsorb = document.getElementById("li-adsorb");
+
+  if (!slideEvap) return;
+
+  const btnNext = document.getElementById("btn-next-li-stage");
+  const stageTitle = document.getElementById("li-stage-title");
+  const stageDesc = document.getElementById("li-stage-desc");
+
+  const displayYield = document.getElementById("li-yield");
+  const displayPurity = document.getElementById("li-purity");
+  const displaySustain = document.getElementById("li-sustain");
+
+  const valEvap = document.getElementById("val-li-evap");
+  const valDosing = document.getElementById("val-li-dosing");
+  const valAdsorb = document.getElementById("val-li-adsorb");
+
+  function calculateLithiumMetrics() {
+    const evap = parseFloat(slideEvap.value);
+    const dosing = parseFloat(slideDosing.value);
+    const adsorb = parseFloat(slideAdsorb.value);
+
+    valEvap.innerText = `${evap}x`;
+    valDosing.innerText = `%${dosing}`;
+    valAdsorb.innerText = `%${adsorb}`;
+
+    const baselineYield = 1.6;
+    const finalYield = (evap / 10.0) * (adsorb / 85.0) * baselineYield * (dosing >= 100 ? 1.0 : (dosing/100));
+    
+    const purityLossDosing = Math.abs(100 - dosing) * 0.08;
+    const purityLossSelect = (98 - adsorb) * 0.04;
+    const finalPurity = Math.max(92.0, Math.min(99.9, 99.6 - purityLossDosing - purityLossSelect));
+
+    const sustainCostEvap = (evap - 5) * 1.5;
+    const sustainCostDosing = Math.abs(100 - dosing) * 2.0;
+    const sustainCostSelect = (98 - adsorb) * 0.8;
+    const sustainabilityScore = Math.round(Math.max(30, Math.min(100, 95 - sustainCostEvap - sustainCostDosing - sustainCostSelect)));
+
+    if (displayYield) displayYield.innerText = `${finalYield.toFixed(1)} kg/gün`;
+    if (displayPurity) {
+      displayPurity.innerText = `${finalPurity.toFixed(2)}%`;
+      if (finalPurity >= 99.5) {
+        displayPurity.style.color = "var(--secondary-cyan)";
+      } else {
+        displayPurity.style.color = "var(--primary-pink)";
+      }
+    }
+    if (displaySustain) {
+      displaySustain.innerText = `${sustainabilityScore} / 100`;
+      if (sustainabilityScore > 75) {
+        displaySustain.style.color = "#4ade80";
+      } else if (sustainabilityScore > 50) {
+        displaySustain.style.color = "#fbbf24";
+      } else {
+        displaySustain.style.color = "#ef4444";
+      }
+    }
+  }
+
+  function handleStageChange() {
+    if (lithiumCurrentStage < 4) {
+      lithiumCurrentStage++;
+    } else {
+      lithiumCurrentStage = 1;
+    }
+
+    const stages = document.querySelectorAll(".process-stage");
+    stages.forEach((stage, idx) => {
+      const stageIdx = idx + 1;
+      stage.classList.remove("active", "completed");
+      if (stageIdx === lithiumCurrentStage) {
+        stage.classList.add("active");
+      } else if (stageIdx < lithiumCurrentStage) {
+        stage.classList.add("completed");
+      }
+    });
+
+    const config = lithiumStages[lithiumCurrentStage];
+    if (stageTitle) stageTitle.innerText = config.title;
+    if (stageDesc) stageDesc.innerText = config.desc;
+    if (btnNext) btnNext.innerHTML = `<i class="fa-solid fa-arrow-right"></i> ${config.buttonText}`;
+  }
+
+  [slideEvap, slideDosing, slideAdsorb].forEach(slider => {
+    slider.addEventListener("input", calculateLithiumMetrics);
+  });
+
+  if (btnNext) {
+    btnNext.addEventListener("click", handleStageChange);
+  }
+
+  calculateLithiumMetrics();
 }
 

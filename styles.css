@@ -200,6 +200,11 @@ body {
     0 20px 60px rgba(0,0,0,0.5),
     0 0 80px rgba(255,117,151,0.08);
   animation: banner-reveal 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.hero-banner-wrap.short-banner {
+  height: 220px;
 }
 
 @keyframes banner-reveal {
@@ -2710,4 +2715,238 @@ body {
   border-radius: 20px;
   letter-spacing: 0.3px;
 }
+
+/* ==========================================================================
+   MÜHENDİSLİK & TEKNOLOJİ SIMULATORS
+   ========================================================================== */
+.cavern-simulator-layout {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .cavern-simulator-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.cavern-visual-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto;
+}
+
+.cavern-depth-tag {
+  position: absolute;
+  bottom: 8px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.cavern-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cavern-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.telemetry-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.tel-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.tel-val {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2px 0;
+}
+
+.tel-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.cavern-stability-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  background: rgba(74, 222, 128, 0.05);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  margin-top: 15px;
+  transition: var(--transition-smooth);
+}
+
+.cavern-stability-alert.warning {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.06);
+}
+
+.cavern-stability-alert.danger {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Lityum Geri Kazanım */
+.lithium-simulator-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lithium-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.process-stages-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.process-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: var(--transition-smooth);
+}
+
+.process-stage.active {
+  opacity: 1;
+}
+
+.process-stage.completed {
+  opacity: 0.85;
+}
+
+.stage-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border-active);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+  transition: var(--transition-smooth);
+}
+
+.process-stage.active .stage-num {
+  border-color: var(--secondary-cyan);
+  background: var(--secondary-cyan-glow);
+  color: #fff;
+  box-shadow: 0 0 10px var(--secondary-cyan-glow);
+}
+
+.process-stage.completed .stage-num {
+  border-color: var(--primary-pink);
+  background: var(--primary-pink-glow);
+  color: #fff;
+}
+
+.stage-name {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.process-stage.active .stage-name {
+  color: var(--text-primary);
+}
+
+.process-details-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 95px;
+}
+
+.process-details-box h4 {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--secondary-cyan);
+  margin-bottom: 5px;
+}
+
+.process-details-box p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.lithium-metrics-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.li-metric {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.lm-label {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.lm-val {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--primary-pink);
+  margin-top: 2px;
+}
+
 
