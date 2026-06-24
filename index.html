@@ -65,6 +65,7 @@
         <a href="#tourism" class="nav-link" id="nav-tourism"><i class="fa-solid fa-camera-retro"></i> Turizm</a>
         <a href="#satellite" class="nav-link" id="nav-satellite"><i class="fa-solid fa-chart-line"></i> Veri & Uydu</a>
         <a href="#technology" class="nav-link" id="nav-technology"><i class="fa-solid fa-flask-vial"></i> Mühendislik</a>
+        <a href="#vision" class="nav-link" id="nav-vision"><i class="fa-solid fa-eye"></i> Vizyon 2056</a>
       </nav>
       
       <button class="menu-toggle" id="menuToggle" aria-label="Menüyü Aç">
@@ -1079,6 +1080,135 @@
       </div>
     </section>
 
+    <!-- VİZYON 2056 SECTION -->
+    <section id="vision" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-eye"></i> Bölüm 8</span>
+        <h2>Vizyon 2056: Ekolojik ve Teknolojik Gelecek</h2>
+        <p>İklim değişikliği ve insan baskısı altındaki Tuz Gölü için 2056 yılına yönelik akıllı sürdürülebilirlik senaryoları ve yeşil enerji projeksiyonları.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Sol Panel: Vizyon Kontrol Kokpiti -->
+        <div class="card glass-card">
+          <h3>Vizyon Politika Kokpiti</h3>
+          <p class="card-desc">Sürdürülebilirlik politikalarını aktif hale getirerek 2056 yılındaki simüle edilmiş göl durumunu etkileyin.</p>
+          
+          <div class="vision-controls-panel">
+            <div class="sim-slider-group">
+              <label for="vision-crop-reform">Tarımsal Sulama Reformu (%): <span class="val-display" id="val-crop-reform">%0</span></label>
+              <input type="range" id="vision-crop-reform" min="0" max="100" value="0" class="slider-input">
+              <span class="slider-hint">Şeker pancarından az su tüketen halofit/arpa bitkilerine geçiş oranı.</span>
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="vision-well-control">Kaçak Kuyu Kapatma Oranı (%): <span class="val-display" id="val-well-control">%0</span></label>
+              <input type="range" id="vision-well-control" min="0" max="100" value="0" class="slider-input">
+              <span class="slider-hint">Havzadaki 100.000 kaçak yeraltı kuyusunun kapatılma/denetlenme oranı.</span>
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="vision-algae-capture">Dunaliella Biyokütle Havuzları (Hektar): <span class="val-display" id="val-algae-capture">0 ha</span></label>
+              <input type="range" id="vision-algae-capture" min="0" max="5000" step="500" value="0" class="slider-input">
+              <span class="slider-hint">Kurulan endüstriyel alg havuzları alanı. Karbon emilimi sağlar.</span>
+            </div>
+
+            <div class="sim-slider-group">
+              <label for="vision-light-pollution">Karanlık Gökyüzü Koruması (%): <span class="val-display" id="val-light-pollution">%0</span></label>
+              <input type="range" id="vision-light-pollution" min="0" max="100" value="0" class="slider-input">
+              <span class="slider-hint">Işık kirliliğini engellemek için akıllı sokak aydınlatması ve imar kısıtlamaları.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sağ Panel: 2056 Çıktı Metrikleri & Durum Raporu -->
+        <div class="card glass-card">
+          <h3>2056 Durum Projeksiyonu</h3>
+          <p class="card-desc">Politikalarınızın 2056 yılında yaratacağı ekolojik, ekonomik ve bilimsel sonuçlar.</p>
+          
+          <div class="vision-metrics-grid">
+            <div class="telemetry-card">
+              <span class="tel-label">Aktif Su Alanı (2056)</span>
+              <span class="tel-val" id="vision-water-area">120 km²</span>
+              <span class="tel-sub" id="vision-water-status">Kritik Daralma (RCP 8.5)</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">CO₂ Yıllık Yutumu</span>
+              <span class="tel-val" id="vision-co2-sink">0 ton</span>
+              <span class="tel-sub">Dunaliella Karbon Emilimi</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">Yeşil H₂ Depolama Enerjisi</span>
+              <span class="tel-val" id="vision-h2-energy">0 GWh</span>
+              <span class="tel-sub">Tuz Kavernaları Kapasitesi</span>
+            </div>
+            <div class="telemetry-card">
+              <span class="tel-label">Gökyüzü Kalitesi (Bortle Sınıfı)</span>
+              <span class="tel-val" id="vision-bortle-class">Sınıf 4 (Geçiş Gökyüzü)</span>
+              <span class="tel-sub" id="vision-astro-attractiveness">Astro-Fotoğrafçılık: İyi</span>
+            </div>
+          </div>
+
+          <div class="vision-summary-box" id="visionSummaryBox">
+            <div class="result-title"><i class="fa-solid fa-chart-line"></i> VİZYON 2056 EKOLOJİK DEĞERLENDİRME</div>
+            <p id="visionSummaryText" style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 6px;">
+              Göl kuruma tehlikesi altında. Tarımsal sulama kısıtlanmazsa aktif su alanı 120 km²'ye düşecek ve flamingo kolonileri havzayı tamamen terk edecek.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Grid: Karanlık Gökyüzü Parkı (Dark Sky Park) Yansıma Tuvali -->
+      <div class="grid-2col margin-top-20">
+        <div class="card glass-card">
+          <h3>Karanlık Gökyüzü Parkı & Ayna Yansıma Simülatörü</h3>
+          <p class="card-desc">Sıfıra yakın ışık kirliliğinde Tuz Gölü yüzeyindeki gökyüzü yansımasını deneyimleyin. Işık kirliliğini azaltarak samanyolunu ve takım yıldızlarını ortaya çıkarın.</p>
+          
+          <div class="sky-simulator-layout">
+            <div class="sky-canvas-container">
+              <canvas id="skyCanvas" width="400" height="240" style="width: 100%; border-radius: 8px; background: #020617; cursor: crosshair;"></canvas>
+              <div class="sky-canvas-hint">Gökyüzündeki yıldızların ve yansımanın üzerine gelerek detayları görün.</div>
+            </div>
+            
+            <div class="sky-details-panel" id="skyDetailsPanel" style="margin-top: 10px; font-size: 0.8rem; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-light); padding: 12px; border-radius: 8px; min-height: 50px;">
+              <i class="fa-solid fa-star" style="color: #fbbf24;"></i> <strong>Gözlem Paneli:</strong> Samanyolu kuşağını ve takımyıldızları görmek için "Karanlık Gökyüzü Koruması" politikasını kokpitte arttırın veya ışık kirliliği sliderını azaltın.
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <h3>Konya Atık Su Hattı & Ekolojik İyileştirme</h3>
+          <p class="card-desc">Konya Ana Tahliye Kanalı'ndan gelen kimyasal girdileri ve göldeki ötrofikasyon (aşırı alg üremesi/oksijensizlik) dengesini simüle edin.</p>
+          
+          <div class="eutrophication-layout">
+            <div class="sim-slider-group">
+              <label for="vision-filter-rate">Arıtma Tesisi Kapasitesi (%): <span class="val-display" id="val-filter-rate">%0</span></label>
+              <input type="range" id="vision-filter-rate" min="0" max="100" value="0" class="slider-input">
+              <span class="slider-hint">Atık suyun kimyasal ve biyolojik arıtma oranı.</span>
+            </div>
+
+            <div class="eutrophication-status-card" id="eutroStatusCard" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 10px; padding: 16px; margin-top: 15px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong>Su Kirlilik İndeksi (WQI):</strong>
+                <span id="eutro-wqi" style="color: #ef4444; font-weight: bold;">88 (Aşırı Kirli)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong>Oksijen Seviyesi (DO):</strong>
+                <span id="eutro-do" style="color: #ef4444; font-weight: bold;">1.8 mg/L (Anoksik)</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong>Dunaliella Sağlığı:</strong>
+                <span id="eutro-algae" style="color: #fbbf24; font-weight: bold;">Stres Altında</span>
+              </div>
+              <p id="eutro-desc" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 10px; line-height: 1.4;">
+                Konya Ana Tahliye Kanalı'ndan gelen yüksek azot ve fosfor girdileri göl çeperinde aşırı zararlı bakteri üremesine (ötrofikasyon) neden oluyor. Oksijen seviyesi aşırı düşük, su kalitesi çok kötü.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Alt Bilgi / Footer -->
@@ -1104,6 +1234,7 @@
         <a href="#tourism">Turizm</a>
         <a href="#satellite">Veriler</a>
         <a href="#technology">Mühendislik</a>
+        <a href="#vision">Vizyon 2056</a>
       </div>
       <div class="footer-badge-row">
         <span class="footer-badge"><i class="fa-solid fa-code"></i> MIT Lisansı</span>

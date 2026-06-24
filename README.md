@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-10.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-11.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
@@ -93,6 +93,8 @@ Tatta-Archive platformu, ham bilimsel verilerin tarayıcı üzerinde görselleş
 *   **Hidrolojik Denge Hesaplayıcı:** Yağış, nehir debileri, yeraltı suyu pompajı ve buharlaşma parametrelerini değiştirerek gölün su bütçesini dinamik olarak hesaplayan matematiksel bir modeldir.
 *   **Dunaliella Salina Alg Simülatörü:** Tuzluluk ve sıcaklık girdilerine göre hücrelerin klorofil ve beta-karoten dengesini hesaplayarak göl suyunun pembeden maviye renk değişimini simüle eder.
 *   **Mekansal Daralma ve Obruk Görselleştirici:** 1975'ten 2025'e kadar olan uydu sınırlarını harita üzerinde ölçeklendirir ve yeraltı suyu tüketimiyle tetiklenen obruk oluşum lokasyonlarını SVG haritasında üretir.
+*   **Vizyon 2056 Kokpiti & Ekolojik Tehdit Karşılaştırıcı:** Tarımsal sulama reformu, kaçak kuyu kapatma oranları ve Konya arıtma tesisi kapasitesi gibi politikaların 2056 yılı su seviyesi, karbon emilimi, enerji depolaması ve ötrofikasyon/oksijen döngüsü üzerindeki etkilerini hesaplar.
+*   **Karanlık Gökyüzü Parkı & Ayna Yansıma Simülatörü:** Işık kirliliğini azaltarak Samanyolu'nu ve takımyıldızları (Büyük Ayı, Kraliçe, Küçük Ayı) gökyüzünde ve su yansımasında etkileşimli olarak canlandıran bir canvas çizim modülüdür.
 
 ---
 

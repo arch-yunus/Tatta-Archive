@@ -70,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Lithium Recovery (Mühendislik)
   initLithiumRecoverySimulator();
+
+  // Vizyon 2056 Kokpiti (Gelecek Projeksiyonları)
+  initVision2056();
 });
 
 /* ==========================================================================
@@ -282,6 +285,12 @@ function initNavigation() {
       location: '<i class="fa-solid fa-gears"></i> Yeraltı Kaverna Hücreleri',
       type: '<i class="fa-solid fa-flask-vial"></i> Hidrojen Depolama & Lityum Prosesi',
       short: true
+    },
+    vision: {
+      img: "banner_satellite.png",
+      location: '<i class="fa-solid fa-eye"></i> Vizyon 2056 Kokpiti',
+      type: '<i class="fa-solid fa-circle-nodes"></i> Karanlık Gökyüzü Parkı & Sürdürülebilirlik',
+      short: true
     }
   };
 
@@ -328,6 +337,10 @@ function initNavigation() {
           } else if (targetId === "technology") {
             setTimeout(() => {
               startCavernSimulation();
+            }, 100);
+          } else if (targetId === "vision") {
+            setTimeout(() => {
+              resizeSkyCanvas();
             }, 100);
           }
         }
@@ -2182,5 +2195,413 @@ function initLithiumRecoverySimulator() {
   }
 
   calculateLithiumMetrics();
+}
+
+/* ==========================================================================
+   21. VİZYON 2056: GELECEK PROJEKSİYONLARI KOKPİTİ
+   ========================================================================== */
+let triggerSkyCanvasRedraw = null;
+let activeConstellation = null;
+const constellations = [
+  {
+    name: "Büyük Ayı (Ursa Major)",
+    stars: [
+      {x: 70, y: 35}, {x: 100, y: 32}, {x: 120, y: 40}, {x: 135, y: 55},
+      {x: 130, y: 75}, {x: 160, y: 78}, {x: 165, y: 58}, {x: 135, y: 55}
+    ]
+  },
+  {
+    name: "Kraliçe (Cassiopeia)",
+    stars: [
+      {x: 280, y: 25}, {x: 295, y: 38}, {x: 310, y: 28}, {x: 330, y: 42}, {x: 345, y: 30}
+    ]
+  },
+  {
+    name: "Küçük Ayı & Polaris (Ursa Minor)",
+    stars: [
+      {x: 200, y: 45, main: true, label: "Polaris (Kutup Yıldızı)"}, {x: 185, y: 60}, {x: 175, y: 68}, 
+      {x: 170, y: 80}, {x: 182, y: 92}, {x: 195, y: 90}, {x: 185, y: 80}
+    ]
+  }
+];
+
+let randomStars = [];
+function generateRandomStars() {
+  randomStars = [];
+  for (let i = 0; i < 180; i++) {
+    randomStars.push({
+      x: Math.random() * 600,
+      y: Math.random() * 110, 
+      size: Math.random() * 1.2 + 0.3,
+      twinkle: Math.random() > 0.5
+    });
+  }
+}
+
+function resizeSkyCanvas() {
+  const canvas = document.getElementById("skyCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 2;
+    if (triggerSkyCanvasRedraw) {
+      triggerSkyCanvasRedraw();
+    }
+  }
+}
+
+function initVision2056() {
+  const cropReformSlider = document.getElementById("vision-crop-reform");
+  const wellControlSlider = document.getElementById("vision-well-control");
+  const algaeCaptureSlider = document.getElementById("vision-algae-capture");
+  const lightPollutionSlider = document.getElementById("vision-light-pollution");
+  const filterRateSlider = document.getElementById("vision-filter-rate");
+
+  if (!cropReformSlider) return;
+
+  const valCrop = document.getElementById("val-crop-reform");
+  const valWell = document.getElementById("val-well-control");
+  const valAlgae = document.getElementById("val-algae-capture");
+  const valLight = document.getElementById("val-light-pollution");
+  const valFilter = document.getElementById("val-filter-rate");
+
+  const displayWaterArea = document.getElementById("vision-water-area");
+  const displayWaterStatus = document.getElementById("vision-water-status");
+  const displayCo2Sink = document.getElementById("vision-co2-sink");
+  const displayH2Energy = document.getElementById("vision-h2-energy");
+  const displayBortle = document.getElementById("vision-bortle-class");
+  const displayAstroAttract = document.getElementById("vision-astro-attractiveness");
+  
+  const summaryBox = document.getElementById("visionSummaryBox");
+  const summaryText = document.getElementById("visionSummaryText");
+
+  const wqiDisplay = document.getElementById("eutro-wqi");
+  const doDisplay = document.getElementById("eutro-do");
+  const algaeDisplay = document.getElementById("eutro-algae");
+  const eutroDesc = document.getElementById("eutro-desc");
+  const eutroCard = document.getElementById("eutroStatusCard");
+
+  const canvas = document.getElementById("skyCanvas");
+
+  let visionState = {
+    cropReform: 0,
+    wellControl: 0,
+    algaeCapture: 0,
+    lightPollution: 0,
+    filterRate: 0
+  };
+
+  generateRandomStars();
+
+  function drawSkyReflection() {
+    if (!canvas) return;
+    const ctxS = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    const horizon = h / 2;
+
+    ctxS.clearRect(0, 0, w, h);
+
+    const reformFactor = visionState.lightPollution / 100.0;
+    
+    // 1. Draw Sky Background
+    const skyGrad = ctxS.createLinearGradient(0, 0, 0, horizon);
+    if (reformFactor < 0.2) {
+      skyGrad.addColorStop(0, "#080c1e");
+      skyGrad.addColorStop(0.7, "#181d33");
+      skyGrad.addColorStop(1, "#3f303a"); 
+    } else if (reformFactor < 0.6) {
+      skyGrad.addColorStop(0, "#030712");
+      skyGrad.addColorStop(0.7, "#090d22");
+      skyGrad.addColorStop(1, "#12142d");
+    } else {
+      skyGrad.addColorStop(0, "#020208");
+      skyGrad.addColorStop(0.7, "#040511");
+      skyGrad.addColorStop(1, "#070716");
+    }
+    ctxS.fillStyle = skyGrad;
+    ctxS.fillRect(0, 0, w, horizon);
+
+    // 2. Draw Lake Water Reflection Background
+    const lakeGrad = ctxS.createLinearGradient(0, horizon, 0, h);
+    if (reformFactor < 0.2) {
+      lakeGrad.addColorStop(0, "#2c222c"); 
+      lakeGrad.addColorStop(0.3, "#101324");
+      lakeGrad.addColorStop(1, "#060913");
+    } else if (reformFactor < 0.6) {
+      lakeGrad.addColorStop(0, "#0e1029");
+      lakeGrad.addColorStop(0.3, "#060918");
+      lakeGrad.addColorStop(1, "#02040c");
+    } else {
+      lakeGrad.addColorStop(0, "#060613");
+      lakeGrad.addColorStop(0.3, "#030308");
+      lakeGrad.addColorStop(1, "#010103");
+    }
+    ctxS.fillStyle = lakeGrad;
+    ctxS.fillRect(0, horizon, w, h - horizon);
+
+    // 3. Draw Milky Way Galaxy
+    if (reformFactor > 0.15) {
+      const gAlpha = (reformFactor - 0.15) * 0.45; 
+      const mwGrad = ctxS.createRadialGradient(w/2, horizon - 20, 20, w/2 + 30, horizon - 50, 140);
+      mwGrad.addColorStop(0, `rgba(167, 139, 250, ${gAlpha})`); 
+      mwGrad.addColorStop(0.4, `rgba(244, 114, 182, ${gAlpha * 0.6})`); 
+      mwGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+      ctxS.fillStyle = mwGrad;
+      ctxS.beginPath();
+      ctxS.ellipse(w/2 + 20, horizon - 30, 160, 45, -Math.PI / 8, 0, Math.PI * 2);
+      ctxS.fill();
+
+      // Milky Way Reflection
+      const mwRefGrad = ctxS.createRadialGradient(w/2, horizon + 20, 20, w/2 + 30, horizon + 50, 140);
+      mwRefGrad.addColorStop(0, `rgba(167, 139, 250, ${gAlpha * 0.5})`);
+      mwRefGrad.addColorStop(0.4, `rgba(244, 114, 182, ${gAlpha * 0.3})`);
+      mwRefGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+      ctxS.fillStyle = mwRefGrad;
+      ctxS.beginPath();
+      ctxS.ellipse(w/2 + 20, horizon + 30, 160, 45, Math.PI / 8, 0, Math.PI * 2);
+      ctxS.fill();
+    }
+
+    // 4. Draw Stars
+    const starCountLimit = Math.floor(randomStars.length * (0.25 + reformFactor * 0.75));
+    const starOpacity = 0.5 + reformFactor * 0.5;
+
+    for (let i = 0; i < starCountLimit; i++) {
+      const star = randomStars[i];
+      let brightness = starOpacity;
+      if (star.twinkle) {
+        brightness *= (0.7 + Math.sin(Date.now() * 0.005 + i) * 0.3);
+      }
+
+      ctxS.fillStyle = `rgba(255, 255, 255, ${brightness * star.size})`;
+      ctxS.fillRect(star.x * (w / 400), star.y, star.size, star.size); 
+
+      const rx = star.x * (w / 400) + Math.sin(Date.now() * 0.002 + star.y) * 0.4;
+      const ry = h - star.y; 
+      ctxS.fillStyle = `rgba(255, 255, 255, ${brightness * star.size * 0.5})`;
+      ctxS.fillRect(rx, ry, star.size * 0.8, star.size * 0.8);
+    }
+
+    // 5. Draw Constellations
+    if (reformFactor > 0.3) {
+      const constAlpha = Math.min(0.8, (reformFactor - 0.3) * 1.5);
+      
+      constellations.forEach(constell => {
+        const isHovered = activeConstellation === constell;
+        
+        ctxS.strokeStyle = isHovered ? `rgba(0, 229, 255, ${constAlpha})` : `rgba(255, 255, 255, ${constAlpha * 0.18})`;
+        ctxS.lineWidth = isHovered ? 1.2 : 0.6;
+        
+        ctxS.beginPath();
+        constell.stars.forEach((s, idx) => {
+          const sx = s.x * (w / 400);
+          if (idx === 0) ctxS.moveTo(sx, s.y);
+          else ctxS.lineTo(sx, s.y);
+        });
+        ctxS.stroke();
+
+        ctxS.strokeStyle = isHovered ? `rgba(0, 229, 255, ${constAlpha * 0.5})` : `rgba(255, 255, 255, ${constAlpha * 0.08})`;
+        ctxS.beginPath();
+        constell.stars.forEach((s, idx) => {
+          const rx = s.x * (w / 400) + Math.sin(Date.now() * 0.002 + s.y) * 0.3;
+          const ry = h - s.y;
+          if (idx === 0) ctxS.moveTo(rx, ry);
+          else ctxS.lineTo(rx, ry);
+        });
+        ctxS.stroke();
+
+        constell.stars.forEach(s => {
+          const sx = s.x * (w / 400);
+          const isMain = s.main;
+          ctxS.fillStyle = isHovered ? "rgba(0, 229, 255, 0.9)" : "rgba(255, 255, 255, 0.8)";
+          ctxS.beginPath();
+          ctxS.arc(sx, s.y, isMain ? 3.5 : 2.0, 0, Math.PI * 2);
+          ctxS.fill();
+
+          if (isMain && isHovered) {
+            ctxS.strokeStyle = "rgba(0, 229, 255, 0.4)";
+            ctxS.beginPath();
+            ctxS.arc(sx, s.y, 7, 0, Math.PI * 2);
+            ctxS.stroke();
+          }
+
+          const rx = sx + Math.sin(Date.now() * 0.002 + s.y) * 0.3;
+          const ry = h - s.y;
+          ctxS.fillStyle = isHovered ? "rgba(0, 229, 255, 0.5)" : "rgba(255, 255, 255, 0.4)";
+          ctxS.beginPath();
+          ctxS.arc(rx, ry, isMain ? 2.5 : 1.5, 0, Math.PI * 2);
+          ctxS.fill();
+        });
+      });
+    }
+
+    // 6. Draw Horizon Line
+    ctxS.strokeStyle = `rgba(255, 255, 255, ${0.05 + reformFactor * 0.08})`;
+    ctxS.lineWidth = 1;
+    ctxS.beginPath();
+    ctxS.moveTo(0, horizon);
+    ctxS.lineTo(w, horizon);
+    ctxS.stroke();
+
+    // 7. Ambient light glow at the bottom
+    if (reformFactor < 0.8) {
+      const lpGlow = ctxS.createLinearGradient(0, h - 30, 0, h);
+      const lpAlpha = (1.0 - reformFactor) * 0.18;
+      lpGlow.addColorStop(0, "rgba(251, 191, 36, 0)");
+      lpGlow.addColorStop(1, `rgba(251, 191, 36, ${lpAlpha})`);
+      ctxS.fillStyle = lpGlow;
+      ctxS.fillRect(0, horizon, w, h - horizon);
+    }
+  }
+
+  triggerSkyCanvasRedraw = drawSkyReflection;
+
+  function update() {
+    visionState.cropReform = parseInt(cropReformSlider.value);
+    visionState.wellControl = parseInt(wellControlSlider.value);
+    visionState.algaeCapture = parseInt(algaeCaptureSlider.value);
+    visionState.lightPollution = parseInt(lightPollutionSlider.value);
+    visionState.filterRate = parseInt(filterRateSlider.value);
+
+    valCrop.innerText = `%${visionState.cropReform}`;
+    valWell.innerText = `%${visionState.wellControl}`;
+    valAlgae.innerText = `${visionState.algaeCapture} ha`;
+    valLight.innerText = `%${visionState.lightPollution}`;
+    valFilter.innerText = `%${visionState.filterRate}`;
+
+    const waterArea = Math.round(120 + (visionState.cropReform * 2.8) + (visionState.wellControl * 2.0));
+    const co2Sink = visionState.algaeCapture * 24;
+    const h2Energy = Math.round((visionState.cropReform * 0.4 + visionState.wellControl * 0.6) * 4.5);
+
+    const bortleScore = 4.5 - (visionState.lightPollution * 0.035);
+    const bortleClassNum = Math.max(1, Math.min(5, Math.round(bortleScore)));
+    let bortleText = "";
+    let astroText = "";
+    if (bortleClassNum === 1) {
+      bortleText = "Sınıf 1 (Kusursuz Karanlık Gökyüzü)";
+      astroText = "Astro-Fotoğrafçılık: Olağanüstü";
+    } else if (bortleClassNum === 2) {
+      bortleText = "Sınıf 2 (Tipik Karanlık Gökyüzü)";
+      astroText = "Astro-Fotoğrafçılık: Mükemmel";
+    } else if (bortleClassNum === 3) {
+      bortleText = "Sınıf 3 (Kırsal Gökyüzü)";
+      astroText = "Astro-Fotoğrafçılık: Çok İyi";
+    } else if (bortleClassNum === 4) {
+      bortleText = "Sınıf 4 (Geçiş Gökyüzü)";
+      astroText = "Astro-Fotoğrafçılık: İyi";
+    } else {
+      bortleText = "Sınıf 5+ (Şehir Gökyüzü / Işıklı)";
+      astroText = "Astro-Fotoğrafçılık: Zayıf";
+    }
+
+    displayWaterArea.innerText = `${waterArea} km²`;
+    displayCo2Sink.innerText = `${co2Sink.toLocaleString("tr-TR")} ton/yıl`;
+    displayH2Energy.innerText = `${h2Energy} GWh`;
+    displayBortle.innerText = bortleText;
+    displayAstroAttract.innerText = astroText;
+
+    if (waterArea < 200) {
+      displayWaterStatus.innerText = "Kritik Daralma (Aşırı Kuraklık)";
+      displayWaterStatus.style.color = "var(--primary-pink)";
+      summaryBox.className = "vision-summary-box negative";
+      summaryText.innerText = "Göl kuruma tehlikesi altında. Tarımsal sulama kısıtlanmazsa aktif su alanı 120 km²'ye kadar düşebilir ve flamingo kreş alanları tamamen yok olur.";
+    } else if (waterArea < 450) {
+      displayWaterStatus.innerText = "Orta Risk (Kısmi Kurtarma)";
+      displayWaterStatus.style.color = "#fbbf24";
+      summaryBox.className = "vision-summary-box warning";
+      summaryText.innerText = "Kısmi kurtarma sağlandı. Flamingolar için göl havzasında sınırlı üreme adacıkları kalır, ancak yeraltı su seviyesi tam stabilite kazanmış değil.";
+    } else {
+      displayWaterStatus.innerText = "Sürdürülebilir (Ekolojik Denge)";
+      displayWaterStatus.style.color = "#4ade80";
+      summaryBox.className = "vision-summary-box positive";
+      summaryText.innerText = "Ekolojik hedef başarıldı! 2056 yılında 600 km² sulak alan sabitlendi. Yeraltı suları yükseliyor, yeşil hidrojen ve karbon yakalama projeleri tam kapasite çalışıyor.";
+    }
+
+    const wqi = Math.round(88 - (visionState.filterRate * 0.76));
+    const dissolvedOxygen = parseFloat((1.8 + (visionState.filterRate * 0.06)).toFixed(1));
+    
+    wqiDisplay.innerText = `${wqi} (${wqi > 70 ? 'Aşırı Kirli' : wqi > 40 ? 'Orta Kirli' : 'Temiz'})`;
+    doDisplay.innerText = `${dissolvedOxygen} mg/L (${dissolvedOxygen < 3 ? 'Anoksik' : dissolvedOxygen < 5.5 ? 'Hipoksik' : 'Oksijenli/Sağlıklı'})`;
+    
+    if (wqi > 70) {
+      wqiDisplay.style.color = "var(--primary-pink)";
+      doDisplay.style.color = "var(--primary-pink)";
+      algaeDisplay.innerText = "Ötrofik Patlama (Zararlı)";
+      algaeDisplay.style.color = "var(--primary-pink)";
+      eutroCard.style.borderColor = "rgba(239, 68, 68, 0.3)";
+      eutroCard.style.background = "rgba(239, 68, 68, 0.06)";
+      eutroDesc.innerText = "Konya Kanalı'ndan gelen yoğun azot-fosfor arıtılmıyor. Sülfat indirgeyen bakteriler ve zararlı alg patlamaları suyu zehirliyor, Artemia popülasyonu ölüyor.";
+    } else if (wqi > 40) {
+      wqiDisplay.style.color = "#fbbf24";
+      doDisplay.style.color = "#fbbf24";
+      algaeDisplay.innerText = "Stres Altında";
+      algaeDisplay.style.color = "#fbbf24";
+      eutroCard.style.borderColor = "rgba(251, 191, 36, 0.3)";
+      eutroCard.style.background = "rgba(251, 191, 36, 0.06)";
+      eutroDesc.innerText = "Kısmi arıtma yapılıyor. Su kalitesi düzelmeye başladı ancak gölün sığ olması nedeniyle ötrofikasyon riski yaz aylarında hala devam ediyor.";
+    } else {
+      wqiDisplay.style.color = "#4ade80";
+      doDisplay.style.color = "#4ade80";
+      algaeDisplay.innerText = "Sağlıklı Dunaliella Popülasyonu";
+      algaeDisplay.style.color = "#4ade80";
+      eutroCard.style.borderColor = "rgba(74, 222, 128, 0.3)";
+      eutroCard.style.background = "rgba(74, 222, 128, 0.06)";
+      eutroDesc.innerText = "Mükemmel su arıtımı! Havzaya giren sular kimyasal kirlilikten arındırıldı. Dunaliella salina algleri ekosisteme oksijen sağlayarak Artemia ve flamingoları besliyor.";
+    }
+
+    drawSkyReflection();
+  }
+
+  canvas.addEventListener("mousemove", (e) => {
+    if (visionState.lightPollution < 30) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    let foundConstell = null;
+    constellations.forEach(constell => {
+      constell.stars.forEach(s => {
+        const sx = s.x * (canvas.width / 400);
+        const dSky = Math.sqrt((mx - sx)**2 + (my - s.y)**2);
+        const dRef = Math.sqrt((mx - sx)**2 + (my - (canvas.height - s.y))**2);
+        if (dSky < 15 || dRef < 15) {
+          foundConstell = constell;
+        }
+      });
+    });
+
+    const detailsPanel = document.getElementById("skyDetailsPanel");
+
+    if (foundConstell) {
+      if (activeConstellation !== foundConstell) {
+        activeConstellation = foundConstell;
+        detailsPanel.innerHTML = `
+          <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--secondary-cyan)"></i> 
+          <strong>Takımyıldız Saptandı:</strong> ${foundConstell.name}<br>
+          <span style="font-size:0.75rem; color:var(--text-secondary)">Tuz Gölü'nün ayna yüzeyi, sıfıra yakın ışık kirliliğinde gökyüzündeki derin uzay cisimlerini yansıtarak astronomlar için doğal bir teleskop merceği oluşturur.</span>
+        `;
+        drawSkyReflection();
+      }
+    } else {
+      if (activeConstellation !== null) {
+        activeConstellation = null;
+        detailsPanel.innerHTML = `
+          <i class="fa-solid fa-star" style="color: #fbbf24;"></i> <strong>Gözlem Paneli:</strong> Takımyıldızları ve samanyolu kuşağını incelemek için üzerlerine gelin.
+        `;
+        drawSkyReflection();
+      }
+    }
+  });
+
+  [cropReformSlider, wellControlSlider, algaeCaptureSlider, lightPollutionSlider, filterRateSlider].forEach(slider => {
+    slider.addEventListener("input", update);
+  });
+
+  setTimeout(resizeSkyCanvas, 100);
+
+  update();
 }
 
