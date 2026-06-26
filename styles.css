@@ -3042,4 +3042,52 @@ body {
   }
 }
 
+/* ==========================================================================
+   22. FİZİKSEL DİNAMİKLER & KIYASLAMALI LİMNOLOJİ STILLERI
+   ========================================================================== */
+.seiche-simulator-layout,
+.erosion-simulator-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.seiche-canvas-container canvas,
+.erosion-canvas-container canvas {
+  display: block;
+}
+
+.btn-barrier.active {
+  background: var(--s-color) !important;
+  color: #060913 !important;
+  box-shadow: 0 0 10px var(--s-color) !important;
+  border-color: var(--s-color) !important;
+}
+
+.btn-lake-select {
+  text-align: left;
+  transition: var(--transition-smooth);
+}
+
+.btn-lake-select.active {
+  background: rgba(0, 229, 255, 0.12) !important;
+  border-color: var(--secondary-cyan) !important;
+  color: #fff !important;
+  box-shadow: 0 0 8px var(--secondary-cyan-glow);
+}
+
+.btn-lake-select:hover:not(.active) {
+  border-color: rgba(0, 229, 255, 0.4);
+  background: rgba(0, 229, 255, 0.04);
+}
+
+.radar-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lakesRadarChart {
+  z-index: 5;
+}
+
 

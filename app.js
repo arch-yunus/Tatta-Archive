@@ -73,6 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Vizyon 2056 Kokpiti (Gelecek Projeksiyonları)
   initVision2056();
+
+  // Fiziksel Dinamikler & Kıyaslamalı Limnoloji
+  initPhysicsDynamics();
+  initGlobalLakesMatrix();
 });
 
 /* ==========================================================================
@@ -291,6 +295,12 @@ function initNavigation() {
       location: '<i class="fa-solid fa-eye"></i> Vizyon 2056 Kokpiti',
       type: '<i class="fa-solid fa-circle-nodes"></i> Karanlık Gökyüzü Parkı & Sürdürülebilirlik',
       short: true
+    },
+    physics: {
+      img: "banner.png",
+      location: '<i class="fa-solid fa-wind"></i> Cihanbeyli & Aksaray Çeperi',
+      type: '<i class="fa-solid fa-wave-square"></i> Seş Salınımları & Toz Erozyon Laboratuvarı',
+      short: true
     }
   };
 
@@ -341,6 +351,11 @@ function initNavigation() {
           } else if (targetId === "vision") {
             setTimeout(() => {
               resizeSkyCanvas();
+            }, 100);
+          } else if (targetId === "physics") {
+            setTimeout(() => {
+              resizePhysicsCanvases();
+              startPhysicsSimulations();
             }, 100);
           }
         }
@@ -2603,5 +2618,482 @@ function initVision2056() {
   setTimeout(resizeSkyCanvas, 100);
 
   update();
+}
+
+/* ==========================================================================
+   22. FİZİKSEL DİNAMİKLER & KIYASLAMALI LİMNOLOJİ
+   ========================================================================== */
+let seicheInterval = null;
+let seicheTime = 0;
+let seicheState = {
+  windSpeed: 35, // km/h
+  depth: 30, // cm
+};
+
+let erosionInterval = null;
+let erosionParticles = [];
+let erosionState = {
+  windSpeed: 45, // km/h
+  moisture: 15, // %
+  barrier: 'none' // 'none', 'halophyte', 'forest'
+};
+
+let lakesRadarChartInstance = null;
+const lakesData = {
+  tuz: {
+    name: "Tuz Gölü (Türkiye)",
+    desc: "İç Anadolu'da yer alan, Türkiye'nin ikinci büyük gölüdür. Ortalama 30 cm derinliğe sahip son derece sığ yapısı ve yüksek NaCl (sofra tuzu) doygunluğu ile bilinir. Bölgedeki tektonik fay hatlarıyla beslenen jeotermal girdiler ve meteorik sular göle kimyasal zenginlik katar.",
+    ions: "Na⁺, Cl⁻, SO₄²⁻, Mg²⁺",
+    threat: "Yeraltı Suyu Çekimi, Tarımsal Drenaj",
+    metrics: { area: 1200, salinity: 32.4, altitude: 905, ph: 8.1, threat: 75 }
+  },
+  deadsea: {
+    name: "Lut Gölü (Ölü Deniz - Ürdün/İsrail)",
+    desc: "Yeryüzünün en alçak noktası olan (-430m) Lut Havzası'nda yer alır. Sodyumun yanı sıra magnezyum (Mg²⁺) ve kalsiyum (Ca²⁺) iyonları bakımından son derece zengindir. Aşırı tuzluluk nedeniyle balık veya bitki yaşamı barındırmaz.",
+    ions: "Mg²⁺, Na⁺, Ca²⁺, Cl⁻",
+    threat: "Su Girişlerinin Kesilmesi, Aşırı Karstik Çökme",
+    metrics: { area: 600, salinity: 34.0, altitude: -430, ph: 6.2, threat: 95 }
+  },
+  gsl: {
+    name: "Büyük Tuz Gölü (GSL - ABD)",
+    desc: "Kuzey Amerika'nın en büyük hipersalin kapalı havzasıdır. Tuzluluk oranı mevsimsel ve bölgesel olarak %5 ile %27 arasında değişir. Sulak alanları göçmen kuşlar için küresel öneme sahiptir.",
+    ions: "Na⁺, Cl⁻, Mg²⁺, SO₄²⁻",
+    threat: "Besleyici Akarsuların Barajlanması, İklim Kuraklığı",
+    metrics: { area: 3400, salinity: 15.0, altitude: 1280, ph: 8.2, threat: 85 }
+  },
+  uyuni: {
+    name: "Salar de Uyuni (Bolivya)",
+    desc: "And Dağları'nda 3656 metre rakımda yer alan dünyanın en büyük tuz düzlüğüdür. Antik göllerin buharlaşmasıyla geriye kalan metrelerce kalınlıktaki tuz kabuğu, dünyadaki lityum rezervlerinin yaklaşık %50'sini barındırır.",
+    ions: "Li⁺, Na⁺, K⁺, Cl⁻",
+    threat: "Lityum Madenciliği Basıncı, Akifer Kirliliği",
+    metrics: { area: 10582, salinity: 35.0, altitude: 3656, ph: 7.8, threat: 60 }
+  },
+  urmia: {
+    name: "Urmiye Gölü (İran)",
+    desc: "Tuz Gölü gibi sığ ve hipersalin olan Urmiye Gölü, son 30 yılda su hacminin yaklaşık %90'ını kaybetmiştir. Kırmızı renkli Dunaliella algleri ve Artemia karideslerine ev sahipliği yapar.",
+    ions: "Na⁺, Cl⁻, Mg²⁺, SO₄²⁻",
+    threat: "Vahşi Tarımsal Sulama, Akarsu Barajları",
+    metrics: { area: 2500, salinity: 22.0, altitude: 1275, ph: 7.5, threat: 90 }
+  }
+};
+
+function resizePhysicsCanvases() {
+  const seicheCanvas = document.getElementById("seicheCanvas");
+  if (seicheCanvas) {
+    const rect = seicheCanvas.parentElement.getBoundingClientRect();
+    seicheCanvas.width = rect.width;
+  }
+  const erosionCanvas = document.getElementById("erosionCanvas");
+  if (erosionCanvas) {
+    const rect = erosionCanvas.parentElement.getBoundingClientRect();
+    erosionCanvas.width = rect.width;
+  }
+}
+
+function startPhysicsSimulations() {
+  initSeicheSimulator();
+  initErosionSimulator();
+}
+
+function initPhysicsDynamics() {
+  const windSlider = document.getElementById("seiche-wind");
+  const depthSlider = document.getElementById("seiche-depth");
+  if (!windSlider) return;
+
+  const valWind = document.getElementById("val-seiche-wind");
+  const valDepth = document.getElementById("val-seiche-depth");
+
+  function updateParams() {
+    seicheState.windSpeed = parseInt(windSlider.value);
+    seicheState.depth = parseInt(depthSlider.value);
+
+    valWind.innerText = `${seicheState.windSpeed} km/s`;
+    valDepth.innerText = `${seicheState.depth} cm`;
+  }
+
+  [windSlider, depthSlider].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  updateParams();
+}
+
+function initSeicheSimulator() {
+  const canvas = document.getElementById("seicheCanvas");
+  if (!canvas) return;
+  const ctxS = canvas.getContext("2d");
+
+  const periodEl = document.getElementById("seiche-period");
+  const speedEl = document.getElementById("seiche-wave-speed");
+  const stressEl = document.getElementById("seiche-stress");
+  const setupEl = document.getElementById("seiche-setup");
+
+  if (seicheInterval) clearInterval(seicheInterval);
+
+  seicheInterval = setInterval(() => {
+    seicheTime += 0.05;
+
+    const L = 80000; // 80 km in meters
+    const g = 9.81;
+    const H = seicheState.depth / 100; // depth in meters
+    
+    const waveSpeed = Math.sqrt(g * H);
+    const T = (2 * L) / waveSpeed;
+    const T_hours = T / 3600;
+
+    const Cd = 0.0013;
+    const rho_air = 1.2;
+    const U_ms = seicheState.windSpeed / 3.6;
+    const tau = Cd * rho_air * (U_ms * U_ms);
+
+    const rho_water = 1200; 
+    const delta_h = (tau * L) / (2 * rho_water * g * H);
+    const delta_h_cm = delta_h * 100;
+
+    if (periodEl) periodEl.innerText = `${T_hours.toFixed(1)} saat`;
+    if (speedEl) speedEl.innerText = `${waveSpeed.toFixed(2)} m/s`;
+    if (stressEl) stressEl.innerText = `${tau.toFixed(4)} Pa`;
+    if (setupEl) setupEl.innerText = `${delta_h_cm.toFixed(1)} cm`;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    const cy = h / 2 + 10;
+    ctxS.clearRect(0, 0, w, h);
+
+    ctxS.fillStyle = "#090d22";
+    ctxS.fillRect(0, 0, w, h);
+
+    ctxS.strokeStyle = "#475569";
+    ctxS.lineWidth = 3;
+    ctxS.beginPath();
+    ctxS.moveTo(0, cy + 45);
+    ctxS.quadraticCurveTo(w / 2, cy + 55, w, cy + 45);
+    ctxS.stroke();
+    
+    ctxS.fillStyle = "#1e293b";
+    ctxS.beginPath();
+    ctxS.moveTo(0, cy + 45);
+    ctxS.quadraticCurveTo(w / 2, cy + 55, w, cy + 45);
+    ctxS.lineTo(w, h);
+    ctxS.lineTo(0, h);
+    ctxS.closePath();
+    ctxS.fill();
+
+    const sloshAmp = Math.min(30, delta_h_cm * 1.5); 
+    const omega = (2 * Math.PI) / 8; 
+    const setupY = sloshAmp * Math.cos(seicheTime * omega);
+
+    const waterGrad = ctxS.createLinearGradient(0, cy - 20, 0, h);
+    waterGrad.addColorStop(0, "rgba(0, 229, 255, 0.45)");
+    waterGrad.addColorStop(1, "rgba(30, 64, 175, 0.2)");
+
+    ctxS.fillStyle = waterGrad;
+    ctxS.beginPath();
+    ctxS.moveTo(0, cy - setupY);
+    for (let x = 0; x <= w; x += 5) {
+      const surfaceY = cy - setupY * Math.cos((Math.PI * x) / w);
+      ctxS.lineTo(x, surfaceY);
+    }
+    ctxS.lineTo(w, cy + 45);
+    ctxS.quadraticCurveTo(w / 2, cy + 55, 0, cy + 45);
+    ctxS.closePath();
+    ctxS.fill();
+
+    ctxS.strokeStyle = "rgba(0, 229, 255, 0.85)";
+    ctxS.lineWidth = 2;
+    ctxS.beginPath();
+    ctxS.moveTo(0, cy - setupY);
+    for (let x = 0; x <= w; x += 5) {
+      const surfaceY = cy - setupY * Math.cos((Math.PI * x) / w);
+      ctxS.lineTo(x, surfaceY);
+    }
+    ctxS.stroke();
+
+    ctxS.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctxS.font = "bold 9px Outfit";
+    ctxS.fillText("Yavşan (Batı)", 15, cy + 30);
+    ctxS.fillText("Kaldırım (Doğu)", w - 85, cy + 30);
+
+    if (seicheState.windSpeed > 5) {
+      ctxS.strokeStyle = "rgba(248, 250, 252, 0.6)";
+      ctxS.lineWidth = 2;
+      const arrowX = w / 2 - 40;
+      const arrowY = 30;
+      ctxS.beginPath();
+      ctxS.moveTo(arrowX, arrowY);
+      ctxS.lineTo(arrowX + 80, arrowY);
+      ctxS.moveTo(arrowX + 65, arrowY - 6);
+      ctxS.lineTo(arrowX + 80, arrowY);
+      ctxS.lineTo(arrowX + 65, arrowY + 6);
+      ctxS.stroke();
+
+      ctxS.fillStyle = "#fff";
+      ctxS.font = "9px Outfit";
+      ctxS.fillText(`Rüzgar Yönü (Poyraz): ${seicheState.windSpeed} km/s`, w / 2 - 70, 18);
+    }
+  }, 50);
+}
+
+function initErosionSimulator() {
+  const windSlider = document.getElementById("erosion-wind");
+  const moistureSlider = document.getElementById("erosion-moisture");
+  const barrierBtns = document.querySelectorAll(".btn-barrier");
+
+  if (!windSlider) return;
+
+  const valWind = document.getElementById("val-erosion-wind");
+  const valMoisture = document.getElementById("val-erosion-moisture");
+
+  const fluxEl = document.getElementById("erosion-flux");
+  const riskEl = document.getElementById("erosion-plasmolysis");
+  const blockEl = document.getElementById("erosion-block-rate");
+
+  function updateParams() {
+    erosionState.windSpeed = parseInt(windSlider.value);
+    erosionState.moisture = parseInt(moistureSlider.value);
+
+    valWind.innerText = `${erosionState.windSpeed} km/s`;
+    valMoisture.innerText = `%${erosionState.moisture}`;
+  }
+
+  [windSlider, moistureSlider].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  barrierBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      barrierBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      erosionState.barrier = btn.getAttribute("data-barrier");
+    });
+  });
+
+  updateParams();
+
+  const canvas = document.getElementById("erosionCanvas");
+  if (!canvas) return;
+  const ctxE = canvas.getContext("2d");
+
+  erosionParticles = [];
+
+  if (erosionInterval) clearInterval(erosionInterval);
+
+  erosionInterval = setInterval(() => {
+    const w = canvas.width;
+    const h = canvas.height;
+    const horizon = h - 35;
+
+    const Ut = 25 * (1 + erosionState.moisture * 0.04);
+    let flux = 0;
+    if (erosionState.windSpeed > Ut) {
+      flux = 0.005 * Math.pow(erosionState.windSpeed - Ut, 1.8) * (1 - erosionState.moisture / 100);
+    }
+
+    let blockRate = 0;
+    if (erosionState.barrier === "halophyte") blockRate = 0.45;
+    else if (erosionState.barrier === "forest") blockRate = 0.85;
+
+    const netFlux = flux * (1 - blockRate);
+
+    let risk = "Düşük";
+    let riskColor = "#4ade80";
+    if (netFlux > 1.2) {
+      risk = "Ekstrem";
+      riskColor = "#ef4444";
+    } else if (netFlux > 0.4) {
+      risk = "Yüksek";
+      riskColor = "#fbbf24";
+    } else if (netFlux > 0.05) {
+      risk = "Orta";
+      riskColor = "#fbbf24";
+    }
+
+    if (fluxEl) fluxEl.innerText = `${netFlux.toFixed(3)} g/m²/s`;
+    if (riskEl) {
+      riskEl.innerText = risk;
+      riskEl.style.color = riskColor;
+    }
+    if (blockEl) blockEl.innerText = `%${Math.round(blockRate * 100)}`;
+
+    if (netFlux > 0.001 && Math.random() < (erosionState.windSpeed / 100)) {
+      const spawnCount = Math.ceil(netFlux * 8);
+      for (let i = 0; i < spawnCount; i++) {
+        erosionParticles.push({
+          x: Math.random() * (w * 0.35),
+          y: horizon - 2 - Math.random() * 5,
+          vx: (erosionState.windSpeed / 10) * (0.8 + Math.random() * 0.4),
+          vy: - (Math.random() * 1.5 + 0.5),
+          size: Math.random() * 2 + 0.5,
+          alpha: 0.8
+        });
+      }
+    }
+
+    for (let i = erosionParticles.length - 1; i >= 0; i--) {
+      const p = erosionParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.04; 
+
+      if (erosionState.barrier !== "none" && p.x > w * 0.48 && p.x < w * 0.52 && p.y > horizon - 40) {
+        if (Math.random() < blockRate) {
+          erosionParticles.splice(i, 1);
+          continue;
+        }
+      }
+
+      if (p.x > w || p.y > horizon) {
+        erosionParticles.splice(i, 1);
+      }
+    }
+
+    ctxE.clearRect(0, 0, w, h);
+
+    ctxE.fillStyle = "#020617";
+    ctxE.fillRect(0, 0, w, h);
+
+    ctxE.fillStyle = "#cbd5e1";
+    ctxE.fillRect(0, horizon, w * 0.48, h - horizon);
+    
+    let fieldColor = "#15803d"; 
+    if (risk === "Ekstrem") fieldColor = "#78350f"; 
+    else if (risk === "Yüksek" || risk === "Orta") fieldColor = "#854d0e"; 
+    ctxE.fillStyle = fieldColor;
+    ctxE.fillRect(w * 0.52, horizon, w * 0.48, h - horizon);
+
+    ctxE.fillStyle = "#1e293b";
+    ctxE.fillRect(w * 0.48, horizon, w * 0.04, h - horizon);
+
+    if (erosionState.barrier === "halophyte") {
+      ctxE.fillStyle = "#4ade80";
+      ctxE.fillRect(w * 0.48, horizon - 20, w * 0.04, 20);
+      ctxE.fillStyle = "#22c55e";
+      ctxE.font = "8px FontAwesome";
+      ctxE.fillText("🌿", w * 0.48 + 2, horizon - 6);
+    } else if (erosionState.barrier === "forest") {
+      ctxE.fillStyle = "#3b82f6";
+      ctxE.fillRect(w * 0.48, horizon - 40, w * 0.04, 40);
+      ctxE.fillStyle = "#1d4ed8";
+      ctxE.font = "8px FontAwesome";
+      ctxE.fillText("🌲", w * 0.48 + 2, horizon - 15);
+    }
+
+    ctxE.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctxE.font = "8px Outfit";
+    ctxE.fillText("Kuruyan Göl Yatağı", 10, horizon + 20);
+    ctxE.fillText(risk === "Düşük" ? "Sağlıklı Tarım Ovaları" : "Tuzlu Plazmoliz Hasarı", w - 105, horizon + 20);
+
+    ctxE.fillStyle = "rgba(241, 245, 249, 0.75)";
+    erosionParticles.forEach(p => {
+      ctxE.beginPath();
+      ctxE.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctxE.fill();
+    });
+  }, 40);
+}
+
+function initGlobalLakesMatrix() {
+  const lakeSelectBtns = document.querySelectorAll(".btn-lake-select");
+  if (!lakeSelectBtns || lakeSelectBtns.length === 0) return;
+
+  const lakeName = document.getElementById("comp-lake-name");
+  const lakeDesc = document.getElementById("comp-lake-desc");
+  const lakeIons = document.getElementById("comp-lake-ions");
+  const lakeThreat = document.getElementById("comp-lake-threat");
+  
+  const ctxL = document.getElementById("lakesRadarChart");
+  if (!ctxL) return;
+
+  function getNormalizedMetrics(lakeKey) {
+    const raw = lakesData[lakeKey].metrics;
+    return [
+      Math.round(raw.salinity * 2.5),
+      Math.round(raw.area / 120),
+      Math.round(((raw.altitude + 500) / 4500) * 100),
+      Math.round((raw.ph / 14) * 100),
+      raw.threat
+    ];
+  }
+
+  let currentSelection = "tuz";
+  
+  if (lakesRadarChartInstance) {
+    lakesRadarChartInstance.destroy();
+  }
+
+  lakesRadarChartInstance = new Chart(ctxL, {
+    type: 'radar',
+    data: {
+      labels: ['Tuzluluk', 'Yüzey Alanı', 'Rakım', 'pH Oranı', 'Tehdit Derecesi'],
+      datasets: [
+        {
+          label: 'Tuz Gölü (Türkiye)',
+          data: getNormalizedMetrics('tuz'),
+          fill: true,
+          backgroundColor: 'rgba(0, 229, 255, 0.12)',
+          borderColor: '#00e5ff',
+          pointBackgroundColor: '#00e5ff',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#00e5ff',
+          borderWidth: 2
+        },
+        {
+          label: 'Karşılaştırılan Göl',
+          data: getNormalizedMetrics('tuz'), 
+          fill: true,
+          backgroundColor: 'rgba(255, 117, 151, 0.12)',
+          borderColor: '#ff7597',
+          pointBackgroundColor: '#ff7597',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#ff7597',
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: '#94a3b8', font: { family: 'Outfit', size: 10 } }
+        }
+      },
+      scales: {
+        r: {
+          angleLines: { color: 'rgba(255,255,255,0.06)' },
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          pointLabels: { color: '#94a3b8', font: { family: 'Outfit', size: 10 } },
+          ticks: { display: false },
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  });
+
+  function updateComparison(lakeKey) {
+    const data = lakesData[lakeKey];
+    lakeName.innerText = data.name;
+    lakeDesc.innerText = data.desc;
+    lakeIons.innerText = data.ions;
+    lakeThreat.innerText = data.threat;
+
+    lakesRadarChartInstance.data.datasets[1].label = data.name;
+    lakesRadarChartInstance.data.datasets[1].data = getNormalizedMetrics(lakeKey);
+    lakesRadarChartInstance.update();
+  }
+
+  lakeSelectBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      lakeSelectBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentSelection = btn.getAttribute("data-lake");
+      updateComparison(currentSelection);
+    });
+  });
+
+  updateComparison("tuz"); 
 }
 

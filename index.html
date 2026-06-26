@@ -66,6 +66,7 @@
         <a href="#satellite" class="nav-link" id="nav-satellite"><i class="fa-solid fa-chart-line"></i> Veri & Uydu</a>
         <a href="#technology" class="nav-link" id="nav-technology"><i class="fa-solid fa-flask-vial"></i> Mühendislik</a>
         <a href="#vision" class="nav-link" id="nav-vision"><i class="fa-solid fa-eye"></i> Vizyon 2056</a>
+        <a href="#physics" class="nav-link" id="nav-physics"><i class="fa-solid fa-wind"></i> Fizik & Dinamik</a>
       </nav>
       
       <button class="menu-toggle" id="menuToggle" aria-label="Menüyü Aç">
@@ -1209,6 +1210,147 @@
       </div>
     </section>
 
+    <!-- FİZİKSEL DİNAMİKLER VE LİMNOLOJİ SECTION -->
+    <section id="physics" class="section">
+      <div class="section-header">
+        <span class="sec-badge"><i class="fa-solid fa-wind"></i> Bölüm 9</span>
+        <h2>Fiziksel Dinamikler ve Kıyaslamalı Limnoloji</h2>
+        <p>Tuz Gölü'nün rüzgarla tetiklenen su salınımları (Seiche), çölleşme kaynaklı toz fırtınaları ve küresel hipersalin göllerle karşılaştırmalı analizi.</p>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Sol Panel: Seş (Seiche) Salınım Simülatörü -->
+        <div class="card glass-card">
+          <h3>Seş (Seiche) Salınım Laboratuvarı</h3>
+          <p class="card-desc">Sığ göl yatağında rüzgar gerilmesiyle oluşan duran dalga salınımlarını ve su yığılmasını simüle edin.</p>
+          
+          <div class="seiche-simulator-layout">
+            <div class="seiche-canvas-container" style="position: relative; background: #020617; border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; height: 180px;">
+              <canvas id="seicheCanvas" width="400" height="180" style="width: 100%; height: 100%;"></canvas>
+            </div>
+            
+            <div class="physics-controls margin-top-20">
+              <div class="sim-slider-group">
+                <label for="seiche-wind">Sürekli Rüzgar Hızı (km/s): <span class="val-display" id="val-seiche-wind">35 km/s</span></label>
+                <input type="range" id="seiche-wind" min="0" max="80" value="35" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="seiche-depth">Ortalama Göl Derinliği (cm): <span class="val-display" id="val-seiche-depth">30 cm</span></label>
+                <input type="range" id="seiche-depth" min="10" max="100" value="30" class="slider-input">
+              </div>
+            </div>
+
+            <!-- Seiche Telemetry -->
+            <div class="cavern-telemetry-grid margin-top-20" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+              <div class="telemetry-card">
+                <span class="tel-label">Salınım Periyodu (T)</span>
+                <span class="tel-val" id="seiche-period">-- saat</span>
+                <span class="tel-sub">Merian Eşitliği</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Kritik Dalga Hızı (c)</span>
+                <span class="tel-val" id="seiche-wave-speed">-- m/s</span>
+                <span class="tel-sub">Sığ Su Modeli (√gH)</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Rüzgar Kayma Gerilmesi</span>
+                <span class="tel-val" id="seiche-stress">-- Pa</span>
+                <span class="tel-sub">Sürtünme Faktörü (τ)</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Maks. Su Yığılma Genliği</span>
+                <span class="tel-val" id="seiche-setup">-- cm</span>
+                <span class="tel-sub">Uç Kıyılardaki Fark (Δh)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sağ Panel: Tuz Tozu Erozyonu & Plazmoliz Simülatörü -->
+        <div class="card glass-card">
+          <h3>Tuz Tozu Erozyonu & Vahşi Çölleşme</h3>
+          <p class="card-desc">Gölün kurumuş tuz kabuğu üzerinden poyraz rüzgarıyla kalkan tuz tozlarının Aksaray/Konya tarım havzalarına yayılımı.</p>
+          
+          <div class="erosion-simulator-layout">
+            <div class="erosion-canvas-container" style="position: relative; background: #020617; border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; height: 180px;">
+              <canvas id="erosionCanvas" width="400" height="180" style="width: 100%; height: 100%;"></canvas>
+            </div>
+            
+            <div class="physics-controls margin-top-20">
+              <div class="sim-slider-group">
+                <label for="erosion-wind">Fırtına Rüzgar Gücü (km/s): <span class="val-display" id="val-erosion-wind">45 km/s</span></label>
+                <input type="range" id="erosion-wind" min="10" max="100" value="45" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="erosion-moisture">Toprak Yüzey Nemliliği (%): <span class="val-display" id="val-erosion-moisture">%15</span></label>
+                <input type="range" id="erosion-moisture" min="0" max="80" value="15" class="slider-input">
+              </div>
+
+              <!-- Rüzgar Bariyeri Seçimi -->
+              <div style="margin-top: 15px;">
+                <span class="slider-hint" style="margin-bottom: 6px; font-weight: bold; color: var(--text-primary);">Rüzgar Kırıcı Ekolojik Bariyer:</span>
+                <div class="scenario-selector-row" style="margin-bottom: 0;">
+                  <button class="btn-scenario btn-barrier active" data-barrier="none" id="barrier-none">Bariyer Yok</button>
+                  <button class="btn-scenario btn-barrier" data-barrier="halophyte" id="barrier-halo" style="--s-color:#4ade80"><span class="scenario-dot" style="background:#4ade80"></span>Tuzcul Kuşak</button>
+                  <button class="btn-scenario btn-barrier" data-barrier="forest" id="barrier-forest" style="--s-color:#3b82f6"><span class="scenario-dot" style="background:#3b82f6"></span>Ağaçlandırma</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Erosion Telemetry -->
+            <div class="cavern-telemetry-grid margin-top-20" style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
+              <div class="telemetry-card" style="padding: 10px;">
+                <span class="tel-label" style="font-size:0.65rem">Kalkan Toz Akısı</span>
+                <span class="tel-val" id="erosion-flux" style="font-size:1rem">-- g/m²/s</span>
+              </div>
+              <div class="telemetry-card" style="padding: 10px;">
+                <span class="tel-label" style="font-size:0.65rem">Plazmoliz Riski</span>
+                <span class="tel-val" id="erosion-plasmolysis" style="font-size:1rem">--</span>
+              </div>
+              <div class="telemetry-card" style="padding: 10px;">
+                <span class="tel-label" style="font-size:0.65rem">Toz Bloke Oranı</span>
+                <span class="tel-val" id="erosion-block-rate" style="font-size:1rem">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Kısım: Küresel Hipersalin Göller Karşılaştırma Matrisi -->
+      <div class="card glass-card margin-top-20">
+        <h3>Küresel Hipersalin Göller Karşılaştırma Matrisi</h3>
+        <p class="card-desc">Tuz Gölü'nün fiziksel, kimyasal ve ekolojik özelliklerini dünyadaki diğer devasa tuz gölleriyle interaktif olarak karşılaştırın.</p>
+        
+        <div class="grid-2col" style="grid-template-columns: 1fr 1.2fr; margin-bottom: 0;">
+          <!-- Sol: Göl Seçimi ve Detayları -->
+          <div class="lakes-compare-selector" style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="scenario-selector-row" style="display: flex; flex-direction: column; gap: 8px; align-items: stretch;">
+              <button class="btn-scenario btn-lake-select active" data-lake="tuz" style="justify-content: flex-start; border-radius: 10px; width: 100%;"><i class="fa-solid fa-water"></i> Tuz Gölü (Türkiye)</button>
+              <button class="btn-scenario btn-lake-select" data-lake="deadsea" style="justify-content: flex-start; border-radius: 10px; width: 100%;"><i class="fa-solid fa-skull-crossbones"></i> Lut Gölü (Ölü Deniz - Ürdün/İsrail)</button>
+              <button class="btn-scenario btn-lake-select" data-lake="gsl" style="justify-content: flex-start; border-radius: 10px; width: 100%;"><i class="fa-solid fa-map-location-dot"></i> Büyük Tuz Gölü (ABD)</button>
+              <button class="btn-scenario btn-lake-select" data-lake="uyuni" style="justify-content: flex-start; border-radius: 10px; width: 100%;"><i class="fa-solid fa-border-all"></i> Salar de Uyuni (Bolivya)</button>
+              <button class="btn-scenario btn-lake-select" data-lake="urmia" style="justify-content: flex-start; border-radius: 10px; width: 100%;"><i class="fa-solid fa-circle-exclamation"></i> Urmiye Gölü (İran)</button>
+            </div>
+
+            <!-- Dinamik Bilgi Kartı -->
+            <div class="process-details-box" id="lakeCompareDetails" style="min-height: 150px; background: rgba(0,0,0,0.3); border-color: var(--border-active);">
+              <h4 id="comp-lake-name">Tuz Gölü (Türkiye)</h4>
+              <p id="comp-lake-desc" style="margin-top: 5px; line-height: 1.4; font-size: 0.8rem;">İç Anadolu'da yer alan, Türkiye'nin ikinci büyük gölüdür. Aşırı sığ yapısı ve yüksek sodyum-klorür oranıyla karakterize edilir.</p>
+              <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-secondary); display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                <span><strong>İyon Karakteri:</strong> <span id="comp-lake-ions" style="color:var(--secondary-cyan)">Na⁺, Cl⁻, SO₄²⁻</span></span>
+                <span><strong>Ekstrem Tehdit:</strong> <span id="comp-lake-threat" style="color:#ef4444">Yeraltı Suyu Çekimi</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sağ: Radar Chart -->
+          <div class="radar-chart-container" style="position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--border-light); border-radius: 12px; padding: 15px; height: 350px; display: flex; align-items: center; justify-content: center;">
+            <canvas id="lakesRadarChart" style="max-height: 100%; max-width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Alt Bilgi / Footer -->
@@ -1235,6 +1377,7 @@
         <a href="#satellite">Veriler</a>
         <a href="#technology">Mühendislik</a>
         <a href="#vision">Vizyon 2056</a>
+        <a href="#physics">Fizik & Dinamik</a>
       </div>
       <div class="footer-badge-row">
         <span class="footer-badge"><i class="fa-solid fa-code"></i> MIT Lisansı</span>

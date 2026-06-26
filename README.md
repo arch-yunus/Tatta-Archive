@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-11.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-12.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
@@ -95,6 +95,9 @@ Tatta-Archive platformu, ham bilimsel verilerin tarayıcı üzerinde görselleş
 *   **Mekansal Daralma ve Obruk Görselleştirici:** 1975'ten 2025'e kadar olan uydu sınırlarını harita üzerinde ölçeklendirir ve yeraltı suyu tüketimiyle tetiklenen obruk oluşum lokasyonlarını SVG haritasında üretir.
 *   **Vizyon 2056 Kokpiti & Ekolojik Tehdit Karşılaştırıcı:** Tarımsal sulama reformu, kaçak kuyu kapatma oranları ve Konya arıtma tesisi kapasitesi gibi politikaların 2056 yılı su seviyesi, karbon emilimi, enerji depolaması ve ötrofikasyon/oksijen döngüsü üzerindeki etkilerini hesaplar.
 *   **Karanlık Gökyüzü Parkı & Ayna Yansıma Simülatörü:** Işık kirliliğini azaltarak Samanyolu'nu ve takımyıldızları (Büyük Ayı, Kraliçe, Küçük Ayı) gökyüzünde ve su yansımasında etkileşimli olarak canlandıran bir canvas çizim modülüdür.
+*   **Seş (Seiche) Salınım Laboratuvarı:** Gölün sığ derinliği ve rüzgar hızı parametrelerine göre su seviyesinin duran dalga periyodunu ve yığılma genliğini hesaplayan fiziksel model kanvasıdır.
+*   **Tuz Tozu Erozyonu & Plazmoliz Simülatörü:** Kuruyan göl yatağından poyrazla kalkan tuz tozlarının yayılımını, partiküllerini ve bitişikteki tarım arazilerinde yarattığı plazmoliz riskini hesaplayan ve ekolojik rüzgar kırıcı bariyerlerin (tuzcul kuşak/orman) etkinliğini test eden simülatördür.
+*   **Küresel Hipersalin Göller Karşılaştırma Matrisi:** Dünyanın en ünlü 5 tuz gölünü (Tuz Gölü, Lut Gölü, Büyük Tuz Gölü, Salar de Uyuni, Urmiye Gölü) iyonik karakter, yüzey alanı, rakım ve tehdit durumları ekseninde interaktif radar grafikler (Chart.js) ile karşılaştıran limnoloji modülüdür.
 
 ---
 
