@@ -77,6 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Fiziksel Dinamikler & Kıyaslamalı Limnoloji
   initPhysicsDynamics();
   initGlobalLakesMatrix();
+
+  // Endüstriyel Tuzla ve Antik Sarnıç Simülatörleri (v13.0)
+  initSaltworksSimulator();
+  initCisternSimulator();
 });
 
 /* ==========================================================================
@@ -346,7 +350,14 @@ function initNavigation() {
             }, 100);
           } else if (targetId === "technology") {
             setTimeout(() => {
+              resizeSaltworksCanvas();
               startCavernSimulation();
+              startSaltworksSimulation();
+            }, 100);
+          } else if (targetId === "history") {
+            setTimeout(() => {
+              resizeCisternCanvas();
+              startCisternSimulation();
             }, 100);
           } else if (targetId === "vision") {
             setTimeout(() => {
@@ -3096,4 +3107,638 @@ function initGlobalLakesMatrix() {
 
   updateComparison("tuz"); 
 }
+
+/* ==========================================================================
+   24. INDUSTRIAL SALTWORKS SIMULATOR (v13.0)
+   ========================================================================== */
+let saltworksInterval = null;
+let saltworksState = {
+  selectedWorks: "kaldirim",
+  densityBe: 24.5,
+  evapRate: 1.5,
+  washEfficiency: 80,
+  dryTemp: 105,
+  yield: 450,
+  purity: 98.4,
+  impurity: 3200,
+  moisture: 0.25,
+  energy: 14.2,
+  animationTime: 0
+};
+
+const saltworksConfig = {
+  kaldirim: {
+    name: "Kaldırım Tuzlası",
+    baseCapacity: 450,
+    baseImpurity: 3000,
+    desc: "Gölün kuzey kesimindeki en büyük tuz üretim havzalarından biridir. Standart sanayi ve sofra tuzu üretimi ağırlıklıdır."
+  },
+  yavsan: {
+    name: "Yavşan Tuzlası",
+    baseCapacity: 220,
+    baseImpurity: 1200,
+    desc: "Batı kıyısında yer alan tarihi tuzla işletmesidir. Medikal ve kimyasal saflıkta üstün kaliteli tuz üretimiyle bilinir."
+  },
+  kayacik: {
+    name: "Kayacık Tuzlası",
+    baseCapacity: 700,
+    baseImpurity: 5500,
+    desc: "Güney havzasındaki tuzla işletmesidir. Yüksek buharlaşma yüzeyi sayesinde yüksek hacimde sanayi tipi tuz üretir."
+  }
+};
+
+function resizeSaltworksCanvas() {
+  const canvas = document.getElementById("saltworksCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initSaltworksSimulator() {
+  const worksBtns = document.querySelectorAll(".btn-saltworks");
+  const slideBe = document.getElementById("salt-be");
+  const slideEvap = document.getElementById("salt-evap");
+  const slideWash = document.getElementById("salt-wash");
+  const slideTemp = document.getElementById("salt-temp");
+
+  if (!slideBe) return;
+
+  const valName = document.getElementById("val-saltworks-name");
+  const valBe = document.getElementById("val-salt-be");
+  const valEvap = document.getElementById("val-salt-evap");
+  const valWash = document.getElementById("val-salt-wash");
+  const valTemp = document.getElementById("val-salt-temp");
+
+  function updateParams() {
+    saltworksState.densityBe = parseFloat(slideBe.value);
+    saltworksState.evapRate = parseFloat(slideEvap.value);
+    saltworksState.washEfficiency = parseInt(slideWash.value);
+    saltworksState.dryTemp = parseInt(slideTemp.value);
+
+    valBe.innerText = `${saltworksState.densityBe.toFixed(1)} °Be`;
+    valEvap.innerText = `${saltworksState.evapRate.toFixed(1)} mm/gün`;
+    valWash.innerText = `%${saltworksState.washEfficiency}`;
+    valTemp.innerText = `${saltworksState.dryTemp} °C`;
+  }
+
+  [slideBe, slideEvap, slideWash, slideTemp].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  worksBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      worksBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      saltworksState.selectedWorks = btn.getAttribute("data-saltworks");
+      valName.innerText = saltworksConfig[saltworksState.selectedWorks].name;
+    });
+  });
+
+  updateParams();
+}
+
+function startSaltworksSimulation() {
+  const canvas = document.getElementById("saltworksCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const yieldEl = document.getElementById("salt-yield");
+  const purityEl = document.getElementById("salt-purity");
+  const impurityEl = document.getElementById("salt-impurity");
+  const moistureEl = document.getElementById("salt-moisture");
+  const energyEl = document.getElementById("salt-energy");
+  const alertEl = document.getElementById("saltworksAlert");
+
+  if (saltworksInterval) clearInterval(saltworksInterval);
+
+  saltworksInterval = setInterval(() => {
+    saltworksState.animationTime += 0.05;
+
+    const works = saltworksConfig[saltworksState.selectedWorks];
+    const Be = saltworksState.densityBe;
+    const evap = saltworksState.evapRate;
+    const wash = saltworksState.washEfficiency;
+    const temp = saltworksState.dryTemp;
+
+    // Yield math
+    let optFactor = 0;
+    if (Be >= 25.5 && Be <= 28.5) {
+      optFactor = 1.0;
+    } else {
+      optFactor = Math.max(0.1, 1.0 - Math.abs(Be - 27.0) / 6.0);
+    }
+    const currentYield = works.baseCapacity * (evap / 1.5) * optFactor;
+
+    // Purity math
+    let basePurity = 98.0;
+    if (Be > 28.5) {
+      basePurity = Math.max(90.0, 98.0 - (Be - 28.5) * 2.0);
+    } else if (Be < 25.5) {
+      basePurity = Math.max(92.0, 98.0 - (25.5 - Be) * 1.5);
+    }
+    const currentPurity = basePurity + (100.0 - basePurity) * (wash / 100.0) * 0.98;
+
+    // Impurities math (Mg/Ca in ppm)
+    let rawImpurities = works.baseImpurity;
+    if (Be > 28.5) {
+      rawImpurities += (Be - 28.5) * 1500;
+    }
+    const currentImpurity = rawImpurities * (1 - wash / 100.0);
+
+    // Moisture math
+    const currentMoisture = 5.0 * Math.exp(-temp / 35.0);
+
+    // Energy math
+    const currentEnergy = (temp * 0.08) + (wash * 0.06);
+
+    // Update Telemetry
+    if (yieldEl) yieldEl.innerText = `${Math.round(currentYield)} ton/gün`;
+    if (purityEl) purityEl.innerText = `%${currentPurity.toFixed(2)}`;
+    if (impurityEl) impurityEl.innerText = `${Math.round(currentImpurity)} ppm`;
+    if (moistureEl) moistureEl.innerText = `%${currentMoisture.toFixed(2)}`;
+    if (energyEl) energyEl.innerText = `${currentEnergy.toFixed(1)} kWh/t`;
+
+    // Alert Status
+    if (alertEl) {
+      let statusText = "";
+      let icon = "fa-circle-info";
+      let colorClass = "var(--text-primary)";
+      if (currentPurity >= 99.5 && currentImpurity < 1000 && currentMoisture < 0.2) {
+        statusText = "<strong>Tuz Sınıfı: Medikal & İlaç Sanayi Kalitesi.</strong> Ultra yüksek saflıkta NaCl hammaddesi.";
+        icon = "fa-circle-check";
+        colorClass = "#4ade80";
+      } else if (currentPurity >= 98.5 && currentImpurity < 2500 && currentMoisture < 0.4) {
+        statusText = "<strong>Tuz Sınıfı: Rafine Sofra Tuzu.</strong> Gıda standardı tüketimine uygundur.";
+        icon = "fa-circle-check";
+        colorClass = "var(--secondary-cyan)";
+      } else if (currentPurity >= 95.0 && currentImpurity < 5000) {
+        statusText = "<strong>Tuz Sınıfı: Sanayi & Kar Karşıtı Yol Tuzu.</strong> Sanayi prosesleri ve buz çözme için ideal.";
+        icon = "fa-triangle-exclamation";
+        colorClass = "#fbbf24";
+      } else {
+        statusText = "<strong>Tuz Sınıfı: Düşük Kaliteli / Nemli Ham Tuz.</strong> Rafinasyon yetersiz veya acı iyon çökelimi yüksek.";
+        icon = "fa-circle-xmark";
+        colorClass = "#ef4444";
+      }
+      alertEl.innerHTML = `<i class="fa-solid ${icon}" style="color:${colorClass}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = colorClass + "33";
+    }
+
+    // Canvas Drawing
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#020617";
+    ctx.fillRect(0, 0, w, h);
+
+    // 5 Stages Layout
+    const numStages = 5;
+    const stageWidth = w / numStages;
+    const pad = 10;
+
+    const stages = [
+      { name: "Evaporasyon", icon: "💧" },
+      { name: "Kristalizasyon", icon: "❄️" },
+      { name: "Yıkama", icon: "🌀" },
+      { name: "Kurutma", icon: "🔥" },
+      { name: "Silo / Ürün", icon: "⛰️" }
+    ];
+
+    stages.forEach((st, idx) => {
+      const x = idx * stageWidth + pad;
+      const y = 35;
+      const sw = stageWidth - pad * 2;
+      const sh = h - 65;
+
+      // Draw container box
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, sw, sh);
+      
+      // Label
+      ctx.fillStyle = "rgba(148, 163, 184, 0.7)";
+      ctx.font = "bold 8px Outfit";
+      ctx.textAlign = "center";
+      ctx.fillText(st.name, x + sw / 2, y - 8);
+
+      // Icon
+      ctx.font = "14px Arial";
+      ctx.fillText(st.icon, x + sw / 2, y + 25);
+
+      if (idx === 0) {
+        // Evaporation pond
+        ctx.fillStyle = "rgba(0, 229, 255, 0.15)";
+        ctx.fillRect(x + 2, y + sh - 40, sw - 4, 38);
+        ctx.fillStyle = "rgba(0, 229, 255, 0.6)";
+        const waveY = y + sh - 45 - Math.sin(saltworksState.animationTime * 3) * 3;
+        ctx.font = "8px Arial";
+        ctx.fillText("↑ ↑", x + sw / 2, waveY);
+      } else if (idx === 1) {
+        // Crystallization bed
+        const heapHeight = Math.min(30, currentYield * 0.04);
+        ctx.fillStyle = "rgba(248, 250, 252, 0.85)";
+        ctx.beginPath();
+        ctx.moveTo(x + 2, y + sh - 2);
+        ctx.lineTo(x + sw / 2, y + sh - heapHeight);
+        ctx.lineTo(x + sw - 2, y + sh - 2);
+        ctx.closePath();
+        ctx.fill();
+        if (currentYield > 50) {
+          ctx.fillStyle = "rgba(248, 250, 252, 0.5)";
+          for (let i = 0; i < 4; i++) {
+            const dropY = y + 35 + ((saltworksState.animationTime * 20 + i * 15) % (sh - 40));
+            ctx.fillRect(x + sw / 2 - 2 + i % 2 * 4, dropY, 2, 2);
+          }
+        }
+      } else if (idx === 2) {
+        // Washing drum
+        if (wash > 50) {
+          ctx.strokeStyle = "rgba(0, 229, 255, 0.4)";
+          ctx.lineWidth = 1.5;
+          for (let i = 0; i < 3; i++) {
+            const lineX = x + 10 + i * (sw - 20) / 2;
+            ctx.beginPath();
+            ctx.moveTo(lineX, y + 30);
+            ctx.lineTo(lineX + Math.sin(saltworksState.animationTime * 10 + i) * 2, y + sh - 10);
+            ctx.stroke();
+          }
+        }
+        ctx.fillStyle = "rgba(248, 250, 252, 0.7)";
+        ctx.fillRect(x + 5, y + sh - 15, sw - 10, 13);
+      } else if (idx === 3) {
+        // Drying furnace
+        ctx.strokeStyle = "rgba(239, 68, 68, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x + sw / 2, y + sh - 25, 15, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.fillStyle = "rgba(239, 68, 68, 0.6)";
+        ctx.font = "8px Arial";
+        ctx.fillText("♨️", x + sw / 2, y + sh - 22 + Math.sin(saltworksState.animationTime * 5) * 2);
+      } else if (idx === 4) {
+        // Silo
+        const pileColor = currentPurity > 99.0 ? "#ffffff" : "rgba(226, 232, 240, 0.85)";
+        const finalHeapHeight = Math.min(45, (currentYield * 0.05));
+        ctx.fillStyle = pileColor;
+        ctx.beginPath();
+        ctx.moveTo(x + 2, y + sh - 2);
+        ctx.lineTo(x + sw / 2, y + sh - finalHeapHeight);
+        ctx.lineTo(x + sw - 2, y + sh - 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.font = "bold 7px Outfit";
+        ctx.fillText(`%${currentPurity.toFixed(1)}`, x + sw / 2, y + sh - 5);
+      }
+    });
+
+    // Connecting arrows
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 2;
+    for (let idx = 0; idx < numStages - 1; idx++) {
+      const startX = (idx + 1) * stageWidth - 5;
+      const arrowY = h / 2 + 10;
+      ctx.beginPath();
+      ctx.moveTo(startX - 2, arrowY);
+      ctx.lineTo(startX + 8, arrowY);
+      ctx.lineTo(startX + 4, arrowY - 3);
+      ctx.moveTo(startX + 8, arrowY);
+      ctx.lineTo(startX + 4, arrowY + 3);
+      ctx.stroke();
+    }
+  }, 50);
+}
+
+/* ==========================================================================
+   25. ANCIENT CISTERN HYDRAULICS SIMULATOR (v13.0)
+   ========================================================================== */
+let cisternInterval = null;
+let cisternState = {
+  selectedCistern: "sultan",
+  rainIntensity: 320,
+  catchmentArea: 250,
+  filterThickness: 45,
+  drawRate: 800,
+  volume: 42.5,
+  clarity: 94,
+  sediment: 4.8,
+  lifetime: 53,
+  animationTime: 0
+};
+
+const cisternConfig = {
+  sultan: {
+    name: "Sultanhanı Kervansarayı Sarnıcı",
+    capacity: 120,
+    runoffCoeff: 0.85,
+    desc: "Tarihi İpek Yolu üzerindeki Sultanhanı Kervansarayı'nın devasa çatısından gelen suları toplayan büyük tonozlu sarnıçtır."
+  },
+  obruk: {
+    name: "Obruk Han Sarnıcı",
+    capacity: 60,
+    runoffCoeff: 0.75,
+    desc: "Karstik çöküntü kenarında yer alan ve kervansarayın avlusundaki yeraltı akışlarından beslenen derin korumalı sarnıçtır."
+  },
+  serefli: {
+    name: "Şereflikoçhisar Antik Sarnıcı",
+    capacity: 90,
+    runoffCoeff: 0.80,
+    desc: "Yerleşim alanındaki antik taş tonozlarla çevrili, sivil halkın tatlı su ihtiyacını karşılayan klasik bir belediye sarnıcıdır."
+  }
+};
+
+function resizeCisternCanvas() {
+  const canvas = document.getElementById("cisternCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initCisternSimulator() {
+  const cisternBtns = document.querySelectorAll(".btn-cistern");
+  const slideRain = document.getElementById("cistern-rain");
+  const slideCatchment = document.getElementById("cistern-catchment");
+  const slideFilter = document.getElementById("cistern-filter");
+  const slideDraw = document.getElementById("cistern-draw");
+
+  if (!slideRain) return;
+
+  const valName = document.getElementById("val-cistern-name");
+  const valRain = document.getElementById("val-cistern-rain");
+  const valCatchment = document.getElementById("val-cistern-catchment");
+  const valFilter = document.getElementById("val-cistern-filter");
+  const valDraw = document.getElementById("val-cistern-draw");
+
+  function updateParams() {
+    cisternState.rainIntensity = parseInt(slideRain.value);
+    cisternState.catchmentArea = parseInt(slideCatchment.value);
+    cisternState.filterThickness = parseInt(slideFilter.value);
+    cisternState.drawRate = parseInt(slideDraw.value);
+
+    valRain.innerText = `${cisternState.rainIntensity} mm/yıl`;
+    valCatchment.innerText = `${cisternState.catchmentArea} m²`;
+    valFilter.innerText = `${cisternState.filterThickness} cm`;
+    valDraw.innerText = `${cisternState.drawRate} L/gün`;
+  }
+
+  [slideRain, slideCatchment, slideFilter, slideDraw].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  cisternBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      cisternBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      cisternState.selectedCistern = btn.getAttribute("data-cistern");
+      const config = cisternConfig[cisternState.selectedCistern];
+      valName.innerText = config.name;
+      cisternState.volume = config.capacity * 0.5;
+      cisternState.sediment = 2.0 + Math.random() * 3.0;
+    });
+  });
+
+  updateParams();
+  cisternState.volume = 65.0;
+}
+
+function startCisternSimulation() {
+  const canvas = document.getElementById("cisternCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const volEl = document.getElementById("cistern-volume");
+  const capSubEl = document.getElementById("cistern-capacity-sub");
+  const clarityEl = document.getElementById("cistern-clarity");
+  const sedimentEl = document.getElementById("cistern-sediment");
+  const lifetimeEl = document.getElementById("cistern-lifetime");
+  const alertEl = document.getElementById("cisternAlert");
+
+  if (cisternInterval) clearInterval(cisternInterval);
+
+  cisternInterval = setInterval(() => {
+    cisternState.animationTime += 0.05;
+
+    const conf = cisternConfig[cisternState.selectedCistern];
+    const rain = cisternState.rainIntensity;
+    const area = cisternState.catchmentArea;
+    const filter = cisternState.filterThickness;
+    const draw = cisternState.drawRate;
+
+    // Daily Rain Inflow math
+    const rainDailyL = (rain / 365.0) * area * conf.runoffCoeff;
+
+    // Filter math
+    const clarity = 100.0 - (35.0 * Math.exp(-filter / 22.0));
+    const filterEfficiency = 1.0 - (filter * 0.0012);
+    const inflowL = rainDailyL * filterEfficiency;
+
+    // Outflow math
+    const outflowL = draw;
+
+    // Net flow in m³ per day
+    const netM3PerDay = (inflowL - outflowL) / 1000.0;
+
+    // Tick represents 0.5 days
+    const dt = 0.5;
+    cisternState.volume += netM3PerDay * dt;
+    cisternState.volume = Math.max(0, Math.min(conf.capacity, cisternState.volume));
+
+    // Sediment growth
+    const sedimentInflow = (inflowL / 1000.0) * (1.0 - clarity / 100.0) * 0.015 * dt;
+    cisternState.sediment += sedimentInflow;
+    cisternState.sediment = Math.min(25.0, cisternState.sediment);
+
+    // Lifetime estimate
+    let lifetimeText = "";
+    if (netM3PerDay >= 0) {
+      lifetimeText = "Dengeli / Sürekli Akış";
+    } else {
+      const days = (cisternState.volume * 1000.0) / Math.abs(inflowL - outflowL);
+      lifetimeText = `${Math.ceil(days)} gün`;
+    }
+
+    // Update telemetry UI
+    if (volEl) volEl.innerText = `${cisternState.volume.toFixed(1)} m³`;
+    if (capSubEl) capSubEl.innerText = `Kapasite: ${conf.capacity} m³`;
+    if (clarityEl) clarityEl.innerText = `%${Math.round(clarity)}`;
+    if (sedimentEl) sedimentEl.innerText = `${cisternState.sediment.toFixed(1)} cm`;
+    if (lifetimeEl) lifetimeEl.innerText = lifetimeText;
+
+    // Status alert message
+    if (alertEl) {
+      let statusText = "";
+      let icon = "fa-circle-check";
+      let color = "#4ade80";
+      
+      const pct = (cisternState.volume / conf.capacity) * 100;
+      if (cisternState.volume <= 0.05) {
+        statusText = "<strong>Sarnıç Tamamen Kurudu!</strong> Su kaynağı tükendi, kervanlar susuzluk riskiyle karşı karşıya.";
+        icon = "fa-circle-xmark";
+        color = "#ef4444";
+      } else if (clarity < 80) {
+        statusText = "<strong>Bulanık Su Kalitesi:</strong> Filtre yatağı yetersiz. Su tortulu, doğrudan içmek risklidir.";
+        icon = "fa-triangle-exclamation";
+        color = "#fbbf24";
+      } else if (pct < 15) {
+        statusText = "<strong>Kritik Su Seviyesi:</strong> Rezerv bitmek üzere. Tüketim acilen azaltılmalıdır.";
+        icon = "fa-circle-exclamation";
+        color = "#f97316";
+      } else {
+        statusText = "<strong>Güvenli Rezerv & Kalite:</strong> Berrak, filtre edilmiş su içmeye uygun ve kervanların hizmetinde.";
+        icon = "fa-circle-check";
+        color = "#f97316";
+      }
+      alertEl.innerHTML = `<i class="fa-solid ${icon}" style="color:${color}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = color + "33";
+    }
+
+    // Canvas drawing
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Deep Dark background
+    ctx.fillStyle = "#030712";
+    ctx.fillRect(0, 0, w, h);
+
+    // Ground level drawing
+    const groundY = 60;
+    ctx.fillStyle = "#1f2937";
+    ctx.fillRect(0, groundY, w, 10);
+    
+    // Draw surface rain
+    if (rain > 150) {
+      ctx.strokeStyle = "rgba(59, 130, 246, 0.4)";
+      ctx.lineWidth = 1;
+      const numDrops = Math.min(40, Math.ceil(rain / 12));
+      for (let i = 0; i < numDrops; i++) {
+        const rx = ((cisternState.animationTime * 200 + i * 45) % w);
+        const ry = ((cisternTime = cisternState.animationTime * 300 + i * 25) % groundY);
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx - 2, ry + 6);
+        ctx.stroke();
+      }
+    }
+
+    // Filter box
+    const fx = w / 2 - 25;
+    const fy = groundY - 5;
+    const fw = 50;
+    const fh = 25;
+    
+    // Sand layer
+    ctx.fillStyle = "#d97706";
+    ctx.fillRect(fx, fy + 5, fw, 10);
+    // Gravel layer
+    ctx.fillStyle = "#4b5563";
+    ctx.fillRect(fx, fy + 15, fw, 10);
+    
+    ctx.strokeStyle = "#9ca3af";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(fx, fy, fw, fh);
+    
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 6px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("FİLTRE", fx + fw / 2, fy - 2);
+
+    // Water flowing down from filter
+    if (rain > 150 && cisternState.volume < conf.capacity) {
+      ctx.strokeStyle = "rgba(0, 229, 255, 0.6)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(w / 2, fy + fh);
+      ctx.lineTo(w / 2, groundY + 50 + Math.sin(cisternState.animationTime * 12) * 5);
+      ctx.stroke();
+    }
+
+    // Cistern vaulted structure
+    const cx = 30;
+    const cy = groundY + 30;
+    const cw = w - 60;
+    const ch = h - cy - 15;
+
+    // Vault Arches
+    ctx.strokeStyle = "#b45309";
+    ctx.lineWidth = 4;
+    
+    const archW = cw / 3;
+    for (let i = 0; i < 3; i++) {
+      const ax = cx + i * archW;
+      ctx.beginPath();
+      ctx.arc(ax + archW / 2, cy + 10, archW / 2, Math.PI, 0, false);
+      ctx.stroke();
+    }
+
+    // Columns
+    ctx.fillStyle = "#78350f";
+    ctx.fillRect(cx + archW - 4, cy + 10, 8, ch - 10);
+    ctx.fillRect(cx + archW * 2 - 4, cy + 10, 8, ch - 10);
+
+    // Pool filling level
+    const maxWaterHeight = ch - 12;
+    const waterHeight = maxWaterHeight * (cisternState.volume / conf.capacity);
+    const poolY = cy + ch - waterHeight;
+
+    // Sediment bed
+    const sedHeight = Math.min(15, cisternState.sediment * 0.6);
+    ctx.fillStyle = "#451a03";
+    ctx.fillRect(cx, cy + ch - sedHeight, cw, sedHeight);
+
+    // Water block
+    if (waterHeight > 0) {
+      const waterGrad = ctx.createLinearGradient(0, poolY, 0, cy + ch);
+      const rVal = Math.round(59 + (100 - clarity) * 1.5);
+      const gVal = Math.round(130 + (100 - clarity) * 0.5);
+      const bVal = Math.round(246 - (100 - clarity) * 1.5);
+      waterGrad.addColorStop(0, `rgba(${rVal}, ${gVal}, ${bVal}, 0.55)`);
+      waterGrad.addColorStop(1, "rgba(30, 58, 138, 0.3)");
+
+      ctx.fillStyle = waterGrad;
+      ctx.beginPath();
+      ctx.moveTo(cx, poolY);
+      const numWaves = 10;
+      const waveSpan = cw / numWaves;
+      for (let i = 0; i <= numWaves; i++) {
+        const wx = cx + i * waveSpan;
+        const wy = poolY + Math.sin(cisternState.animationTime * 4 + i) * 1.8;
+        ctx.lineTo(wx, wy);
+      }
+      ctx.lineTo(cx + cw, cy + ch - sedHeight);
+      ctx.lineTo(cx, cy + ch - sedHeight);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Cistern Wall Outlines
+    ctx.strokeStyle = "#92400e";
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(cx, cy, cw, ch);
+
+    // Scale markers
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.font = "6px Outfit";
+    ctx.textAlign = "right";
+    ctx.fillText("Max", cx - 4, cy + 15);
+    ctx.fillText("50%", cx - 4, cy + ch / 2 + 5);
+    ctx.fillText("Min", cx - 4, cy + ch - 5);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 2, cy + 12); ctx.lineTo(cx, cy + 12);
+    ctx.moveTo(cx - 2, cy + ch / 2); ctx.lineTo(cx, cy + ch / 2);
+    ctx.moveTo(cx - 2, cy + ch - 2); ctx.lineTo(cx, cy + ch - 2);
+    ctx.stroke();
+
+  }, 60);
+}
+
 

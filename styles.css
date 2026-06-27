@@ -3090,4 +3090,91 @@ body {
   z-index: 5;
 }
 
+/* ==========================================================================
+   23. ENDÜSTRİYEL TUZLA VE ANTİK SARNIÇ SİMÜLATÖRLERİ STILLERİ (v13.0)
+   ========================================================================== */
+.saltworks-top-row,
+.cistern-top-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.saltworks-controls,
+.cistern-controls {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.saltworks-visual-container,
+.cistern-visual-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+}
+
+.saltworks-selector-buttons,
+.cistern-selector-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.btn-saltworks,
+.btn-cistern {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
+.btn-saltworks.active {
+  background: var(--secondary-cyan) !important;
+  color: #060913 !important;
+  border-color: var(--secondary-cyan) !important;
+  box-shadow: 0 0 10px var(--secondary-cyan-glow) !important;
+}
+
+.btn-cistern.active {
+  background: #f97316 !important;
+  color: #030712 !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4) !important;
+}
+
+.saltworks-telemetry-grid,
+.cistern-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .saltworks-top-row,
+  .cistern-top-row {
+    flex-direction: column;
+  }
+  
+  .saltworks-controls,
+  .cistern-controls {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .saltworks-telemetry-grid,
+  .cistern-telemetry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .saltworks-telemetry-grid,
+  .cistern-telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 

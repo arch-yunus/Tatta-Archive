@@ -527,6 +527,77 @@
           </div>
         </div>
       </div>
+
+      <!-- Antik Sarnıç ve Tatlı Su Simülatörü -->
+      <div class="card glass-card margin-top-30" style="border-color: rgba(249, 115, 22, 0.2);">
+        <h3>🧱 Antik Sarnıç Hidroliği & Tatlı Su Toplama Simülatörü</h3>
+        <p class="card-desc">İç Anadolu'nun yarı kurak ikliminde, tarihi Selçuklu kervansaraylarının ve hanlarının tatlı su ihtiyacını karşılayan kubbeli tuğla sarnıçların yağış süzme ve depolama hidroliğini deneyimleyin.</p>
+        
+        <div class="cistern-simulator-layout">
+          <div class="cistern-top-row">
+            <div class="cistern-controls">
+              <div class="sim-slider-group">
+                <label>Tarihi Sarnıç Seçimi: <span class="val-display" id="val-cistern-name">Sultanhanı Kervansarayı Sarnıcı</span></label>
+                <div class="cistern-selector-buttons">
+                  <button class="btn btn-outline btn-sm btn-cistern active" data-cistern="sultan">Sultanhanı</button>
+                  <button class="btn btn-outline btn-sm btn-cistern" data-cistern="obruk">Obruk Han</button>
+                  <button class="btn btn-outline btn-sm btn-cistern" data-cistern="serefli">Şereflikoçhisar</button>
+                </div>
+              </div>
+              <div class="sim-slider-group">
+                <label for="cistern-rain">Yıllık Ortalama Yağış (mm): <span class="val-display" id="val-cistern-rain">320 mm</span></label>
+                <input type="range" id="cistern-rain" min="150" max="600" step="10" value="320" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="cistern-catchment">Çatı / Toplama Alanı (m²): <span class="val-display" id="val-cistern-catchment">250 m²</span></label>
+                <input type="range" id="cistern-catchment" min="50" max="600" step="10" value="250" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="cistern-filter">Kum-Çakıl Filtre Kalınlığı (cm): <span class="val-display" id="val-cistern-filter">45 cm</span></label>
+                <input type="range" id="cistern-filter" min="10" max="100" step="5" value="45" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="cistern-draw">Günlük Su Tüketimi (Litre/gün): <span class="val-display" id="val-cistern-draw">800 L/gün</span></label>
+                <input type="range" id="cistern-draw" min="100" max="2500" step="50" value="800" class="slider-input">
+              </div>
+            </div>
+            
+            <div class="cistern-visual-container">
+              <canvas id="cisternCanvas" height="240" style="width: 100%; border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; background: #030712;"></canvas>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="cistern-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(249, 115, 22, 0.1);">
+              <span class="tel-label">Depolanan Su Hacmi</span>
+              <span class="tel-val" id="cistern-volume">42.5 m³</span>
+              <span class="tel-sub" id="cistern-capacity-sub">Kapasite: 80 m³</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(249, 115, 22, 0.1);">
+              <span class="tel-label">Su Netliği / Kalitesi</span>
+              <span class="tel-val" id="cistern-clarity">%94</span>
+              <span class="tel-sub" id="cistern-clarity-sub">Kum filtresi berraklığı</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(249, 115, 22, 0.1);">
+              <span class="tel-label">Tortu Kalınlığı</span>
+              <span class="tel-val" id="cistern-sediment">4.8 cm</span>
+              <span class="tel-sub">Taban birikintisi</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(249, 115, 22, 0.1);">
+              <span class="tel-label">Kuruma Ömrü</span>
+              <span class="tel-val" id="cistern-lifetime">53 gün</span>
+              <span class="tel-sub" id="cistern-lifetime-sub">Yağışsız dayanım süresi</span>
+            </div>
+          </div>
+
+          <!-- Alert status box -->
+          <div class="cavern-stability-alert margin-top-20" id="cisternAlert" style="background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.2);">
+            <i class="fa-solid fa-circle-check" style="color:#f97316"></i>
+            <span style="color:#f8fafc"><strong>Sarnıç Su Durumu:</strong> Filtre edilmiş su içilebilir kalitededir ve kervanların ihtiyacını karşılamaktadır.</span>
+          </div>
+        </div>
+      </div>
     </section>
 
 
@@ -1076,6 +1147,84 @@
             </div>
             
             <button class="btn btn-primary btn-full margin-top-20" id="btn-next-li-stage"><i class="fa-solid fa-arrow-right"></i> Sonraki Aşamaya Geç</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider and Saltworks Simulator -->
+      <div class="margin-top-30" style="border-top: 1px dashed var(--border-light); padding-top: 30px;">
+        <div class="card glass-card">
+          <h3>⚗️ Endüstriyel Tuzla ve Rafinasyon Proses Simülatörü</h3>
+          <p class="card-desc">Gölün ana tuzlalarından gelen salamuranın kademeli buharlaşma, kristalizasyon ve modern rafinasyon (yıkama, kurutma, iyotlama) aşamalarını ve tuz saflık derecesini simüle edin.</p>
+          
+          <div class="saltworks-simulator-layout">
+            <div class="saltworks-top-row">
+              <div class="saltworks-controls">
+                <div class="sim-slider-group">
+                  <label>Tuzla Seçimi: <span class="val-display" id="val-saltworks-name">Kaldırım Tuzlası</span></label>
+                  <div class="saltworks-selector-buttons">
+                    <button class="btn btn-outline btn-sm btn-saltworks active" data-saltworks="kaldirim">Kaldırım</button>
+                    <button class="btn btn-outline btn-sm btn-saltworks" data-saltworks="yavsan">Yavşan</button>
+                    <button class="btn btn-outline btn-sm btn-saltworks" data-saltworks="kayacik">Kayacık</button>
+                  </div>
+                </div>
+                <div class="sim-slider-group">
+                  <label for="salt-be">Giriş Yoğunluğu (°Be - Baumé): <span class="val-display" id="val-salt-be">24.5 °Be</span></label>
+                  <input type="range" id="salt-be" min="15" max="32" step="0.5" value="24.5" class="slider-input">
+                </div>
+                <div class="sim-slider-group">
+                  <label for="salt-evap">Buharlaşma Hızı (mm/gün): <span class="val-display" id="val-salt-evap">1.5 mm/gün</span></label>
+                  <input type="range" id="salt-evap" min="0.5" max="3.0" step="0.1" value="1.5" class="slider-input">
+                </div>
+                <div class="sim-slider-group">
+                  <label for="salt-wash">Yıkama Verimliliği (%): <span class="val-display" id="val-salt-wash">%80</span></label>
+                  <input type="range" id="salt-wash" min="50" max="99" step="1" value="80" class="slider-input">
+                </div>
+                <div class="sim-slider-group">
+                  <label for="salt-temp">Kurutma Sıcaklığı (°C): <span class="val-display" id="val-salt-temp">105 °C</span></label>
+                  <input type="range" id="salt-temp" min="60" max="150" step="5" value="105" class="slider-input">
+                </div>
+              </div>
+              
+              <div class="saltworks-visual-container">
+                <canvas id="saltworksCanvas" height="240" style="width: 100%; border: 1px solid var(--border-light); border-radius: 8px; background: #020617;"></canvas>
+              </div>
+            </div>
+
+            <!-- Telemetry Grid -->
+            <div class="saltworks-telemetry-grid margin-top-20">
+              <div class="telemetry-card">
+                <span class="tel-label">Günlük NaCl Hasadı</span>
+                <span class="tel-val" id="salt-yield">450 ton</span>
+                <span class="tel-sub" id="salt-yield-sub">Toplam kristallenme</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">NaCl Saflığı</span>
+                <span class="tel-val" id="salt-purity">%98.4</span>
+                <span class="tel-sub" id="salt-grade-sub">Standart Sofra Tuzu</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Acılık (Mg/Ca Oranı)</span>
+                <span class="tel-val" id="salt-impurity">3,200 ppm</span>
+                <span class="tel-sub" id="salt-impurity-sub">Diğer acı iyonlar</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Nem / Su Oranı</span>
+                <span class="tel-val" id="salt-moisture">%0.25</span>
+                <span class="tel-sub" id="salt-moisture-sub">Fırın çıkışı nem</span>
+              </div>
+              <div class="telemetry-card">
+                <span class="tel-label">Spesifik Enerji</span>
+                <span class="tel-val" id="salt-energy">14.2 kWh/t</span>
+                <span class="tel-sub">Rafinasyon maliyeti</span>
+              </div>
+            </div>
+
+            <!-- Alert status box -->
+            <div class="cavern-stability-alert margin-top-20" id="saltworksAlert">
+              <i class="fa-solid fa-circle-info"></i>
+              <span><strong>Tuz Kalitesi Durumu:</strong> Gıda tüketimine uygun standart yemeklik sofra tuzu sınıfındadır.</span>
+            </div>
           </div>
         </div>
       </div>
