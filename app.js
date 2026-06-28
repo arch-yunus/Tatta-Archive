@@ -81,6 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Endüstriyel Tuzla ve Antik Sarnıç Simülatörleri (v13.0)
   initSaltworksSimulator();
   initCisternSimulator();
+
+  // Yeni Simülatörler (v14.0)
+  initHalophyteRemediationSimulator();
+  initCaravanSimulator();
+  initCCNSimulator();
 });
 
 /* ==========================================================================
@@ -354,10 +359,17 @@ function initNavigation() {
               startCavernSimulation();
               startSaltworksSimulation();
             }, 100);
+          } else if (targetId === "ecology") {
+            setTimeout(() => {
+              resizePhytoCanvas();
+              startPhytoSimulation();
+            }, 100);
           } else if (targetId === "history") {
             setTimeout(() => {
               resizeCisternCanvas();
               startCisternSimulation();
+              resizeCaravanCanvas();
+              startCaravanSimulation();
             }, 100);
           } else if (targetId === "vision") {
             setTimeout(() => {
@@ -367,6 +379,8 @@ function initNavigation() {
             setTimeout(() => {
               resizePhysicsCanvases();
               startPhysicsSimulations();
+              resizeCCNCanvas();
+              startCCNSimulation();
             }, 100);
           }
         }
@@ -3740,5 +3754,854 @@ function startCisternSimulation() {
 
   }, 60);
 }
+
+/* ==========================================================================
+   26. PHYTOMEDIATION SIMULATOR (v14.0)
+   ========================================================================== */
+let phytoInterval = null;
+let phytoState = {
+  selectedPlant: "salicornia",
+  initialSalinity: 45,
+  plantingDensity: 35,
+  heavyMetals: 150,
+  irrigation: 250,
+  currentSalinity: 45,
+  absorbedMetals: 0,
+  carbonSeq: 0,
+  biomass: 0,
+  animationTime: 0,
+  particles: []
+};
+
+const phytoConfig = {
+  salicornia: {
+    name: "Salicornia europaea (Deniz Börülcesi)",
+    salAccumulationRate: 0.12,
+    metalAccumulationRate: 0.08,
+    carbonRate: 5.5,
+    biomassRate: 0.05,
+    desc: "Hipersalin koşullara en dayanıklı türdür. Hücrelerinde yüksek miktarda tuz biriktirebilir. Fitoremediasyon şampiyonudur."
+  },
+  suaeda: {
+    name: "Suaeda prostrata (Tuz Otu)",
+    salAccumulationRate: 0.08,
+    metalAccumulationRate: 0.15,
+    carbonRate: 4.8,
+    biomassRate: 0.04,
+    desc: "Topraktaki kurşun (Pb) ve kadmiyum (Cd) gibi ağır metalleri bünyesinde biriktirmede üstün başarı sergiler."
+  },
+  limonium: {
+    name: "Limonium gmelinii (Deniz Lavantası)",
+    salAccumulationRate: 0.06,
+    metalAccumulationRate: 0.05,
+    carbonRate: 7.2,
+    biomassRate: 0.06,
+    desc: "Tuz bezleriyle fazla tuzu dışarı atar. Geniş yaprak yapısıyla yüksek karbon emilimi ve estetik biyokütle sağlar."
+  }
+};
+
+function resizePhytoCanvas() {
+  const canvas = document.getElementById("phytoCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initHalophyteRemediationSimulator() {
+  const plantBtns = document.querySelectorAll(".btn-phyto-plant");
+  const slideSal = document.getElementById("phyto-salinity");
+  const slideDen = document.getElementById("phyto-density");
+  const slideMet = document.getElementById("phyto-metals");
+  const slideIrr = document.getElementById("phyto-irrigation");
+
+  if (!slideSal) return;
+
+  const valSal = document.getElementById("val-phyto-sal");
+  const valDen = document.getElementById("val-phyto-density");
+  const valMet = document.getElementById("val-phyto-metals");
+  const valIrr = document.getElementById("val-phyto-irr");
+
+  function updateParams() {
+    phytoState.initialSalinity = parseFloat(slideSal.value);
+    phytoState.plantingDensity = parseInt(slideDen.value);
+    phytoState.heavyMetals = parseInt(slideMet.value);
+    phytoState.irrigation = parseInt(slideIrr.value);
+
+    valSal.innerText = `${phytoState.initialSalinity} dS/m`;
+    valDen.innerText = `${phytoState.plantingDensity} adet/m²`;
+    valMet.innerText = `${phytoState.heavyMetals} ppm`;
+    valIrr.innerText = `${phytoState.irrigation} mm`;
+
+    phytoState.currentSalinity = phytoState.initialSalinity;
+    phytoState.absorbedMetals = 0;
+    phytoState.carbonSeq = 0;
+    phytoState.biomass = 0;
+    phytoState.animationTime = 0;
+  }
+
+  [slideSal, slideDen, slideMet, slideIrr].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  plantBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      plantBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      phytoState.selectedPlant = btn.getAttribute("data-plant");
+      phytoState.currentSalinity = phytoState.initialSalinity;
+      phytoState.absorbedMetals = 0;
+      phytoState.carbonSeq = 0;
+      phytoState.biomass = 0;
+      phytoState.animationTime = 0;
+    });
+  });
+
+  updateParams();
+}
+
+function startPhytoSimulation() {
+  const canvas = document.getElementById("phytoCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const curSalEl = document.getElementById("phyto-current-sal");
+  const salRedEl = document.getElementById("phyto-sal-reduction");
+  const absMetEl = document.getElementById("phyto-absorbed-metals");
+  const metRedEl = document.getElementById("phyto-metal-reduction");
+  const carbSeqEl = document.getElementById("phyto-carbon-seq");
+  const biomassEl = document.getElementById("phyto-biomass");
+  const alertEl = document.getElementById("phytoAlert");
+
+  if (phytoInterval) clearInterval(phytoInterval);
+
+  phytoState.particles = [];
+  const numParticles = 80;
+  for (let i = 0; i < numParticles; i++) {
+    phytoState.particles.push({
+      x: Math.random(),
+      y: 0.5 + Math.random() * 0.5,
+      type: Math.random() > 0.4 ? "salt" : "metal",
+      speed: 0.2 + Math.random() * 0.3
+    });
+  }
+
+  phytoInterval = setInterval(() => {
+    phytoState.animationTime += 0.02;
+
+    const plant = phytoConfig[phytoState.selectedPlant];
+    const density = phytoState.plantingDensity;
+    const initialSal = phytoState.initialSalinity;
+    const metals = phytoState.heavyMetals;
+    const irr = phytoState.irrigation;
+
+    const t = phytoState.animationTime;
+    const maxT = 10;
+    const factor = Math.min(1.0, t / maxT);
+
+    const salUptakeCoef = plant.salAccumulationRate * (density / 40.0) * (irr / 300.0);
+    const finalSal = initialSal * Math.exp(-salUptakeCoef * factor * 1.5);
+    phytoState.currentSalinity = finalSal;
+    const salReductionPct = Math.round(((initialSal - finalSal) / initialSal) * 100);
+
+    const metalUptakeCoef = plant.metalAccumulationRate * (density / 40.0) * (irr / 300.0);
+    const absorbed = metals * (1.0 - Math.exp(-metalUptakeCoef * factor * 1.8));
+    phytoState.absorbedMetals = absorbed;
+    const metalReductionPct = Math.round((absorbed / (metals > 0 ? metals : 1.0)) * 100);
+
+    phytoState.carbonSeq = plant.carbonRate * density * factor * (irr / 250.0) * 12.0;
+    phytoState.biomass = plant.biomassRate * density * factor * (irr / 250.0) * 0.8;
+
+    if (curSalEl) curSalEl.innerText = `${phytoState.currentSalinity.toFixed(1)} dS/m`;
+    if (salRedEl) salRedEl.innerText = `Azalma: -%${salReductionPct}`;
+    if (absMetEl) absMetEl.innerText = `${phytoState.absorbedMetals.toFixed(1)} mg/kg`;
+    if (metRedEl) metRedEl.innerText = `Topraktan temizlenen: %${metalReductionPct}`;
+    if (carbSeqEl) carbSeqEl.innerText = `${Math.round(phytoState.carbonSeq)} g/m²`;
+    if (biomassEl) biomassEl.innerText = `${phytoState.biomass.toFixed(2)} kg/m²`;
+
+    if (alertEl) {
+      let statusText = "";
+      let icon = "fa-circle-check";
+      let colorClass = "#22c55e";
+      if (salReductionPct >= 60 && metalReductionPct >= 50) {
+        statusText = `<strong>Mükemmel İyileşme (Sınıf 1):</strong> Toprak yapısı normalleşiyor. Tarımsal faaliyetler için elverişli seviyeye yaklaşıldı.`;
+        icon = "fa-circle-check";
+        colorClass = "#22c55e";
+      } else if (salReductionPct >= 30) {
+        statusText = `<strong>Orta Düzey İyileşme (Sınıf 2):</strong> Tuzluluk düşüyor, ağır metaller kısmen temizlendi. Süreç devam etmeli.`;
+        icon = "fa-circle-check";
+        colorClass = "var(--secondary-cyan)";
+      } else {
+        statusText = `<strong>Fitoremediasyon Başlangıcı:</strong> Bitkiler adaptasyon sürecinde. Toprak iyileşmesi henüz başlangıç seviyesinde.`;
+        icon = "fa-circle-exclamation";
+        colorClass = "#fbbf24";
+      }
+      alertEl.innerHTML = `<i class="fa-solid ${icon}" style="color:${colorClass}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = colorClass + "33";
+    }
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = "#1e1b18";
+    ctx.fillRect(0, h / 2, w, h / 2);
+    
+    ctx.strokeStyle = "#3f3f46";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    const numPlants = Math.min(12, Math.ceil(density / 6));
+    const plantSpacing = w / (numPlants + 1);
+    
+    for (let i = 1; i <= numPlants; i++) {
+      const px = i * plantSpacing;
+      const py = h / 2;
+      const maxHeight = 50 + (plant.biomassRate * 400);
+      const curHeight = maxHeight * factor;
+
+      ctx.strokeStyle = "rgba(168, 85, 247, 0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.quadraticCurveTo(px - 15, py + 25, px - 5, py + 45);
+      ctx.moveTo(px, py);
+      ctx.quadraticCurveTo(px + 15, py + 20, px + 5, py + 40);
+      ctx.moveTo(px, py);
+      ctx.lineTo(px, py + 30);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#22c55e";
+      ctx.fillStyle = "#4ade80";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(px, py - curHeight);
+      ctx.stroke();
+
+      if (curHeight > 15) {
+        ctx.beginPath();
+        ctx.ellipse(px - 8, py - curHeight * 0.4, 5, 2, -Math.PI / 4, 0, Math.PI * 2);
+        ctx.ellipse(px + 8, py - curHeight * 0.4, 5, 2, Math.PI / 4, 0, Math.PI * 2);
+        ctx.ellipse(px - 10, py - curHeight * 0.7, 6, 2.5, -Math.PI / 4, 0, Math.PI * 2);
+        ctx.ellipse(px + 10, py - curHeight * 0.7, 6, 2.5, Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    phytoState.particles.forEach(p => {
+      const px = p.x * w;
+      const py = p.y * h;
+
+      if (p.type === "salt") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.fillRect(px, py, 3, 3);
+      } else {
+        ctx.fillStyle = "rgba(239, 68, 68, 0.75)";
+        ctx.beginPath();
+        ctx.arc(px, py, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      p.y -= p.speed * 0.005;
+
+      if (p.y <= 0.52) {
+        p.y = 0.95;
+        p.x = Math.random();
+      }
+    });
+
+  }, 40);
+}
+
+/* ==========================================================================
+   27. CARAVAN LOGISTICS SIMULATOR (v14.0)
+   ========================================================================== */
+let caravanInterval = null;
+let caravanState = {
+  selectedRoute: "tatta-konya",
+  camelCount: 15,
+  loadPerCamel: 120,
+  waterReserve: 1200,
+  season: "spring",
+  distanceLeft: 0,
+  daysElapsed: 0,
+  currentWater: 1200,
+  health: 100,
+  profit: 0,
+  cargoWeight: 0,
+  isRunning: false,
+  caravanX: 0,
+  animationTime: 0
+};
+
+const caravanRoutes = {
+  "tatta-konya": {
+    name: "Tatta ➔ Iconium (Konya)",
+    totalDistance: 120,
+    safetyBase: 90,
+    waterReplenishPoints: [40, 80],
+    pricePerKg: 3.5,
+    desc: "Düz ova rotası. Kervansaraylar sıktır, su tedariği kolaydır, eşkıya riski düşüktür."
+  },
+  "tatta-hattusa": {
+    name: "Tatta ➔ Hattuşaş (Çorum)",
+    totalDistance: 240,
+    safetyBase: 65,
+    waterReplenishPoints: [70, 150],
+    pricePerKg: 6.8,
+    desc: "Uzun ve dalgalı arazi rotası. Su kuyuları seyrektir, geçitlerde hava sıcaklığı zorlayıcıdır."
+  },
+  "tatta-kayseri": {
+    name: "Tatta ➔ Caesarea (Kayseri)",
+    totalDistance: 190,
+    safetyBase: 78,
+    waterReplenishPoints: [60, 120],
+    pricePerKg: 5.2,
+    desc: "Kısmi engebeli rota. Tuz tozu fırtınasına açık ovalardan geçer. Orta risklidir."
+  }
+};
+
+function resizeCaravanCanvas() {
+  const canvas = document.getElementById("caravanCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initCaravanSimulator() {
+  const routeBtns = document.querySelectorAll(".btn-caravan-route");
+  const slideCamels = document.getElementById("caravan-camels");
+  const slideLoad = document.getElementById("caravan-load");
+  const slideWater = document.getElementById("caravan-water");
+  const selectSeason = document.getElementById("caravan-season");
+  const btnStart = document.getElementById("btn-start-caravan");
+
+  if (!slideCamels) return;
+
+  const valCamels = document.getElementById("val-caravan-camels");
+  const valLoad = document.getElementById("val-caravan-load");
+  const valWater = document.getElementById("val-caravan-water");
+
+  function updateParams() {
+    if (caravanState.isRunning) return;
+
+    caravanState.camelCount = parseInt(slideCamels.value);
+    caravanState.loadPerCamel = parseInt(slideLoad.value);
+    caravanState.waterReserve = parseInt(slideWater.value);
+    caravanState.season = selectSeason.value;
+
+    valCamels.innerText = `${caravanState.camelCount} deve`;
+    valLoad.innerText = `${caravanState.loadPerCamel} kg`;
+    valWater.innerText = `${caravanState.waterReserve} L`;
+
+    const route = caravanRoutes[caravanState.selectedRoute];
+    caravanState.distanceLeft = route.totalDistance;
+    caravanState.daysElapsed = 0;
+    caravanState.currentWater = caravanState.waterReserve;
+    caravanState.health = 100;
+    caravanState.cargoWeight = caravanState.camelCount * caravanState.loadPerCamel;
+    caravanState.profit = 0;
+
+    updateCaravanUI();
+  }
+
+  [slideCamels, slideLoad, slideWater].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+  selectSeason.addEventListener("change", updateParams);
+
+  routeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (caravanState.isRunning) return;
+      routeBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      caravanState.selectedRoute = btn.getAttribute("data-route");
+      updateParams();
+    });
+  });
+
+  btnStart.addEventListener("click", () => {
+    if (caravanState.isRunning) {
+      caravanState.isRunning = false;
+      btnStart.innerHTML = '<i class="fa-solid fa-play"></i> Yolculuğu Başlat';
+      updateParams();
+    } else {
+      caravanState.isRunning = true;
+      btnStart.innerHTML = '<i class="fa-solid fa-square-xmark"></i> Yolculuğu İptal Et / Sıfırla';
+      runCaravanJourney();
+    }
+  });
+
+  updateParams();
+}
+
+function updateCaravanUI() {
+  const distEl = document.getElementById("caravan-dist");
+  const daysEl = document.getElementById("caravan-day-display");
+  const waterEl = document.getElementById("caravan-water-telemetry");
+  const usageEl = document.getElementById("caravan-water-usage");
+  const healthEl = document.getElementById("caravan-health");
+  const profitEl = document.getElementById("caravan-profit");
+  const cargoEl = document.getElementById("caravan-cargo");
+  const statusEl = document.getElementById("caravan-status");
+
+  if (distEl) distEl.innerText = `${Math.round(caravanState.distanceLeft)} km`;
+  if (daysEl) daysEl.innerText = `Gün: ${caravanState.daysElapsed}`;
+  if (waterEl) waterEl.innerText = `${Math.round(caravanState.currentWater)} L`;
+  
+  let dailyUsage = caravanState.camelCount * 12;
+  if (caravanState.season === "summer") dailyUsage *= 1.8;
+  if (usageEl) usageEl.innerText = `Tüketim: ${Math.round(dailyUsage)} L/gün`;
+  
+  if (healthEl) healthEl.innerText = `%${Math.round(caravanState.health)}`;
+  if (profitEl) profitEl.innerText = `${Math.round(caravanState.profit)} Dinar`;
+  if (cargoEl) cargoEl.innerText = `Toplam Yük: ${caravanState.cargoWeight} kg`;
+}
+
+function runCaravanJourney() {
+  const alertEl = document.getElementById("caravanAlert");
+  const btnStart = document.getElementById("btn-start-caravan");
+  
+  let route = caravanRoutes[caravanState.selectedRoute];
+  
+  let dailyDist = 20;
+  if (caravanState.loadPerCamel > 160) dailyDist -= 4;
+  if (caravanState.season === "summer") dailyDist -= 3;
+  
+  let dailyWaterUse = caravanState.camelCount * 12;
+  if (caravanState.season === "summer") dailyWaterUse *= 1.8;
+
+  let baseSafety = route.safetyBase;
+  if (caravanState.season === "autumn") baseSafety -= 10;
+  if (caravanState.season === "summer") baseSafety -= 5;
+
+  let messageLog = "Yolculuk başladı! Kervan Tatta Gölü'nün beyaz düzlüklerinden ayrılıyor.";
+  if (alertEl) alertEl.innerHTML = `<i class="fa-solid fa-map-location-dot" style="color:#a855f7"></i> <span style="color:#f8fafc"><strong>Günlük:</strong> ${messageLog}</span>`;
+
+  caravanInterval = setInterval(() => {
+    if (!caravanState.isRunning) {
+      clearInterval(caravanInterval);
+      return;
+    }
+
+    caravanState.daysElapsed++;
+    caravanState.distanceLeft -= dailyDist;
+    caravanState.currentWater -= dailyWaterUse;
+
+    let routeConfig = caravanRoutes[caravanState.selectedRoute];
+    let traveled = routeConfig.totalDistance - caravanState.distanceLeft;
+    let replenished = false;
+    routeConfig.waterReplenishPoints.forEach(pt => {
+      if (traveled >= pt && traveled - dailyDist < pt) {
+        let addedWater = 400 + Math.random() * 400;
+        caravanState.currentWater = Math.min(caravanState.waterReserve, caravanState.currentWater + addedWater);
+        replenished = true;
+      }
+    });
+
+    let eventRoll = Math.random() * 100;
+    let eventMsg = "";
+    if (eventRoll > baseSafety) {
+      let dangerType = Math.random() > 0.5 ? "bandit" : "weather";
+      if (dangerType === "bandit") {
+        let lostCargo = Math.round(caravanState.cargoWeight * 0.15);
+        caravanState.cargoWeight -= lostCargo;
+        caravanState.health -= 15;
+        eventMsg = ` Kervan eşkıya saldırısına uğradı! ${lostCargo} kg tuz kaybedildi.`;
+      } else {
+        caravanState.health -= 10;
+        caravanState.currentWater -= 100;
+        eventMsg = caravanState.season === "autumn" 
+          ? " Kervan şiddetli tuz tozu fırtınasına yakalandı! Sağlık ve su azaldı." 
+          : " Aşırı sıcaklık nedeniyle develer bitkin düştü.";
+      }
+    }
+
+    if (caravanState.currentWater <= 0) {
+      caravanState.currentWater = 0;
+      caravanState.health -= 25;
+      eventMsg += " Su kaynakları tamamen tükendi! Kervan susuzluktan kırılıyor.";
+    }
+
+    if (caravanState.health < 0) caravanState.health = 0;
+
+    if (replenished) {
+      messageLog = `İpek Yolu hanına ulaşıldı. Sarnıçlardan taze su ikmali yapıldı.${eventMsg}`;
+    } else {
+      messageLog = `Kervan ${dailyDist} km ilerledi.${eventMsg}`;
+    }
+
+    if (alertEl) {
+      alertEl.innerHTML = `<i class="fa-solid fa-caravan" style="color:#a855f7"></i> <span style="color:#f8fafc"><strong>Gün ${caravanState.daysElapsed}:</strong> ${messageLog}</span>`;
+    }
+
+    if (caravanState.distanceLeft <= 0) {
+      caravanState.distanceLeft = 0;
+      caravanState.profit = caravanState.cargoWeight * routeConfig.pricePerKg;
+      caravanState.isRunning = false;
+      clearInterval(caravanInterval);
+      btnStart.innerHTML = '<i class="fa-solid fa-play"></i> Yeni Yolculuk';
+      if (alertEl) {
+        alertEl.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e"></i> <span style="color:#f8fafc"><strong>Başarı:</strong> Kervan varış noktasına ulaştı! ${Math.round(caravanState.profit)} Altın Dinar kâr elde edildi.</span>`;
+        alertEl.style.borderColor = "#22c55e33";
+      }
+    }
+
+    if (caravanState.health <= 0) {
+      caravanState.isRunning = false;
+      clearInterval(caravanInterval);
+      btnStart.innerHTML = '<i class="fa-solid fa-play"></i> Yeniden Dene';
+      if (alertEl) {
+        alertEl.innerHTML = `<i class="fa-solid fa-skull-crossbones" style="color:#ef4444"></i> <span style="color:#f8fafc"><strong>Hata:</strong> Kervan çölde kayboldu ve telef oldu. Yolculuk başarısız.</span>`;
+        alertEl.style.borderColor = "#ef444433";
+      }
+    }
+
+    updateCaravanUI();
+
+  }, 1000);
+}
+
+function startCaravanSimulation() {
+  const canvas = document.getElementById("caravanCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  let animTime = 0;
+
+  function draw() {
+    if (!canvas) return;
+    animTime += 0.05;
+    
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = "#050515";
+    ctx.fillRect(0, 0, w, h);
+
+    const routeName = caravanState.selectedRoute;
+    const totalDist = caravanRoutes[routeName].totalDistance;
+    const traveled = totalDist - caravanState.distanceLeft;
+    const pct = traveled / totalDist;
+
+    const startNode = { x: 50, y: h / 2 };
+    const endNode = { x: w - 50, y: h / 2 };
+    
+    ctx.strokeStyle = "rgba(168, 85, 247, 0.25)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(startNode.x, startNode.y);
+    ctx.quadraticCurveTo(w / 2, h / 2 - 40, endNode.x, endNode.y);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#a855f7";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(startNode.x, startNode.y);
+    const midX = startNode.x + (endNode.x - startNode.x) * pct;
+    const midY = startNode.y + (endNode.y - startNode.y) * pct - Math.sin(pct * Math.PI) * 40;
+    ctx.quadraticCurveTo(startNode.x + (w/2 - startNode.x) * pct, startNode.y + (h/2 - 40 - startNode.y) * pct, midX, midY);
+    ctx.stroke();
+
+    ctx.fillStyle = "#00e5ff";
+    ctx.beginPath();
+    ctx.arc(startNode.x, startNode.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 8px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("Tatta", startNode.x, startNode.y - 12);
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.beginPath();
+    ctx.arc(endNode.x, endNode.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.fillText("Hedef", endNode.x, endNode.y - 12);
+
+    const cx = startNode.x + (endNode.x - startNode.x) * pct;
+    const cy = startNode.y + (endNode.y - startNode.y) * pct - Math.sin(pct * Math.PI) * 40;
+
+    ctx.fillStyle = "#a855f7";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(168, 85, 247, 0.5)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 10 + Math.sin(animTime * 3) * 2, 0, Math.PI * 2);
+    ctx.stroke();
+
+    if (caravanState.season === "summer") {
+      ctx.fillStyle = "rgba(239, 68, 68, 0.04)";
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    if (caravanState.season === "autumn" && caravanState.isRunning) {
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.15)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        let sy = (animTime * 150 + i * 40) % h;
+        ctx.beginPath();
+        ctx.moveTo(0, sy);
+        ctx.lineTo(w, sy + Math.sin(animTime + i) * 10);
+        ctx.stroke();
+      }
+    }
+
+    if (caravanState.isRunning) {
+      requestAnimationFrame(draw);
+    }
+  }
+
+  draw();
+}
+
+/* ==========================================================================
+   28. CCN & AEROSOL YAĞIŞ YOĞUNLAŞMA LABORATUVARI (v14.0)
+   ========================================================================== */
+let ccnInterval = null;
+let ccnState = {
+  windSpeed: 45,
+  humidity: 75,
+  aerosolFlux: 350,
+  temperature: -15,
+  dropletDiameter: 1.25,
+  condensationRate: 840,
+  cloudProbability: 72,
+  rainIncrement: 6.4,
+  animationTime: 0,
+  particles: []
+};
+
+function resizeCCNCanvas() {
+  const canvas = document.getElementById("ccnCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initCCNSimulator() {
+  const slideWind = document.getElementById("ccn-wind");
+  const slideHum = document.getElementById("ccn-humidity");
+  const slideFlux = document.getElementById("ccn-flux");
+  const slideTemp = document.getElementById("ccn-temp");
+
+  if (!slideWind) return;
+
+  const valWind = document.getElementById("val-ccn-wind");
+  const valHum = document.getElementById("val-ccn-hum");
+  const valFlux = document.getElementById("val-ccn-flux");
+  const valTemp = document.getElementById("val-ccn-temp");
+
+  function updateParams() {
+    ccnState.windSpeed = parseInt(slideWind.value);
+    ccnState.humidity = parseInt(slideHum.value);
+    ccnState.aerosolFlux = parseInt(slideFlux.value);
+    ccnState.temperature = parseInt(slideTemp.value);
+
+    valWind.innerText = `${ccnState.windSpeed} km/s`;
+    valHum.innerText = `%${ccnState.humidity}`;
+    valFlux.innerText = `${ccnState.aerosolFlux} p/cm³`;
+    valTemp.innerText = `${ccnState.temperature} °C`;
+  }
+
+  [slideWind, slideHum, slideFlux, slideTemp].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  updateParams();
+}
+
+function startCCNSimulation() {
+  const canvas = document.getElementById("ccnCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const dropSizeEl = document.getElementById("ccn-droplet-size");
+  const satRatioEl = document.getElementById("ccn-sat-ratio");
+  const condRateEl = document.getElementById("ccn-condensation-rate");
+  const cloudProbEl = document.getElementById("ccn-cloud-prob");
+  const rainIncEl = document.getElementById("ccn-rain-increment");
+  const alertEl = document.getElementById("ccnAlert");
+
+  if (ccnInterval) clearInterval(ccnInterval);
+
+  ccnState.particles = [];
+  for (let i = 0; i < 40; i++) {
+    ccnState.particles.push({
+      x: 0.1 + Math.random() * 0.4,
+      y: 0.2 + Math.random() * 0.6,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5,
+      size: 1 + Math.random() * 2
+    });
+  }
+
+  ccnInterval = setInterval(() => {
+    ccnState.animationTime += 0.05;
+
+    const wind = ccnState.windSpeed;
+    const hum = ccnState.humidity;
+    const flux = ccnState.aerosolFlux;
+    const temp = ccnState.temperature;
+
+    const saturationRatio = 100.0 + (0.5 * (100.0 - hum) / 50.0);
+    const criticalDiameter = Math.max(0.1, 2.5 - (hum / 60.0) - (flux / 800.0));
+    
+    const rate = Math.round(flux * (hum / 100.0) * (Math.abs(temp - 10) / 15.0) * 1.5);
+    const cloudProb = Math.min(100, Math.round((hum * 0.7) + (flux * 0.03) + (wind * 0.1)));
+    const rainInc = (flux / 200.0) * (hum / 75.0) * 2.8;
+
+    if (dropSizeEl) dropSizeEl.innerText = `${criticalDiameter.toFixed(2)} μm`;
+    if (satRatioEl) satRatioEl.innerText = `Aşırı Doygunluk Eşiği: %${saturationRatio.toFixed(1)}`;
+    if (condRateEl) condRateEl.innerText = `${rate} damla/s`;
+    if (cloudProbEl) {
+      cloudProbEl.innerText = `%${cloudProb}`;
+      let cType = "Cirrus";
+      if (cloudProb > 80) cType = "Cumulonimbus";
+      else if (cloudProb > 50) cType = "Stratocumulus";
+      else if (cloudProb > 25) cType = "Altocumulus";
+      const sub = document.querySelector("#ccn-cloud-prob + .tel-sub");
+      if (sub) sub.innerText = `Bulut Tipi: ${cType}`;
+    }
+    if (rainIncEl) rainIncEl.innerText = `+%${rainInc.toFixed(1)}`;
+
+    if (alertEl) {
+      let statusText = "";
+      let icon = "fa-cloud-showers-water";
+      let color = "var(--secondary-cyan)";
+      if (cloudProb > 75) {
+        statusText = "<strong>Aerosol Fiziği Durumu:</strong> Yüksek yoğunlaşma hızı ve doygunluk. İç Anadolu'da yerel sağanak yağışlar tetikleniyor.";
+        color = "var(--secondary-cyan)";
+      } else if (cloudProb > 40) {
+        statusText = "<strong>Aerosol Fiziği Durumu:</strong> Parçalı bulutlanma aktif. Yoğunlaşma dengeli, yağış ihtimali orta düzeyde.";
+        color = "#fbbf24";
+      } else {
+        statusText = "<strong>Aerosol Fiziği Durumu:</strong> Düşük nem oranı. Yoğunlaşma yavaş, gökyüzü açık veya sığ bulutlu.";
+        color = "#ef4444";
+      }
+      alertEl.innerHTML = `<i class="fa-solid ${icon}" style="color:${color}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = color + "33";
+    }
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const midX = w / 2;
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(midX, 0);
+    ctx.lineTo(midX, h);
+    ctx.stroke();
+
+    const cx = midX / 2;
+    const cy = h / 2;
+    const r = Math.min(midX, h) / 2 - 15;
+    
+    ctx.fillStyle = "#0c4a6e";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(6, 182, 212, 0.4)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.font = "bold 6px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("CCN MİKROSKOBİK GÖRÜNÜM (NaCl)", cx, cy - r + 12);
+
+    const nucSize = 18;
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#00e5ff";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(cx - nucSize/2, cy - nucSize/2, nucSize, nucSize);
+    
+    const maxShellRad = r - 25;
+    const shellRad = nucSize/2 + (maxShellRad - nucSize/2) * (hum / 100.0);
+    
+    ctx.fillStyle = "rgba(0, 229, 255, 0.25)";
+    ctx.strokeStyle = "rgba(0, 229, 255, 0.75)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, shellRad + Math.sin(ccnState.animationTime * 4) * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ccnState.particles.forEach(p => {
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(p.x * midX, p.y * h, p.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      const dx = cx - (p.x * midX);
+      const dy = cy - (p.y * h);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < shellRad) {
+        const angle = Math.random() * Math.PI * 2;
+        p.x = (cx + Math.cos(angle) * (r - 5)) / midX;
+        p.y = (cy + Math.sin(angle) * (r - 5)) / h;
+      } else {
+        p.x += (dx / dist) * 0.003 * (flux / 350.0);
+        p.y += (dy / dist) * 0.003 * (flux / 350.0);
+      }
+    });
+
+    const rx = midX + 15;
+    const rw = w - rx - 15;
+
+    if (cloudProb > 25) {
+      const numClouds = Math.ceil(cloudProb / 20);
+      ctx.fillStyle = "rgba(148, 163, 184, 0.4)";
+      for (let i = 0; i < numClouds; i++) {
+        const ccx = rx + 30 + i * (rw / numClouds);
+        const ccy = 40 + Math.sin(ccnState.animationTime + i) * 3;
+        ctx.beginPath();
+        ctx.arc(ccx, ccy, 18, 0, Math.PI * 2);
+        ctx.arc(ccx - 12, ccy, 14, 0, Math.PI * 2);
+        ctx.arc(ccx + 12, ccy, 14, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    if (cloudProb > 50) {
+      const rainCount = Math.min(35, Math.round(rate / 25));
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < rainCount; i++) {
+        const dropX = rx + ((ccnState.animationTime * 150 + i * 27) % rw);
+        const dropY = 55 + ((ccnState.animationTime * 220 + i * 38) % (h - 95));
+        ctx.beginPath();
+        ctx.moveTo(dropX, dropY);
+        ctx.lineTo(dropX - 1, dropY + 6);
+        ctx.stroke();
+      }
+    }
+
+    ctx.fillStyle = "#1e2937";
+    ctx.fillRect(midX + 5, h - 25, w - midX - 10, 20);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 6px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("ATMOSFERİK YAĞIŞ SÜRECİ", midX + (w - midX)/2, h - 10);
+
+  }, 50);
+}
+
 
 

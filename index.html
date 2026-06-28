@@ -461,6 +461,77 @@
           <!-- JS ile doldurulacak -->
         </div>
       </div>
+
+      <!-- Halofit Fitoremediasyon & Toprak Tuzluluğu Arındırma Simülatörü (YENİ - v14.0) -->
+      <div class="card glass-card margin-top-20" style="border-color: rgba(34, 197, 94, 0.2);">
+        <h3>🌿 Halofit Fitoremediasyon & Toprak Desalinizasyon Simülatörü</h3>
+        <p class="card-desc">Konya Ana Tahliye Kanalı ve kuraklık nedeniyle tuzlaşan/kirlenen tarım arazilerinin endemik halofit bitkiler (tuzcul otlar) kullanılarak nasıl rehabilite edildiğini simüle edin.</p>
+        
+        <div class="phytoremediation-simulator-layout">
+          <div class="phyto-top-row">
+            <div class="phyto-controls">
+              <div class="sim-slider-group">
+                <label>Bitki Türü Seçimi:</label>
+                <div class="phyto-selector-buttons">
+                  <button class="btn btn-outline btn-sm btn-phyto-plant active" data-plant="salicornia">Salicornia (Deniz Börülcesi)</button>
+                  <button class="btn btn-outline btn-sm btn-phyto-plant" data-plant="suaeda">Suaeda (Tuz Otu)</button>
+                  <button class="btn btn-outline btn-sm btn-phyto-plant" data-plant="limonium">Limonium (Deniz Lavantası)</button>
+                </div>
+              </div>
+              <div class="sim-slider-group">
+                <label for="phyto-salinity">Başlangıç Toprak Tuzluluğu (EC - dS/m): <span class="val-display" id="val-phyto-sal">45 dS/m</span></label>
+                <input type="range" id="phyto-salinity" min="10" max="100" step="5" value="45" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="phyto-density">Dikim Yoğunluğu (Bitki/m²): <span class="val-display" id="val-phyto-density">35 adet</span></label>
+                <input type="range" id="phyto-density" min="5" max="80" step="5" value="35" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="phyto-metals">Ağır Metal Kirliliği (Pb/Cd - ppm): <span class="val-display" id="val-phyto-metals">150 ppm</span></label>
+                <input type="range" id="phyto-metals" min="0" max="500" step="10" value="150" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="phyto-irrigation">Yıllık Sulama/Yağış (mm): <span class="val-display" id="val-phyto-irr">250 mm</span></label>
+                <input type="range" id="phyto-irrigation" min="100" max="600" step="25" value="250" class="slider-input">
+              </div>
+            </div>
+            
+            <div class="phyto-visual-container">
+              <canvas id="phytoCanvas" height="240" style="width: 100%; border: 1px solid rgba(34, 197, 94, 0.15); border-radius: 8px; background: #022c22;"></canvas>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="phyto-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(34, 197, 94, 0.15);">
+              <span class="tel-label">Toprak Tuz Oranı</span>
+              <span class="tel-val" id="phyto-current-sal">32.4 dS/m</span>
+              <span class="tel-sub" id="phyto-sal-reduction">Azalma: -%28</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(34, 197, 94, 0.15);">
+              <span class="tel-label">Ağır Metal Emilimi</span>
+              <span class="tel-val" id="phyto-absorbed-metals">42.5 mg/kg</span>
+              <span class="tel-sub" id="phyto-metal-reduction">Topraktan temizlenen: %34</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(34, 197, 94, 0.15);">
+              <span class="tel-label">Karbon Yutumu</span>
+              <span class="tel-val" id="phyto-carbon-seq">185 g/m²</span>
+              <span class="tel-sub">Yıllık CO₂ fiksasyonu</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(34, 197, 94, 0.15);">
+              <span class="tel-label">Biyokütle Verimi</span>
+              <span class="tel-val" id="phyto-biomass">1.8 kg/m²</span>
+              <span class="tel-sub">Hasat edilebilir organik madde</span>
+            </div>
+          </div>
+
+          <!-- Alert status box -->
+          <div class="cavern-stability-alert margin-top-20" id="phytoAlert" style="background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.2);">
+            <i class="fa-solid fa-circle-check" style="color:#22c55e"></i>
+            <span style="color:#f8fafc"><strong>Fitoremediasyon Durumu:</strong> Bitkiler topraktaki tuzu ve ağır metalleri başarıyla emmektedir.</span>
+          </div>
+        </div>
+      </div>
     </section>
 
 
@@ -624,6 +695,86 @@
           <div class="cavern-stability-alert margin-top-20" id="cisternAlert" style="background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.2);">
             <i class="fa-solid fa-circle-check" style="color:#f97316"></i>
             <span style="color:#f8fafc"><strong>Sarnıç Su Durumu:</strong> Filtre edilmiş su içilebilir kalitededir ve kervanların ihtiyacını karşılamaktadır.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Antik Tuz Yolu Kervan Lojistik Simülatörü (YENİ - v14.0) -->
+      <div class="card glass-card margin-top-30" style="border-color: rgba(168, 85, 247, 0.2);">
+        <h3>🐫 Antik Tuz Yolu Kervan Lojistik Simülatörü</h3>
+        <p class="card-desc">Tatta Gölü'nden yüklenen kaya tuzlarını Selçuklu ve Roma ticaret yolları üzerinden başkentlere taşıyan bir kervanbaşısınız. Kaynakları yönetin ve kervanınızı hedefe ulaştırın.</p>
+        
+        <div class="caravan-simulator-layout">
+          <div class="caravan-top-row">
+            <div class="caravan-controls">
+              <div class="sim-slider-group">
+                <label>Ticaret Rotası Seçimi:</label>
+                <div class="caravan-route-buttons">
+                  <button class="btn btn-outline btn-sm btn-caravan-route active" data-route="tatta-konya">Tatta ➔ Iconium (Konya)</button>
+                  <button class="btn btn-outline btn-sm btn-caravan-route" data-route="tatta-hattusa">Tatta ➔ Hattuşaş (Çorum)</button>
+                  <button class="btn btn-outline btn-sm btn-caravan-route" data-route="tatta-kayseri">Tatta ➔ Caesarea (Kayseri)</button>
+                </div>
+              </div>
+              <div class="sim-slider-group">
+                <label for="caravan-camels">Kervan Büyüklüğü (Deve Sayısı): <span class="val-display" id="val-caravan-camels">15 deve</span></label>
+                <input type="range" id="caravan-camels" min="5" max="50" step="1" value="15" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="caravan-load">Tuz Yükü (Deve Başına - kg): <span class="val-display" id="val-caravan-load">120 kg</span></label>
+                <input type="range" id="caravan-load" min="50" max="200" step="10" value="120" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="caravan-water">Su Tedarik Kaynağı (Litre): <span class="val-display" id="val-caravan-water">1200 L</span></label>
+                <input type="range" id="caravan-water" min="200" max="3000" step="100" value="1200" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label>Ziyaret Mevsimi:</label>
+                <select id="caravan-season" class="select-input" style="width: 100%; background: #0b0f1d; border: 1px solid var(--border-light); color: var(--text-primary); padding: 8px; border-radius: 6px;">
+                  <option value="spring">İlkbahar (Ilıman, Sarnıçlar Dolu)</option>
+                  <option value="summer">Yaz (Aşırı Sıcak, Kuraklık Riski)</option>
+                  <option value="autumn">Sonbahar (Rüzgarlı, Tuz Tozu Fırtınası)</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="caravan-visual-container">
+              <canvas id="caravanCanvas" height="240" style="width: 100%; border: 1px solid rgba(168, 85, 247, 0.15); border-radius: 8px; background: #050515;"></canvas>
+            </div>
+          </div>
+
+          <!-- Controls under canvas -->
+          <div class="caravan-actions-row margin-top-20">
+            <button class="btn btn-primary" id="btn-start-caravan" style="width: 100%;"><i class="fa-solid fa-play"></i> Yolculuğu Başlat</button>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="caravan-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(168, 85, 247, 0.15);">
+              <span class="tel-label">Kalan Mesafe</span>
+              <span class="tel-val" id="caravan-dist">-- km</span>
+              <span class="tel-sub" id="caravan-day-display">Gün: 0</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(168, 85, 247, 0.15);">
+              <span class="tel-label">Mevcut Su Rezervi</span>
+              <span class="tel-val" id="caravan-water-telemetry">-- Litre</span>
+              <span class="tel-sub" id="caravan-water-usage">Tüketim: -- L/gün</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(168, 85, 247, 0.15);">
+              <span class="tel-label">Kervan Sağlığı / Kondisyon</span>
+              <span class="tel-val" id="caravan-health">%100</span>
+              <span class="tel-sub" id="caravan-status">Yola çıkmaya hazır</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(168, 85, 247, 0.15);">
+              <span class="tel-label">Kazanılacak Kâr</span>
+              <span class="tel-val" id="caravan-profit">-- Dinarlar</span>
+              <span class="tel-sub" id="caravan-cargo">Toplam Yük: -- kg</span>
+            </div>
+          </div>
+
+          <!-- Status Box -->
+          <div class="cavern-stability-alert margin-top-20" id="caravanAlert" style="background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.2);">
+            <i class="fa-solid fa-map" style="color:#a855f7"></i>
+            <span style="color:#f8fafc"><strong>Yolculuk Günlüğü:</strong> Rota hazır, kervanbaşının emrini bekliyor.</span>
           </div>
         </div>
       </div>
@@ -1524,6 +1675,69 @@
           <!-- Sağ: Radar Chart -->
           <div class="radar-chart-container" style="position: relative; background: rgba(0,0,0,0.2); border: 1px solid var(--border-light); border-radius: 12px; padding: 15px; height: 350px; display: flex; align-items: center; justify-content: center;">
             <canvas id="lakesRadarChart" style="max-height: 100%; max-width: 100%;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- CCN & Aerosol Yağış Yoğunlaşma Laboratuvarı (YENİ - v14.0) -->
+      <div class="card glass-card margin-top-20" style="border-color: rgba(6, 182, 212, 0.2);">
+        <h3>🌧️ CCN & Aerosol Yağış Yoğunlaşma Laboratuvarı</h3>
+        <p class="card-desc">Gölden rüzgar erozyonu ile kalkan NaCl tuz aerosollerinin atmosferde bulut yoğunlaşma çekirdekleri (CCN - Cloud Condensation Nuclei) oluşturarak İç Anadolu'nun bulutluluk ve yağış rejimini nasıl etkilediğini mikro düzeyde simüle edin.</p>
+        
+        <div class="ccn-simulator-layout">
+          <div class="ccn-top-row">
+            <div class="ccn-controls">
+              <div class="sim-slider-group">
+                <label for="ccn-wind">Aerosol Yükselim Hızı (Rüzgar - km/s): <span class="val-display" id="val-ccn-wind">45 km/s</span></label>
+                <input type="range" id="ccn-wind" min="10" max="100" step="5" value="45" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="ccn-humidity">Atmosferik Bağıl Nem (%): <span class="val-display" id="val-ccn-hum">%75</span></label>
+                <input type="range" id="ccn-humidity" min="30" max="100" step="5" value="75" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="ccn-flux">Tuz Aerosol Derişimi (partikül/cm³): <span class="val-display" id="val-ccn-flux">350 p/cm³</span></label>
+                <input type="range" id="ccn-flux" min="50" max="1000" step="50" value="350" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="ccn-temp">Üst Atmosfer Sıcaklığı (°C): <span class="val-display" id="val-ccn-temp">-15 °C</span></label>
+                <input type="range" id="ccn-temp" min="-40" max="10" step="1" value="-15" class="slider-input">
+              </div>
+            </div>
+            
+            <div class="ccn-visual-container">
+              <canvas id="ccnCanvas" height="240" style="width: 100%; border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 8px; background: #083344;"></canvas>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="ccn-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(6, 182, 212, 0.15);">
+              <span class="tel-label">Damlacık Kritik Çapı (Köhler Teorisi)</span>
+              <span class="tel-val" id="ccn-droplet-size">1.25 μm</span>
+              <span class="tel-sub" id="ccn-sat-ratio">Aşırı Doygunluk Eşiği: %100.2</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(6, 182, 212, 0.15);">
+              <span class="tel-label">Yoğunlaşma Hızı</span>
+              <span class="tel-val" id="ccn-condensation-rate">840 d/s</span>
+              <span class="tel-sub">Saniyedeki damla oluşumu</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(6, 182, 212, 0.15);">
+              <span class="tel-label">Yoğun Bulutlanma İhtimali</span>
+              <span class="tel-val" id="ccn-cloud-prob">%72</span>
+              <span class="tel-sub" id="ccn-cloud-type">Bulut Tipi: Stratocumulus</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(6, 182, 212, 0.15);">
+              <span class="tel-label">İç Anadolu Net Yağış Artışı</span>
+              <span class="tel-val" id="ccn-rain-increment">%6.4</span>
+              <span class="tel-sub">Toz-Bulut Yağış Geri Beslemesi</span>
+            </div>
+          </div>
+
+          <!-- Alert Status Box -->
+          <div class="cavern-stability-alert margin-top-20" id="ccnAlert" style="background: rgba(6, 182, 212, 0.08); border-color: rgba(6, 182, 212, 0.2);">
+            <i class="fa-solid fa-cloud-showers-water" style="color:#06b6d4"></i>
+            <span style="color:#f8fafc"><strong>Aerosol Fiziği Durumu:</strong> Yükselen tuz kristalleri atmosferde bulut damlacıkları oluşturarak İç Anadolu'da yerel yağışları tetiklemektedir.</span>
           </div>
         </div>
       </div>

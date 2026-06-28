@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/versiyon-13.0-ff7597?style=for-the-badge)
+![Version](https://img.shields.io/badge/versiyon-14.0-ff7597?style=for-the-badge)
 ![License](https://img.shields.io/badge/lisans-MIT%20%2F%20CC--BY--4.0-00e5ff?style=for-the-badge)
 ![Language](https://img.shields.io/badge/dil-Türkçe-blueviolet?style=for-the-badge)
 ![Status](https://img.shields.io/badge/durum-Aktif%20Geliştirme-4ade80?style=for-the-badge)
@@ -100,6 +100,9 @@ Tatta-Archive platformu, ham bilimsel verilerin tarayıcı üzerinde görselleş
 *   **Küresel Hipersalin Göller Karşılaştırma Matrisi:** Dünyanın en ünlü 5 tuz gölünü (Tuz Gölü, Lut Gölü, Büyük Tuz Gölü, Salar de Uyuni, Urmiye Gölü) iyonik karakter, yüzey alanı, rakım ve tehdit durumları ekseninde interaktif radar grafikler (Chart.js) ile karşılaştıran limnoloji modülüdür.
 *   **Endüstriyel Tuzla ve Rafinasyon Proses Simülatörü:** Kaldırım, Yavşan ve Kayacık tuzlalarındaki buharlaşma, kademeli kristallenme ve rafinasyon (yıkama, fırında kurutma, saflık kontrol) süreçlerini simüle ederek tuz verimini ve saflık derecesini hesaplayan endüstriyel modeldir.
 *   **Antik Sarnıç Hidroliği ve Havza Tatlı Su Ağı Simülatörü:** Selçuklu kervansarayları (Sultanhanı, Obruk Han) ve antik yerleşimlerdeki tuğla sarnıçların çatı yağış toplama, kum-çakıl süzgeç filtreleme, yeraltı depolama ve tortu birikim dinamiklerini simüle eden hidrolojik-arkeolojik modüldür.
+*   **Halofit Fitoremediasyon & Toprak Desalinizasyon Simülatörü:** Endemik tuzcul bitkilerin (*Salicornia europaea*, *Suaeda prostrata*, *Limonium gmelinii*) toprak tuzluluğunu giderme, ağır metalleri emme ve karbon bağlama kapasitesini hesaplayan ekolojik rehabilitasyon simülatörüdür.
+*   **Antik Tuz Yolu Kervan Lojistik Simülatörü:** Selçuklu ve Roma dönemlerinde Tatta Gölü'nden alınan kaya tuzunun kervanlarla hedeflere (Konya, Hattuşaş, Kayseri) taşınmasını, su tüketimi, güvenlik olayları ve altın kâr oranları ekseninde simüle eden lojistik-tarih modülüdür.
+*   **CCN & Aerosol Yağış Yoğunlaşma Laboratuvarı:** Gölden kalkan NaCl tuz aerosollerinin üst atmosferde bulut yoğunlaşma çekirdekleri (CCN) oluşturma Köhler teorisi dinamiklerini ve İç Anadolu yağış rejimine net yağış artış geri besleme katkısını simüle eden fiziksel-meteorolojik modüldür.
 
 ---
 
@@ -234,6 +237,20 @@ Tuz Gölü, sadece flamingolar (*Phoenicopterus roseus*) için değil, hipersali
 
 Tuz Gölü çevresi, **%80'i Türkiye'ye özgü** halofit bitkilerden oluşan nadir bir flora alanıdır. Bu bitkiler, tuz konsantrasyonunun toprak tuz oranı %2–15 olan alanlarda yetişir ve özel fizyolojik adaptasyonlara sahiptir.
 
+### Halofit Fitoremediasyon ve Toprak Desalinizasyon Mekanizması
+
+Halofitler, yüksek sodyum ($Na^+$) ve klorür ($Cl^-$) iyonu konsantrasyonuna sahip topraklarda osmotik basıncı dengelemek için iyon akümülasyon mekanizmaları geliştirmişlerdir. Fitoremediasyon (bitkisel arındırma) süreci boyunca toprak tuzluluğunun ($EC$) zamana bağlı azalması aşağıdaki birinci dereceden kinetik modelle ifade edilir:
+
+$$EC(t) = EC_0 \cdot e^{-k_{uptake} \cdot \rho \cdot t}$$
+
+Burada:
+- $EC_0$: Başlangıç toprak elektriksel iletkenliği (dS/m)
+- $k_{uptake}$: Bitki türüne özgü tuz emilim katsayısı
+- $\rho$: Dikim yoğunluğu (bitki/m²)
+- $t$: Zaman (büyüme mevsimi/yıl)
+
+*Salicornia europaea* gibi sukulent halofitler, tuzu vakuollerinde depo ederek topraktan tuzu uzaklaştırırken; *Limonium gmelinii* gibi ksilofit bitkiler yapraklarındaki tuz bezleri vasıtasıyla fazla tuzu kristalize ederek dışarı atarlar. Bu süreç ayrıca Konya Tahliye Kanalı'ndan sızan ağır metallerin kök bölgesi rizosferinde şelatlanarak stabilize edilmesini (fitostabilizasyon) sağlar.
+
 ---
 
 ## ⚗️ Endüstriyel Tuzla Teknolojileri ve Rafinasyon Prosesi
@@ -251,6 +268,19 @@ Tuz Gölü havzasının karşı karşıya olduğu en büyük antropojenik tehdit
 ## 🏛️ Tarih, Arkeoloji ve Kervansaray Ticaret Ağları
 
 Tuz Gölü, antik çağlardan bu yana Anadolu'nun en önemli tuz üretim ve ticaret merkezi olmuştur. Roma imparatorluk yollarından Selçuklu kervan yollarına kadar geniş bir lojistik ağın odak noktasını oluşturmuştur.
+
+### Antik Tuz Yolu Kervan Lojistiği
+
+Selçuklu ve Roma dönemlerinde Tatta Gölü havzasından elde edilen kaya tuzu, stratejik bir gıda saklama maddesiydi. Kervanların taşıma kapasitesi ve su tüketimi lojistik hesaplamanın temelini oluşturuyordu:
+
+$$V_{su\_tuketim} = N_{deve} \cdot C_{gunluk} \cdot t_{gun}$$
+
+Burada:
+- $N_{deve}$: Kervandaki deve sayısı
+- $C_{gunluk}$: Bir devenin günlük ortalama su tüketimi (yaz aylarında sıcaklık nedeniyle ~1.8x artar)
+- $t_{gun}$: Seyahat süresi
+
+Kervanların günlük ilerleme hızı, taşıdıkları tuz yükünün ağırlığına ($120\text{ kg}-200\text{ kg}$) bağlı olarak günde ortalama $16\text{ km}-20\text{ km}$ arasında değişmekteydi. Kervansaraylar (Sultanhanı, Obruk Han) arasındaki mesafe, kervanın su tedariği tükenmeden bir diğer güvenli tatlı su sarnıcına ulaşabilmesi amacıyla tam olarak bu günlük yürüyüş menzillerine göre planlanmıştır.
 
 ---
 
@@ -275,6 +305,21 @@ Gölün yaz aylarında kurumasıyla geriye kalan gevşek tuz kristalleri ve kill
 ## 🌧️ Atmosferik Fizik: Bulut Yoğunlaşma Çekirdekleri (CCN)
 
 Tuz Gölü havzasından kalkan mikroskobik uçucu tuz aerosolleri ($NaCl$), İç Anadolu atmosfer fiziğinde önemli bir rol oynar.
+
+### Köhler Teorisi ve Damlacık Yoğunlaşma Koşulu
+
+Bulut damlacıklarının tuz aerosol çekirdekleri üzerinde büyümesi **Köhler Denklemi** ile tanımlanır:
+
+$$\ln\left(\frac{p_w(D)}{p_w^0}\right) = \frac{4 M_w \sigma_{w}}{R T \rho_w D} - \frac{6 n_s M_w}{\pi \rho_w D^3}$$
+
+Burada:
+- $D$: Damlacık çapı
+- $\sigma_w$: Su yüzey gerilimi
+- $n_s$: Çözünmüş tuz aerosolünün mol sayısı
+- $M_w$: Suyun moleküler ağırlığı
+- $\rho_w$: Saf su yoğunluğu
+
+Denklemdeki ilk terim **Kelvin Etkisi** (kavisli yüzey nedeniyle buhar basıncının artması) iken, ikinci terim **Raoult Etkisi / Çözünen Etkisi** (çözünmüş tuz nedeniyle buhar basıncının düşmesi) olarak adlandırılır. Tuz aerosolleri, çözünürlüklerinin çok yüksek olması sebebiyle aşırı doygunluk eşiğini düşürerek havadaki nem oranının düşük olduğu koşullarda bile yoğunlaşmayı ve bulut oluşumunu mümkün kılarlar.
 
 ---
 
