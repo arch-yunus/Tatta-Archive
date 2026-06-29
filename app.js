@@ -86,6 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initHalophyteRemediationSimulator();
   initCaravanSimulator();
   initCCNSimulator();
+
+  // Sürüm 15.0 Simülatörleri
+  initPaleolimnologySimulator();
+  initAlgaeReactorSimulator();
 });
 
 /* ==========================================================================
@@ -348,7 +352,12 @@ function initNavigation() {
         if (sec.id === targetId) {
           sec.classList.add("active-section");
           // Resize canvases on view load
-          if (targetId === "mysteries") {
+          if (targetId === "geology") {
+            setTimeout(() => {
+              resizePaleoCanvas();
+              startPaleolimnologySimulation();
+            }, 100);
+          } else if (targetId === "mysteries") {
             setTimeout(() => {
               resizeIllusionCanvas();
               startRadarSweep();
@@ -358,6 +367,8 @@ function initNavigation() {
               resizeSaltworksCanvas();
               startCavernSimulation();
               startSaltworksSimulation();
+              resizeReactorCanvas();
+              startAlgaeReactorSimulation();
             }, 100);
           } else if (targetId === "ecology") {
             setTimeout(() => {
@@ -4600,8 +4611,548 @@ function startCCNSimulation() {
     ctx.textAlign = "center";
     ctx.fillText("ATMOSFERİK YAĞIŞ SÜRECİ", midX + (w - midX)/2, h - 10);
 
+    ctx.fillStyle = "#1e2937";
+    ctx.fillRect(midX + 5, h - 25, w - midX - 10, 20);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 6px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("ATMOSFERİK YAĞIŞ SÜRECİ", midX + (w - midX)/2, h - 10);
+
   }, 50);
 }
+
+/* ==========================================================================
+   29. QUATERNARY PALEOLIMNOLOGY SIMULATOR (v15.0)
+   ========================================================================== */
+let paleoInterval = null;
+let paleoState = {
+  timeKya: 0,
+  eccentricity: 0.0167,
+  obliquity: 23.44,
+  precession: 102,
+  waterLevel: 0.2,
+  tempAnomaly: 0.0,
+  sedRate: 0.12,
+  insolation: 485,
+  animationTime: 0
+};
+
+function getPaleoData(kya) {
+  const lookup = [
+    { kya: 0, level: 0.2, temp: 0.0, sed: 0.12, type: "Sığ Hipersalin Halit", desc: "Sığ tuz gölü, yüksek buharlaşma." },
+    { kya: 10, level: 12.0, temp: -1.5, sed: 0.35, type: "Orta Acı Limnik", desc: "Erken Holosen nemli evre." },
+    { kya: 20, level: 48.0, temp: -7.2, sed: 0.85, type: "Derin Tatlı Su (Pluvial)", desc: "Son Buzul Maksimumu dev göl evresi." },
+    { kya: 30, level: 28.0, temp: -5.0, sed: 0.62, type: "Derin Limnik Kil/Marn", desc: "Soğuk nemli buzul gölü." },
+    { kya: 40, level: 15.0, temp: -4.0, sed: 0.44, type: "Orta Limnik", desc: "Buzul dönemi geçiş evresi." },
+    { kya: 50, level: 32.0, temp: -5.8, sed: 0.70, type: "Derin Tatlı Su", desc: "Yüksek yağışlı buzul maksimumu." },
+    { kya: 60, level: 24.0, temp: -4.8, sed: 0.52, type: "Orta-Derin Limnik", desc: "Kararlı soğuk göl evresi." },
+    { kya: 70, level: 8.0, temp: -3.0, sed: 0.28, type: "Sığ Acı Su", desc: "Yarı kurak buzul geçişi." },
+    { kya: 80, level: 4.5, temp: -1.0, sed: 0.20, type: "Sığ Salin Jips", desc: "Sıcak buzul-arası geçiş." },
+    { kya: 90, level: -1.2, temp: 1.0, sed: 0.08, type: "Kurumuş Çamur Düzlüğü", desc: "Ekstrem buharlaşma, göl neredeyse yok." },
+    { kya: 100, level: -2.0, temp: 1.8, sed: 0.05, type: "Ekstrem Kurak Sabka", desc: "Sıcak buzul-arası pik evre." },
+    { kya: 110, level: 1.0, temp: 0.5, sed: 0.15, type: "Sığ Hipersalin Halit", desc: "Geçiş evresi tuz birikimi." },
+    { kya: 120, level: 2.8, temp: 1.2, sed: 0.18, type: "Sığ Salin Jips", desc: "Eemian Sıcak Dönem başlangıcı." }
+  ];
+  let i = 0;
+  while (i < lookup.length - 1 && kya > lookup[i+1].kya) {
+    i++;
+  }
+  const p1 = lookup[i];
+  const p2 = lookup[i+1];
+  const frac = (kya - p1.kya) / (p2.kya - p1.kya);
+  
+  return {
+    level: p1.level + (p2.level - p1.level) * frac,
+    temp: p1.temp + (p2.temp - p1.temp) * frac,
+    sed: p1.sed + (p2.sed - p1.sed) * frac,
+    type: p1.level > 20 ? p2.type : p1.type,
+    desc: p1.level > 20 ? p2.desc : p1.desc
+  };
+}
+
+function resizePaleoCanvas() {
+  const canvas = document.getElementById("paleoCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initPaleolimnologySimulator() {
+  const slideTime = document.getElementById("paleo-time");
+  const slideEcc = document.getElementById("paleo-ecc");
+  const slideObliq = document.getElementById("paleo-obliq");
+  const slidePrec = document.getElementById("paleo-prec");
+
+  if (!slideTime) return;
+
+  const valTime = document.getElementById("val-paleo-time");
+  const valEcc = document.getElementById("val-paleo-ecc");
+  const valObliq = document.getElementById("val-paleo-obliq");
+  const valPrec = document.getElementById("val-paleo-prec");
+
+  function updateParams() {
+    paleoState.timeKya = parseInt(slideTime.value);
+    paleoState.eccentricity = parseFloat(slideEcc.value);
+    paleoState.obliquity = parseFloat(slideObliq.value);
+    paleoState.precession = parseInt(slidePrec.value);
+
+    valTime.innerText = `${paleoState.timeKya} kya (${paleoState.timeKya === 0 ? "Günümüz" : "Bin Yıl Önce"})`;
+    valEcc.innerText = paleoState.eccentricity.toFixed(4);
+    valObliq.innerText = `${paleoState.obliquity.toFixed(2)}°`;
+    valPrec.innerText = `${paleoState.precession}°`;
+
+    // Overwrite default sliders to match historic time defaults slightly (helping user adjust)
+    // Formula for orbital insolation
+    const insolation = 485 + 30 * (paleoState.eccentricity - 0.0167) * 45 + 10 * (paleoState.obliquity - 23.44) + 14 * Math.sin(paleoState.precession * Math.PI / 180);
+    paleoState.insolation = insolation;
+  }
+
+  [slideTime, slideEcc, slideObliq, slidePrec].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  updateParams();
+}
+
+function startPaleolimnologySimulation() {
+  const canvas = document.getElementById("paleoCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const wLevelEl = document.getElementById("paleo-water-level");
+  const lTypeEl = document.getElementById("paleo-lake-type");
+  const tAnomEl = document.getElementById("paleo-temp-anomaly");
+  const sRateEl = document.getElementById("paleo-sed-rate");
+  const insolEl = document.getElementById("paleo-insolation");
+  const alertEl = document.getElementById("paleoAlert");
+
+  if (paleoInterval) clearInterval(paleoInterval);
+
+  paleoInterval = setInterval(() => {
+    paleoState.animationTime += 0.05;
+
+    const baseData = getPaleoData(paleoState.timeKya);
+
+    // Dynamic coupling based on sliders
+    // Obliquity increase increases summer temperatures slightly. Eccentricity amplifies precession seasonal swings.
+    const orbTempJitter = (paleoState.obliquity - 23.44) * 0.8 + (paleoState.eccentricity - 0.0167) * 12 * Math.cos(paleoState.precession * Math.PI / 180);
+    
+    // Su seviyesi ve sedimantasyon hesapları
+    const finalLevel = Math.max(-3.0, baseData.level - orbTempJitter * 2.5);
+    const finalTemp = baseData.temp + orbTempJitter;
+    const finalSed = baseData.sed * (1.0 + (finalLevel / 50.0));
+
+    // Telemetry updates
+    if (wLevelEl) wLevelEl.innerText = `${finalLevel >= 0 ? "+" : ""}${finalLevel.toFixed(1)} m`;
+    if (lTypeEl) {
+      let lType = baseData.type;
+      if (finalLevel > 35) lType = "Derin Tatlı Su (Pluvial)";
+      else if (finalLevel > 15) lType = "Orta Derin Limnik Kil";
+      else if (finalLevel > 2) lType = "Sığ Salin Jips";
+      else if (finalLevel > -0.5) lType = "Sığ Hipersalin Halit";
+      else lType = "Ekstrem Kurak Sabka / Çamur Düzlüğü";
+      lTypeEl.innerText = lType;
+    }
+    if (tAnomEl) tAnomEl.innerText = `${finalTemp >= 0 ? "+" : ""}${finalTemp.toFixed(1)} °C`;
+    if (sRateEl) sRateEl.innerText = `${finalSed.toFixed(2)} mm/yıl`;
+    if (insolEl) insolEl.innerText = `${Math.round(paleoState.insolation)} W/m²`;
+
+    // Status message
+    if (alertEl) {
+      let statusText = "";
+      let color = "var(--secondary-cyan)";
+      if (finalLevel > 25) {
+        statusText = `<strong>Buzul (Pluvial) Göl Safhası:</strong> Havzada genişleyen ormanlar, düşük buharlaşma ve derin tatlı su ekosistemi hakimdir.`;
+        color = "#3b82f6";
+      } else if (finalLevel < 0) {
+        statusText = `<strong>Buzul-Arası Kurak Evre:</strong> Sıcaklık yüksek, buharlaşma ekstrem boyutta. Göl yatağı kuru tuz kabuğu ve sabkalara dönüşmüştür.`;
+        color = "#ef4444";
+      } else {
+        statusText = `<strong>Dengeli Yarı Kurak Evre:</strong> Mevcut duruma yakın sığ su ve tuzcul evaporit çökelleri birikmektedir.`;
+        color = "#fbbf24";
+      }
+      alertEl.innerHTML = `<i class="fa-solid fa-earth-europe" style="color:${color}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = color + "33";
+    }
+
+    // Render Canvas
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const midX = w / 2;
+
+    // Split Canvas: Left (Orbital Diagram) and Right (Lake Sediment profile)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(midX, 0);
+    ctx.lineTo(midX, h);
+    ctx.stroke();
+
+    // ----------------------------------------------------
+    // LEFT VIEW: Orbital Mechanics (Earth & Sun)
+    // ----------------------------------------------------
+    const cx = midX / 2;
+    const cy = h / 2 - 10;
+    
+    // Draw Sun
+    ctx.fillStyle = "#eab308";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(234, 179, 8, 0.3)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 17 + Math.sin(paleoState.animationTime * 2) * 1.5, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Orbit ellipse (Eccentricity affects ratios)
+    const rx = 55;
+    const ry = 40 * (1 - (paleoState.eccentricity * 3));
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Earth position along orbit
+    const orbitAngle = paleoState.animationTime * 0.5;
+    const ex = cx + rx * Math.cos(orbitAngle);
+    const ey = cy + ry * Math.sin(orbitAngle);
+
+    // Draw Earth
+    ctx.fillStyle = "#3b82f6";
+    ctx.beginPath();
+    ctx.arc(ex, ey, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Tilt Axis (Obliquity)
+    const tiltAngle = (paleoState.obliquity * Math.PI) / 180;
+    ctx.strokeStyle = "#4ade80";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(ex - 10 * Math.sin(tiltAngle), ey - 10 * Math.cos(tiltAngle));
+    ctx.lineTo(ex + 10 * Math.sin(tiltAngle), ey + 10 * Math.cos(tiltAngle));
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.font = "bold 6px Outfit";
+    ctx.textAlign = "center";
+    ctx.fillText("MİLANKOVİTCH DÖNGÜLERİ", cx, h - 10);
+
+    // ----------------------------------------------------
+    // RIGHT VIEW: Lake Sediment and Water Level
+    // ----------------------------------------------------
+    const rx2 = midX + 15;
+    const rw = w - rx2 - 15;
+
+    // Draw geology strata (fixed)
+    const strataY = h - 50;
+    
+    // Stratum 1: Basal clay (gray)
+    ctx.fillStyle = "#374151";
+    ctx.fillRect(rx2, strataY, rw, 40);
+    // Stratum 2: Marl (greenish gray)
+    ctx.fillStyle = "#4b5563";
+    ctx.fillRect(rx2, strataY - 15, rw, 15);
+    // Stratum 3: Gypsum/Halite layer (white-brown)
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillRect(rx2, strataY - 25, rw, 10);
+
+    // Label Strata
+    ctx.fillStyle = "rgba(255,255,255,0.3)";
+    ctx.font = "5px Outfit";
+    ctx.fillText("Marn / Kil", rx2 + 25, strataY + 12);
+    ctx.fillText("Evaporit", rx2 + 25, strataY - 20);
+
+    // Draw water block (Dynamic level)
+    // Mapping: finalLevel (-3m to 50m) maps to (strataY - 25) to (30px)
+    const maxH = strataY - 25 - 30;
+    const normLevel = Math.min(1.0, Math.max(0.0, (finalLevel + 3.0) / 53.0));
+    const waterH = maxH * normLevel;
+    const waterY = strataY - 25 - waterH;
+
+    if (waterH > 0) {
+      // Deep blue for deep water, greenish-pink for shallow evaporite
+      const waterGrad = ctx.createLinearGradient(0, waterY, 0, strataY - 25);
+      if (finalLevel > 15) {
+        waterGrad.addColorStop(0, "rgba(59, 130, 246, 0.6)");
+        waterGrad.addColorStop(1, "rgba(29, 78, 216, 0.3)");
+      } else {
+        waterGrad.addColorStop(0, "rgba(255, 117, 151, 0.5)");
+        waterGrad.addColorStop(1, "rgba(0, 229, 255, 0.25)");
+      }
+      ctx.fillStyle = waterGrad;
+      ctx.fillRect(rx2, waterY, rw, waterH);
+    } else {
+      // Cracked soil representation for negative water levels
+      ctx.strokeStyle = "#b45309";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(rx2, strataY - 25, rw, 1);
+    }
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 6px Outfit";
+    ctx.fillText("GÖL HAVZASI EN KESİTİ", midX + (w - midX)/2, h - 10);
+
+  }, 50);
+}
+
+/* ==========================================================================
+   30. ALGAE BIO-REACTOR SIMULATOR (v15.0)
+   ========================================================================== */
+let reactorInterval = null;
+let reactorState = {
+  co2Feed: 400,
+  light: 500,
+  nutrients: 16,
+  temperature: 25,
+  growthRate: 0.45,
+  cellDensity: "Orta",
+  carbonSeq: 12.5,
+  bioplasticYield: 14.8,
+  lipidContent: 28.4,
+  animationTime: 0,
+  cells: []
+};
+
+function resizeReactorCanvas() {
+  const canvas = document.getElementById("reactorCanvas");
+  if (canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+  }
+}
+
+function initAlgaeReactorSimulator() {
+  const slideCo2 = document.getElementById("reactor-co2");
+  const slideLight = document.getElementById("reactor-light");
+  const slideNut = document.getElementById("reactor-nutrients");
+  const slideTemp = document.getElementById("reactor-temp");
+
+  if (!slideCo2) return;
+
+  const valCo2 = document.getElementById("val-reactor-co2");
+  const valLight = document.getElementById("val-reactor-light");
+  const valNut = document.getElementById("val-reactor-nut");
+  const valTemp = document.getElementById("val-reactor-temp");
+
+  function updateParams() {
+    reactorState.co2Feed = parseInt(slideCo2.value);
+    reactorState.light = parseInt(slideLight.value);
+    reactorState.nutrients = parseInt(slideNut.value);
+    reactorState.temperature = parseInt(slideTemp.value);
+
+    valCo2.innerText = `${reactorState.co2Feed} ppm`;
+    valLight.innerText = `${reactorState.light} W/m²`;
+    valNut.innerText = `N/P ${reactorState.nutrients}`;
+    valTemp.innerText = `${reactorState.temperature} °C`;
+  }
+
+  [slideCo2, slideLight, slideNut, slideTemp].forEach(slider => {
+    slider.addEventListener("input", updateParams);
+  });
+
+  updateParams();
+}
+
+function startAlgaeReactorSimulation() {
+  const canvas = document.getElementById("reactorCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const growthEl = document.getElementById("reactor-growth-rate");
+  const densityEl = document.getElementById("reactor-cell-density");
+  const lipidEl = document.getElementById("reactor-lipid-content");
+  const carbonEl = document.getElementById("reactor-carbon-sequestration");
+  const plasticEl = document.getElementById("reactor-bioplastic-yield");
+  const alertEl = document.getElementById("reactorAlert");
+
+  if (reactorInterval) clearInterval(reactorInterval);
+
+  // Initialize Dunaliella cell population
+  reactorState.cells = [];
+  const cellCount = 25;
+  for (let i = 0; i < cellCount; i++) {
+    reactorState.cells.push({
+      x: 0.15 + Math.random() * 0.7,
+      y: 0.15 + Math.random() * 0.7,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: 5 + Math.random() * 4,
+      rotation: Math.random() * Math.PI
+    });
+  }
+
+  reactorInterval = setInterval(() => {
+    reactorState.animationTime += 0.05;
+
+    const co2 = reactorState.co2Feed;
+    const light = reactorState.light;
+    const nut = reactorState.nutrients;
+    const temp = reactorState.temperature;
+
+    // Photosynthesis & growth equations
+    // Temperature optimal is 28 °C
+    const tempFactor = Math.max(0.05, 1.0 - Math.pow(Math.abs(temp - 28.0) / 18.0, 2));
+    
+    // Nutrient factor: too low N/P limits growth, but triggers high stress lipid/PHA accumulation
+    const nutFactor = nut / (nut + 4.0);
+
+    const growth = 1.8 * (co2 / (co2 + 400.0)) * (light / (light + 250.0)) * tempFactor * nutFactor;
+    reactorState.growthRate = growth;
+
+    // Stress levels drive lipid accumulation (%)
+    // High light + low nutrients + temperature extremes increase lipid accumulation
+    const stressIndex = (light / 1000.0) * (50.0 - nut) / 45.0;
+    const lipid = 12.0 + 45.0 * Math.min(1.0, Math.max(0.0, stressIndex));
+    reactorState.lipidContent = lipid;
+
+    // Carbon Sequestration (tons/year)
+    const carbon = growth * (co2 / 400.0) * 14.5;
+    reactorState.carbonSeq = carbon;
+
+    // Bioplastic yield (kg/day)
+    const plastic = growth * (lipid / 100.0) * 22.0;
+    reactorState.bioplasticYield = plastic;
+
+    // Density category
+    let density = "Normal";
+    if (growth > 1.2) density = "Aşırı Yoğun";
+    else if (growth > 0.8) density = "Yüksek Yoğunluk";
+    else if (growth > 0.4) density = "Orta Yoğunluk";
+    else density = "Düşük Yoğunluk";
+    reactorState.cellDensity = density;
+
+    // Update Telemetry
+    if (growthEl) growthEl.innerText = `${reactorState.growthRate.toFixed(2)} g/L/gün`;
+    if (densityEl) densityEl.innerText = `Hücre Yoğunluğu: ${reactorState.cellDensity}`;
+    if (lipidEl) lipidEl.innerText = `%${reactorState.lipidContent.toFixed(1)}`;
+    if (carbonEl) carbonEl.innerText = `${reactorState.carbonSeq.toFixed(1)} ton/yıl`;
+    if (plasticEl) plasticEl.innerText = `${reactorState.bioplasticYield.toFixed(1)} kg/gün`;
+
+    // Alert Status
+    if (alertEl) {
+      let statusText = "";
+      let icon = "fa-flask";
+      let color = "#10b981";
+      if (lipid > 35) {
+        statusText = "<strong>Biyoreaktör Stres Altında:</strong> Besin yetersizliği ve yüksek ışık alglerde yoğun yağ/biyoyakıt sentezini tetikliyor.";
+        color = "#fbbf24";
+      } else if (growth > 1.0) {
+        statusText = "<strong>Maksimum Fotosentez Verimi:</strong> Optimum CO₂ ve sıcaklık. Karbon yakalama oranı en üst seviyededir.";
+        color = "#10b981";
+      } else if (tempFactor < 0.25) {
+        statusText = "<strong>Termal Limit Aşıldı:</strong> Sıcaklık alg hücresel protein yapılarını zorluyor, büyüme durma noktasına yakın.";
+        color = "#ef4444";
+      } else {
+        statusText = "<strong>Stabil Üretim:</strong> Algal fotosentez reaksiyonları dengeli devam ediyor.";
+        color = "var(--secondary-cyan)";
+      }
+      alertEl.innerHTML = `<i class="fa-solid ${icon}" style="color:${color}"></i> <span style="color:#f8fafc">${statusText}</span>`;
+      alertEl.style.borderColor = color + "33";
+    }
+
+    // Canvas drawing
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Deep reactor transparent chamber gradient background
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+    bgGrad.addColorStop(0, "#022c22");
+    bgGrad.addColorStop(1, "#020617");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Reactor outline glass borders
+    ctx.strokeStyle = "rgba(16, 185, 129, 0.2)";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(10, 10, w - 20, h - 20);
+
+    // CO2 bubble sparger animation (bubbles rising from sparger at bottom)
+    const bubbleCount = Math.min(50, Math.round(co2 / 20));
+    ctx.fillStyle = "rgba(0, 229, 255, 0.4)";
+    for (let i = 0; i < bubbleCount; i++) {
+      const bx = 20 + ((reactorState.animationTime * 90 + i * 45) % (w - 40));
+      const by = h - 20 - ((reactorState.animationTime * 140 + i * 25) % (h - 40));
+      ctx.beginPath();
+      ctx.arc(bx, by, 1.5 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Cells: Draw Dunaliella Salina cells (red/green shift based on stress)
+    // Low nutrient (N/P < 15) and high light increases red beta-carotene/lipid content
+    const redFactor = Math.min(1.0, Math.max(0.0, (lipid - 12) / 35.0));
+
+    reactorState.cells.forEach(c => {
+      // Particle drift motion
+      c.x += c.vx * 0.5 * (1 + growth * 0.5);
+      c.y += c.vy * 0.5 * (1 + growth * 0.5);
+
+      // Boundaries collision bounce
+      if (c.x < 0.05 || c.x > 0.95) c.vx *= -1;
+      if (c.y < 0.05 || c.y > 0.95) c.vy *= -1;
+
+      // Keep cell in bounds
+      c.x = Math.max(0.06, Math.min(0.94, c.x));
+      c.y = Math.max(0.06, Math.min(0.94, c.y));
+
+      const cx = c.x * w;
+      const cy = c.y * h;
+
+      // Cell rotation
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(c.rotation + reactorState.animationTime * c.vx);
+
+      // Cell body color (green-to-red gradient based on carotene accumulation)
+      const cellGrad = ctx.createRadialGradient(0, 0, 1, 0, 0, c.size);
+      
+      const greenColor = `rgba(${Math.round(34 + 180 * redFactor)}, ${Math.round(197 - 120 * redFactor)}, ${Math.round(94 - 40 * redFactor)}, 0.85)`;
+      const coreColor = `rgba(${Math.round(239 * redFactor)}, ${Math.round(68 * redFactor)}, ${Math.round(68 * redFactor)}, 0.95)`;
+      
+      cellGrad.addColorStop(0, coreColor);
+      cellGrad.addColorStop(1, greenColor);
+
+      ctx.fillStyle = cellGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, c.size, c.size * 0.7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Flagella drawing (two small flagellar tails at the front)
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-c.size, 0);
+      ctx.quadraticCurveTo(-c.size - 12, -8, -c.size - 18, -6 + Math.sin(reactorState.animationTime * 8) * 3);
+      ctx.moveTo(-c.size, 0);
+      ctx.quadraticCurveTo(-c.size - 12, 8, -c.size - 18, 6 + Math.cos(reactorState.animationTime * 8) * 3);
+      ctx.stroke();
+
+      // Draw accumulated lipid/fat droplets inside the cells under stress
+      if (lipid > 20) {
+        const numDroplets = Math.min(4, Math.floor((lipid - 10) / 8));
+        ctx.fillStyle = "rgba(234, 179, 8, 0.75)";
+        for (let j = 0; j < numDroplets; j++) {
+          const dx = (j % 2 === 0 ? 3 : -3) * (j / 2 + 0.5);
+          const dy = (j % 2 === 0 ? -2 : 2) * (j / 2 + 0.5);
+          ctx.beginPath();
+          ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.restore();
+    });
+
+  }, 40);
+}
+
 
 
 

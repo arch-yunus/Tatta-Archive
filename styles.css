@@ -3373,6 +3373,101 @@ blockquote cite {
   }
 }
 
+/* ==========================================================================
+   29. QUATERNARY PALEOLIMNOLOGY SIMULATOR (v15.0)
+   ========================================================================== */
+.paleo-simulator-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.paleo-top-row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.paleo-controls {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paleo-visual-container {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.paleo-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* ==========================================================================
+   30. ALGAE BIO-REACTOR SIMULATOR (v15.0)
+   ========================================================================== */
+.reactor-simulator-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.reactor-top-row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.reactor-controls {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reactor-visual-container {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.reactor-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .paleo-top-row,
+  .reactor-top-row {
+    flex-direction: column;
+  }
+  
+  .paleo-controls,
+  .reactor-controls {
+    width: 100% !important;
+  }
+
+  .paleo-telemetry-grid,
+  .reactor-telemetry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .paleo-telemetry-grid,
+  .reactor-telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
 

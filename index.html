@@ -338,6 +338,69 @@
           </div>
         </div>
       </div>
+
+      <!-- Kuvaterner Paleolimnoloji ve İklim Döngüleri Simülatörü (YENİ - v15.0) -->
+      <div class="card glass-card margin-top-30" style="border-color: rgba(59, 130, 246, 0.2);">
+        <h3>🌍 Kuvaterner Paleolimnoloji ve İklim Döngüleri Simülatörü</h3>
+        <p class="card-desc">Dünya'nın Milankovitch yörünge döngülerini (Eksantriklik, Eksen Eğikliği, Yalpalama) değiştirerek son 120.000 yılda (Kuvaterner) Tuz Gölü havzasındaki iklimsel sıcaklık anomalilerini ve göl su seviyesi/sediman değişimlerini gözlemleyin.</p>
+        
+        <div class="paleo-simulator-layout">
+          <div class="paleo-top-row">
+            <div class="paleo-controls">
+              <div class="sim-slider-group">
+                <label for="paleo-time">Zaman Dilimi (Bin Yıl Önce - kya): <span class="val-display" id="val-paleo-time">0 kya (Günümüz)</span></label>
+                <input type="range" id="paleo-time" min="0" max="120" step="10" value="0" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="paleo-ecc">Dünya Yörünge Eksantrikliği (Eccentricity): <span class="val-display" id="val-paleo-ecc">0.0167</span></label>
+                <input type="range" id="paleo-ecc" min="0.005" max="0.060" step="0.001" value="0.0167" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="paleo-obliq">Eksen Eğikliği (Obliquity / Tilt): <span class="val-display" id="val-paleo-obliq">23.44°</span></label>
+                <input type="range" id="paleo-obliq" min="22.1" max="24.5" step="0.1" value="23.44" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="paleo-prec">Yalpalama Açısı (Precession): <span class="val-display" id="val-paleo-prec">102°</span></label>
+                <input type="range" id="paleo-prec" min="0" max="360" step="5" value="102" class="slider-input">
+              </div>
+            </div>
+            
+            <div class="paleo-visual-container">
+              <canvas id="paleoCanvas" height="240" style="width: 100%; border: 1px solid rgba(59, 130, 246, 0.15); border-radius: 8px; background: #030712;"></canvas>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="paleo-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(59, 130, 246, 0.15);">
+              <span class="tel-label">Göl Su Seviyesi / Hacmi</span>
+              <span class="tel-val" id="paleo-water-level">+0.2 m</span>
+              <span class="tel-sub" id="paleo-lake-type">Sığ Hipersalin Halit</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(59, 130, 246, 0.15);">
+              <span class="tel-label">Sıcaklık Anomalisi</span>
+              <span class="tel-val" id="paleo-temp-anomaly">0.0 °C</span>
+              <span class="tel-sub">Sanayi öncesine göre</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(59, 130, 246, 0.15);">
+              <span class="tel-label">Yıllık Sedimantasyon Hızı</span>
+              <span class="tel-val" id="paleo-sed-rate">0.12 mm/yıl</span>
+              <span class="tel-sub">Evaporit kristal birikimi</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(59, 130, 246, 0.15);">
+              <span class="tel-label">Güneş Radyasyonu (Insolation)</span>
+              <span class="tel-val" id="paleo-insolation">485 W/m²</span>
+              <span class="tel-sub">Haziran ayı 65°N ortalaması</span>
+            </div>
+          </div>
+
+          <!-- Alert status box -->
+          <div class="cavern-stability-alert margin-top-20" id="paleoAlert" style="background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.2);">
+            <i class="fa-solid fa-earth-americas" style="color:#3b82f6"></i>
+            <span style="color:#f8fafc"><strong>Paleo-Limnolojik Durum:</strong> Göl günümüzdeki sığ, yüksek evaporitli yapısını sergilemektedir.</span>
+          </div>
+        </div>
+      </div>
     </section>
 
 
@@ -1405,6 +1468,69 @@
               <i class="fa-solid fa-circle-info"></i>
               <span><strong>Tuz Kalitesi Durumu:</strong> Gıda tüketimine uygun standart yemeklik sofra tuzu sınıfındadır.</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dunaliella Biyoreaktör & Karbon Yakalama Simülatörü (YENİ - v15.0) -->
+      <div class="card glass-card margin-top-30" style="border-color: rgba(16, 185, 129, 0.2);">
+        <h3>🧪 Dunaliella Biyoreaktör & Karbon Yakalama Simülatörü</h3>
+        <p class="card-desc">Tuz Gölü havzasında kurulması planlanan endüstriyel algal biyoreaktörlerde CO₂ besleme hızı, güneş ışınımı, besin girdileri ve sıcaklığı değiştirerek biyokütle gelişimini, lipid/biyoyakıt verimini ve karbon tutum kapasitesini modelleyin.</p>
+        
+        <div class="reactor-simulator-layout">
+          <div class="reactor-top-row">
+            <div class="reactor-controls">
+              <div class="sim-slider-group">
+                <label for="reactor-co2">CO₂ Besleme Hızı (ppm): <span class="val-display" id="val-reactor-co2">400 ppm</span></label>
+                <input type="range" id="reactor-co2" min="200" max="1500" step="50" value="400" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="reactor-light">Güneş Işınımı (W/m²): <span class="val-display" id="val-reactor-light">500 W/m²</span></label>
+                <input type="range" id="reactor-light" min="100" max="1000" step="50" value="500" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="reactor-nutrients">Besin Oranı (Azot/Fosfor N/P): <span class="val-display" id="val-reactor-nut">16</span></label>
+                <input type="range" id="reactor-nutrients" min="5" max="50" step="1" value="16" class="slider-input">
+              </div>
+              <div class="sim-slider-group">
+                <label for="reactor-temp">Reaktör Sıcaklığı (°C): <span class="val-display" id="val-reactor-temp">25 °C</span></label>
+                <input type="range" id="reactor-temp" min="10" max="45" step="1" value="25" class="slider-input">
+              </div>
+            </div>
+            
+            <div class="reactor-visual-container">
+              <canvas id="reactorCanvas" height="240" style="width: 100%; border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 8px; background: #022c22;"></canvas>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="reactor-telemetry-grid margin-top-20">
+            <div class="telemetry-card" style="border-color: rgba(16, 185, 129, 0.15);">
+              <span class="tel-label">Alg Büyüme Hızı</span>
+              <span class="tel-val" id="reactor-growth-rate">0.45 g/L/gün</span>
+              <span class="tel-sub" id="reactor-cell-density">Hücre Yoğunluğu: Orta</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(16, 185, 129, 0.15);">
+              <span class="tel-label">Lipid / Biyoyakıt Oranı</span>
+              <span class="tel-val" id="reactor-lipid-content">%28.4</span>
+              <span class="tel-sub">Hücresel yağ birikimi</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(16, 185, 129, 0.15);">
+              <span class="tel-label">Yıllık CO₂ Tutumu</span>
+              <span class="tel-val" id="reactor-carbon-sequestration">12.5 ton/yıl</span>
+              <span class="tel-sub">Emilen sera gazı kütlesi</span>
+            </div>
+            <div class="telemetry-card" style="border-color: rgba(16, 185, 129, 0.15);">
+              <span class="tel-label">Biyo-Plastik Verimi</span>
+              <span class="tel-val" id="reactor-bioplastic-yield">14.8 kg/gün</span>
+              <span class="tel-sub">Polimerik yan ürün eldesi</span>
+            </div>
+          </div>
+
+          <!-- Alert Status Box -->
+          <div class="cavern-stability-alert margin-top-20" id="reactorAlert" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2);">
+            <i class="fa-solid fa-flask" style="color:#10b981"></i>
+            <span style="color:#f8fafc"><strong>Biyoreaktör Durumu:</strong> Alg kültürü stabil durumda fotosentez yapmakta ve karbondioksit bağlamaktadır.</span>
           </div>
         </div>
       </div>
